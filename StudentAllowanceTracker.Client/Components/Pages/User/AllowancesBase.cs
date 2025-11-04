@@ -120,21 +120,18 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
         {
             var now = DateTime.Now;
             var monthStart = new DateTime(now.Year, now.Month, 1);
-            var monthEnd = now; // Up to today only
+            var monthEnd = now; 
             decimal total = 0;
 
             foreach (var allowance in allowances.Where(IsActive))
             {
-                // Skip if not started yet
                 if (allowance.StartDate > now) continue;
 
-                // Get effective start date (either allowance start or month start, whichever is later)
                 var effectiveStart = allowance.StartDate > monthStart ? allowance.StartDate : monthStart;
 
                 switch (allowance.Type)
                 {
                     case AllowanceType.OneTime:
-                        // Only if received this month
                         if (allowance.StartDate.Month == now.Month && allowance.StartDate.Year == now.Year && allowance.StartDate <= now)
                         {
                             total += allowance.Amount;
@@ -142,19 +139,16 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
                         break;
 
                     case AllowanceType.Daily:
-                        // Count actual days from start to today
                         var days = (now - effectiveStart).Days + 1;
                         total += allowance.Amount * days;
                         break;
 
                     case AllowanceType.Weekly:
-                        // Count actual weeks that passed this month
                         var weeks = (now - effectiveStart).Days / 7;
                         total += allowance.Amount * weeks;
                         break;
 
                     case AllowanceType.Monthly:
-                        // Only count if we've passed the start date this month
                         if (effectiveStart.Month == now.Month && effectiveStart <= now)
                         {
                             total += allowance.Amount;
@@ -162,8 +156,7 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
                         break;
 
                     case AllowanceType.Yearly:
-                        // Pro-rated based on days passed
-                        var yearDays = DateTime.IsLeapYear(now.Year) ? 366 : 365;
+                    var yearDays = DateTime.IsLeapYear(now.Year) ? 366 : 365;
                         var daysPassed = now.DayOfYear;
                         total += (allowance.Amount / yearDays) * daysPassed;
                         break;
