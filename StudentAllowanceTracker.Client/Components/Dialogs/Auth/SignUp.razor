@@ -1,0 +1,118 @@
+﻿@inject IAuthService AuthService
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<MudDialog>
+    <DialogContent>
+        <div class="px-4 py-2">
+            <MudText Typo="Typo.h5" Class="mb-2 font-bold text-gray-900">Create Your Account</MudText>
+            <MudText Typo="Typo.body2" Class="mb-6 text-gray-600">
+                Join thousands of students taking control of their finances.
+            </MudText>
+
+            <MudForm @ref="form" @bind-IsValid="@success">
+                <MudTextField @bind-Value="firstName"
+                              Label="First Name"
+                              Variant="Variant.Outlined"
+                              Required="true"
+                              RequiredError="First name is required"
+                              Class="mb-4"
+                              Placeholder="John" />
+
+                <MudTextField @bind-Value="lastName"
+                              Label="Last Name"
+                              Variant="Variant.Outlined"
+                              Required="true"
+                              RequiredError="Last name is required"
+                              Class="mb-4"
+                              Placeholder="Doe" />
+
+                <MudTextField @bind-Value="email"
+                              Label="Email"
+                              Variant="Variant.Outlined"
+                              Required="true"
+                              RequiredError="Email is required"
+                              Class="mb-4"
+                              Placeholder="you@example.com" />
+
+                <MudTextField @bind-Value="password"
+                              Label="Password"
+                              Variant="Variant.Outlined"
+                              InputType="InputType.Password"
+                              Required="true"
+                              RequiredError="Password is required"
+                              Class="mb-6"
+                              Placeholder="••••••••" />
+
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Success"
+                           FullWidth="true"
+                           Size="Size.Large"
+                           OnClick="HandleSignUp"
+                           Class="mb-4"
+                           Style="text-transform: none; font-weight: 600;">
+                    Create Account
+                </MudButton>
+
+                <MudText Typo="Typo.body2" Align="Align.Center" Class="text-gray-600">
+                    Already have an account?
+                    <MudLink OnClick="HandleLoginClick" Color="Color.Success" Class="font-semibold">
+                        Login
+                    </MudLink>
+                </MudText>
+            </MudForm>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = default!;
+
+    private MudForm form;
+    private bool success;
+    private string firstName = "";
+    private string lastName = "";
+    private string email = "";
+    private string password = "";
+    private async Task HandleSignUp()
+    {
+        await form.Validate();
+
+        if (!success)
+            return;
+
+        var dto = new RegisterDTO
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                Password = password
+            };
+
+        try
+        {
+            var result = await AuthService.RegisterAsync(dto);
+
+            if (result != null && result.Contains("success", StringComparison.OrdinalIgnoreCase))
+            {
+                Snackbar.Add("Account created! Please verify your email before logging in.", Severity.Success);
+
+                MudDialog.Close(DialogResult.Ok(email));
+            }
+            else
+            {
+                Snackbar.Add(result ?? "Registration failed.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+
+    private void HandleLoginClick()
+    {
+        MudDialog.Close();
+    }
+}

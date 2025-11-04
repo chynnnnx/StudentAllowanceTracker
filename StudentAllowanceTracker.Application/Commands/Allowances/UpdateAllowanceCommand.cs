@@ -1,0 +1,24 @@
+﻿using MediatR;
+using StudentAllowanceTracker.Application.DTOs;
+using StudentAllowanceTracker.Shared.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace StudentAllowanceTracker.Application.Commands.Allowances
+{
+    public class UpdateAllowanceCommand: IRequest<AllowanceDTO>
+    {
+        public Guid AllowanceID { get; set; } = default!;
+
+        public decimal Amount { get; set; }
+        public string? Description { get; set; }
+
+        public DateTime StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+
+        public AllowanceType Type { get; set; }
+    }
+}

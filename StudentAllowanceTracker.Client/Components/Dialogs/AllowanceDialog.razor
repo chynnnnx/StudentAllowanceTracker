@@ -1,0 +1,119 @@
+﻿@inherits AllowanceDialogBase
+
+<MudDialog>
+    <DialogContent>
+        <div style="padding: 1rem;">
+
+            <!-- Header -->
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <div style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%);
+                            width: 64px; height: 64px; border-radius: 1rem;
+                            display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <MudIcon Icon="@Icons.Material.Filled.AccountBalanceWallet" Style="color: white; font-size: 2rem;" />
+                </div>
+                <MudText Typo="Typo.h5" Style="color: hsl(0, 0%, 10.6%); font-weight: 600;">
+                    @(IsEditMode ? "Edit Allowance" : "Add New Allowance")
+                </MudText>
+                <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 52.2%);">
+                    @(IsEditMode ? "Update your income source" : "Set up your regular income source")
+                </MudText>
+            </div>
+
+            <!-- Form -->
+            <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                <MudNumericField @bind-Value="allowance.Amount"
+                                 Label="Amount"
+                                 Variant="Variant.Outlined"
+                                 Adornment="Adornment.Start"
+                                 AdornmentText="₱"
+                                 Format="N2"
+                                 Min="0"
+                                 HelperText="Enter the allowance amount"
+                                 Style="width: 100%;" />
+
+                <MudTextField @bind-Value="allowance.Description"
+                              Label="Description"
+                              Variant="Variant.Outlined"
+                              Placeholder="e.g., Weekly allowance from parents"
+                              HelperText="Add a note about this allowance"
+                              Style="width: 100%;" />
+
+                <!-- Frequency -->
+                <div>
+                    <MudText Typo="Typo.body2" Style="margin-bottom: 0.5rem;">Frequency</MudText>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem;">
+                        @foreach (var type in Enum.GetValues<AllowanceType>())
+                        {
+                            <MudCard Style="@GetTypeCardStyle(type)" @onclick="@(() => allowance.Type = type)">
+                                <MudCardContent Style="padding: 1rem; text-align: center; cursor: pointer;">
+                                    <MudIcon Icon="@GetTypeIcon(type)"
+                                             Style="@($"{GetTypeIconStyle(type)} margin-bottom: 0.5rem;")"
+                                             Size="Size.Large" />
+                                    <MudText Typo="Typo.body2" Style="@GetTypeTextStyle(type)" Class="font-medium">
+                                        @type.ToString()
+                                    </MudText>
+                                </MudCardContent>
+                            </MudCard>
+                        }
+                    </div>
+                </div>
+
+                <!-- Dates -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <MudDatePicker Date="allowance.StartDate"
+                                   DateChanged="@((DateTime? date) => allowance.StartDate = date ?? DateTime.Today)"
+                                   Label="Start Date"
+                                   Variant="Variant.Outlined"
+                                   Editable="true"
+                                   Style="width: 100%;"
+                                   Color="Color.Success" />
+
+                    <MudDatePicker Date="allowance.EndDate"
+                                   DateChanged="@((DateTime? date) => allowance.EndDate = date)"
+                                   Label="End Date (Optional)"
+                                   Variant="Variant.Outlined"
+                                   Editable="true"
+                                   Clearable="true"
+                                   Style="width: 100%;"
+                                   Color="Color.Success"
+                                   HelperText="Leave empty for ongoing" />
+                </div>
+
+                <!-- Preview -->
+                @if (allowance.Amount > 0)
+                {
+                    <MudAlert Severity="Severity.Info"
+                              Style="background-color: hsl(103, 96.4%, 89%);
+                                     border-left: 4px solid hsl(162, 86.6%, 32.2%);
+                                     border-radius: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <MudIcon Icon="@Icons.Material.Filled.Info" Style="color: hsl(162, 86.6%, 32.2%);" />
+                            <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 10.6%); font-weight: 500;">
+                                You'll receive ₱@allowance.Amount.ToString("N2") @GetFrequencyText()
+                            </MudText>
+                        </div>
+                    </MudAlert>
+                }
+            </div>
+        </div>
+    </DialogContent>
+
+    <DialogActions>
+        <div style="padding: 0 1rem 1rem 1rem; width: 100%; display: flex; gap: 0.75rem;">
+            <MudButton OnClick="Cancel"
+                       Variant="Variant.Outlined"
+                       Style="flex: 1; border-color: hsl(0, 0%, 81.2%); color: hsl(0, 0%, 27.8%);">
+                Cancel
+            </MudButton>
+
+            <MudButton OnClick="Submit"
+                       Variant="Variant.Filled"
+                       Style="flex: 2;
+                              background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%);
+                              color: white; font-weight: 500;"
+                       Disabled="@(!IsValid())">
+                @(IsEditMode ? "Update Allowance" : "Add Allowance")
+            </MudButton>
+        </div>
+    </DialogActions>
+</MudDialog>

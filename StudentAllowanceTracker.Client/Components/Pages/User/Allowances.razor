@@ -1,0 +1,141 @@
+﻿@page "/allowances"
+@inherits AllowancesBase
+
+<div style="max-width: 1200px; margin: 0 auto;">
+
+    <!-- Header Section -->
+    <div class="flex items-center justify-between" style="margin-bottom: 2rem;">
+        <div>
+            <MudText Typo="Typo.h4" Style="color: hsl(0, 0%, 10.6%); font-weight: 600; margin-bottom: 0.25rem;">Allowances</MudText>
+            <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 52.2%);">Manage your income sources</MudText>
+        </div>
+        <MudButton Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   OnClick="OpenAddDialog"
+                   Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); color: white; text-transform: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 500;">
+            Add Allowance
+        </MudButton>
+    </div>
+
+    @if (isLoading)
+    {
+        <div style="text-align: center; padding: 3rem;">
+            <MudProgressCircular Color="Color.Success" Indeterminate="true" />
+            <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 52.2%); margin-top: 1rem;">Loading your allowances...</MudText>
+        </div>
+    }
+    else
+    {
+        <!-- Summary Cards -->
+        <div class="grid gap-4 mb-6" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+
+            <!-- This Month -->
+            <MudCard Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); border-radius: 1rem; padding: 1.5rem;">
+                <MudCardContent Style="padding: 0;">
+                    <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.9); margin-bottom: 0.5rem;">This Month</MudText>
+                    <MudText Typo="Typo.h4" Style="color: white; font-weight: 700;">₱@GetThisMonthTotal().ToString("N2")</MudText>
+                </MudCardContent>
+            </MudCard>
+
+            <!-- Active Count -->
+            <MudCard Style="background-color: white; border: 2px solid hsl(162, 41.8%, 89.2%); border-radius: 1rem; padding: 1.5rem;">
+                <MudCardContent Style="padding: 0;">
+                    <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 52.2%); margin-bottom: 0.5rem;">Active Allowances</MudText>
+                    <MudText Typo="Typo.h4" Style="color: hsl(0, 0%, 10.6%); font-weight: 700;">@allowances.Count(IsActive)</MudText>
+                </MudCardContent>
+            </MudCard>
+
+        </div>
+
+        <!-- Allowance List -->
+        <MudCard Style="background-color: white; border: 2px solid hsl(162, 41.8%, 89.2%); border-radius: 1rem; padding: 2rem;">
+
+            <div class="flex items-center justify-between" style="margin-bottom: 1.5rem;">
+                <MudText Typo="Typo.h6" Style="color: hsl(0, 0%, 10.6%); font-weight: 600;">Your Allowances</MudText>
+                <MudButtonGroup Variant="Variant.Outlined" Size="Size.Small">
+                    <MudButton Style="@GetFilterButtonStyle(showAll)"
+                               OnClick="@(() => showAll = true)">
+                        All
+                    </MudButton>
+                    <MudButton Style="@GetFilterButtonStyle(!showAll)"
+                               OnClick="@(() => showAll = false)">
+                        Active Only
+                    </MudButton>
+                </MudButtonGroup>
+            </div>
+
+            @if (GetFilteredAllowances().Any())
+            {
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    @foreach (var allowance in GetFilteredAllowances())
+                    {
+                        var active = IsActive(allowance);
+                        var bgColor = active ? "hsl(103, 96.4%, 89%)" : "hsl(0, 0%, 96%)";
+                        var borderColor = active ? "hsl(162, 86.6%, 32.2%)" : "hsl(0, 0%, 81.2%)";
+
+                        <div style="background-color: @bgColor; border-left: 4px solid @borderColor; border-radius: 0.75rem; padding: 1rem; display: flex; align-items: center; justify-content: space-between;">
+                            <div class="flex items-center" style="gap: 1rem;">
+                                <MudIcon Icon="@GetFrequencyIcon(allowance.Type)"
+                                         Style="@GetIconStyle(active)" />
+                                <div>
+                                    <MudText Typo="Typo.body1" Style="color: hsl(0, 0%, 10.6%); font-weight: 500;">@allowance.Description</MudText>
+                                    <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 52.2%);">
+                                        @GetFrequencyLabel(allowance.Type) • @(active ? "Active" : "Ended")
+                                    </MudText>
+                                    @if (!active && allowance.EndDate.HasValue)
+                                    {
+                                        <MudText Typo="Typo.caption" Style="color: hsl(0, 0%, 71%);">
+                                            Ended: @allowance.EndDate.Value.ToString("MMM dd, yyyy")
+                                        </MudText>
+                                    }
+                                    else if (active)
+                                    {
+                                        <MudText Typo="Typo.caption" Style="color: hsl(0, 0%, 71%);">
+                                            Started: @allowance.StartDate.ToString("MMM dd, yyyy")
+                                        </MudText>
+                                    }
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="text-align: right;">
+                                    <MudText Typo="Typo.h6" Style="@GetAmountStyle(active)">
+                                        ₱@allowance.Amount.ToString("N2")
+                                    </MudText>
+                                    <MudText Typo="Typo.caption" Style="color: hsl(0, 0%, 52.2%);">@GetFrequencyUnit(allowance.Type)</MudText>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                                   Size="Size.Small"
+                                                   Style="color: hsl(162, 86.6%, 32.2%);"
+                                                   OnClick="@(() => OpenEditDialog(allowance))"
+                                                   Title="Edit allowance" />
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                   Size="Size.Small"
+                                                   Style="color: hsl(0, 84.2%, 60.2%);"
+                                                   OnClick="@(() => DeleteAllowance(allowance))"
+                                                   Title="Delete allowance" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <!-- Empty State -->
+                <div style="text-align: center; padding: 3rem 1rem;">
+                    <MudIcon Icon="@Icons.Material.Outlined.AccountBalanceWallet"
+                             Style="color: hsl(0, 0%, 81.2%); font-size: 4rem; margin-bottom: 1rem;" />
+                    <MudText Typo="Typo.h6" Style="color: hsl(0, 0%, 52.2%); margin-bottom: 0.5rem;">
+                        @(showAll ? "No allowances yet" : "No active allowances")
+                    </MudText>
+                    <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 71%);">
+                        @(showAll ? "Click 'Add Allowance' to get started" : "All your allowances have ended")
+                    </MudText>
+                </div>
+            }
+
+        </MudCard>
+    }
+
+</div>

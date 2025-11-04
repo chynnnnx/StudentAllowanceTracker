@@ -1,0 +1,210 @@
+﻿@page "/"
+@layout EmptyLayout
+@inject IDialogService DialogService
+@using StudentAllowanceTracker.Client.Components.Dialogs.Auth
+<MudAppBar Elevation="2" Fixed="true" Class="bg-white shadow-sm" Style="background-color: white;">
+    <!-- Left side: Icon + Title -->
+    <MudIconButton Icon="@Icons.Material.Filled.School" Color="Color.Success" Size="Size.Medium" Edge="Edge.Start" />
+    <MudText Typo="Typo.h6" Class="font-semibold text-gray-800">
+        ExpenseTrack
+    </MudText>
+
+    <!-- Spacer pushes everything after it to the right -->
+    <MudSpacer />
+
+    <!-- Right side: Buttons -->
+    @if (IsLoggedIn)
+    {
+        <MudText Class="mr-2 hidden text-sm text-gray-600 sm:inline">
+            Welcome, @UserName
+        </MudText>
+        <MudButton Variant="Variant.Outlined"
+                   Color="Color.Default"
+                   OnClick="HandleLogout"
+                   StartIcon="@Icons.Material.Filled.Logout">
+            Logout
+        </MudButton>
+    }
+    else
+    {
+        <MudButton Variant="Variant.Text" OnClick="ShowLogin">
+            LOGIN
+        </MudButton>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   OnClick="ShowSignup">
+            SIGN UP
+        </MudButton>
+    }
+</MudAppBar>
+
+<div class="flex flex-col">
+
+<!-- HERO SECTION -->
+    <div class="relative bg-white px-6 pt-40 pb-8 text-center" style="padding-top: 160px;">
+        <div class="mx-auto max-w-3xl">
+        <MudText Typo="Typo.h2" Class="mb-4 font-bold text-gray-800" Color="Color.Success">
+            Smart Expense Tracking for Students
+        </MudText>
+
+        <MudText Typo="Typo.subtitle1" Class="mb-8 text-gray-600">
+            Take control of your finances with our easy-to-use expense tracker.
+            Perfect for students managing budgets, tracking spending, and achieving financial goals.
+        </MudText>
+
+        <div class="mb-12 flex justify-center gap-4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="rounded-full px-6 py-2">
+                Get Started Free
+            </MudButton>
+            <MudButton Variant="Variant.Outlined" Class="rounded-full px-6 py-2">
+                Learn More
+            </MudButton>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="flex flex-col justify-center gap-10 text-gray-700 sm:flex-row">
+            <div>
+                <MudText Typo="Typo.h4" Color="Color.Primary" Class="text-primary font-bold">10k+</MudText>
+                <MudText Typo="Typo.caption">Active Students</MudText>
+            </div>
+            <div>
+                    <MudText Typo="Typo.h4" Color="Color.Primary" Class="text-primary font-bold">$2M+</MudText>
+                <MudText Typo="Typo.caption">Money Tracked</MudText>
+            </div>
+            <div>
+                    <MudText Typo="Typo.h4" Color="Color.Primary" Class="text-primary font-bold">98%</MudText>
+                <MudText Typo="Typo.caption">Satisfaction Rate</MudText>
+            </div>
+        </div>
+    </div>
+
+    <!-- Divider (remove absolute, make it flow naturally) -->
+    <div class="mt-12"></div>
+
+
+<!-- FEATURES SECTION -->
+        <div class="bg-white-100 w-full py-20 text-center" >
+    <div class="mx-auto max-w-6xl px-6">
+        <MudText Typo="Typo.h4" Class="mb-2 font-bold text-gray-800">
+            Everything You Need to Manage Your Money
+        </MudText>
+
+        <MudText Typo="Typo.subtitle1" Class="mb-12 text-gray-600">
+            Powerful features designed specifically for students to track expenses and stay on budget.
+        </MudText>
+
+        <!-- Feature Cards Grid -->
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <MudCard Class="p-6 shadow-sm hover:shadow-lg" Style="border: 1px solid #e5e7eb; transition: all 0.3s ease;">
+                <div class="mb-4 inline-flex rounded-2xl p-4" style="background-color: #d1fae5;">
+                    <MudIcon Icon="@Icons.Material.Filled.ReceiptLong" Color="Color.Success" Size="Size.Large" />
+                </div>
+                <MudText Typo="Typo.h6" Class="mb-2 font-semibold text-gray-800">Track Every Expense</MudText>
+                <MudText Typo="Typo.body2" Class="text-gray-600">
+                    Easily log all your expenses with categories like food, transport, books, and more.
+                </MudText>
+            </MudCard>
+
+            <MudCard Class="p-6 shadow-sm hover:shadow-lg" Style="border: 1px solid #e5e7eb; transition: all 0.3s ease;">
+                <div class="mb-4 inline-flex rounded-2xl p-4" style="background-color: #d1fae5;">
+                    <MudIcon Icon="@Icons.Material.Filled.PieChart" Color="Color.Success" Size="Size.Large" />
+                </div>
+                <MudText Typo="Typo.h6" Class="mb-2 font-semibold text-gray-800">Visual Insights</MudText>
+                <MudText Typo="Typo.body2" Class="text-gray-600">
+                    See where your money goes with beautiful charts and detailed breakdowns.
+                </MudText>
+            </MudCard>
+
+            <MudCard Class="p-6 shadow-sm hover:shadow-lg" Style="border: 1px solid #e5e7eb; transition: all 0.3s ease;">
+                <div class="mb-4 inline-flex rounded-2xl p-4" style="background-color: #d1fae5;">
+                    <MudIcon Icon="@Icons.Material.Filled.TrendingDown" Color="Color.Success" Size="Size.Large" />
+                </div>
+                <MudText Typo="Typo.h6" Class="mb-2 font-semibold text-gray-800">Budget Management</MudText>
+                <MudText Typo="Typo.body2" Class="text-gray-600">
+                    Set monthly budgets and get alerts when you're close to your limit.
+                </MudText>
+            </MudCard>
+
+            <MudCard Class="p-6 shadow-sm hover:shadow-lg" Style="border: 1px solid #e5e7eb; transition: all 0.3s ease;">
+                <div class="mb-4 inline-flex rounded-2xl p-4" style="background-color: #d1fae5;">
+                    <MudIcon Icon="@Icons.Material.Filled.NotificationsActive" Color="Color.Success" Size="Size.Large" />
+                </div>
+                <MudText Typo="Typo.h6" Class="mb-2 font-semibold text-gray-800">Smart Reminders</MudText>
+                <MudText Typo="Typo.body2" Class="text-gray-600">
+                    Never forget to log an expense with timely notifications.
+                </MudText>
+            </MudCard>
+
+            <MudCard Class="p-6 shadow-sm hover:shadow-lg" Style="border: 1px solid #e5e7eb; transition: all 0.3s ease;">
+                <div class="mb-4 inline-flex rounded-2xl p-4" style="background-color: #d1fae5;">
+                    <MudIcon Icon="@Icons.Material.Filled.Shield" Color="Color.Success" Size="Size.Large" />
+                </div>
+                <MudText Typo="Typo.h6" Class="mb-2 font-semibold text-gray-800">Secure & Private</MudText>
+                <MudText Typo="Typo.body2" Class="text-gray-600">
+                    Your financial data is encrypted and stored securely.
+                </MudText>
+            </MudCard>
+
+            <MudCard Class="p-6 shadow-sm hover:shadow-lg" Style="border: 1px solid #e5e7eb; transition: all 0.3s ease;">
+                <div class="mb-4 inline-flex rounded-2xl p-4" style="background-color: #d1fae5;">
+                    <MudIcon Icon="@Icons.Material.Filled.PhoneAndroid" Color="Color.Success" Size="Size.Large" />
+                </div>
+                <MudText Typo="Typo.h6" Class="mb-2 font-semibold text-gray-800">Access Anywhere</MudText>
+                <MudText Typo="Typo.body2" Class="text-gray-600">
+                    Track expenses on the go with our responsive design.
+                </MudText>
+            </MudCard>
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public bool IsLoggedIn { get; set; }
+    [Parameter] public string? UserName { get; set; }
+    [Parameter] public EventCallback OnLogin { get; set; }
+    [Parameter] public EventCallback OnSignup { get; set; }
+    [Parameter] public EventCallback OnLogout { get; set; }
+
+    private void ShowLogin()
+    {
+        var options = new DialogOptions()
+    {
+        CloseButton = true,
+            MaxWidth = MaxWidth.ExtraSmall,
+            FullWidth = true,
+        };
+
+    DialogService.Show<Login>("Login", options);
+    }
+    private async void ShowSignup()
+    {
+        var options = new DialogOptions
+            {
+                CloseButton = true,
+                MaxWidth = MaxWidth.ExtraSmall,
+                FullWidth = true,
+            };
+        var dialog = DialogService.Show<SignUp>("Sign Up", options);
+        var result = await dialog.Result;
+
+        
+        if (!result.Canceled && result.Data is string email && !string.IsNullOrWhiteSpace(email))
+        {
+            var verifyOptions = new DialogOptions
+                {
+                    CloseButton = true,
+                    MaxWidth = MaxWidth.ExtraSmall,
+                    FullWidth = true
+                };
+
+            var parameters = new DialogParameters { ["Email"] = email };
+            await DialogService.ShowAsync<EmailVerification>("Verify Your Email", parameters, verifyOptions);
+        }
+    }
+
+    private void HandleLogout() => OnLogout.InvokeAsync();
+
+   
+}
