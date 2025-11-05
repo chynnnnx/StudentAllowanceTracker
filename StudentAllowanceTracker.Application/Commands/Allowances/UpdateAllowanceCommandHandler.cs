@@ -4,10 +4,12 @@ using StudentAllowanceTracker.Application.DTOs;
 using StudentAllowanceTracker.Application.Interfaces;
 using StudentAllowanceTracker.Domain.Entities;
 using StudentAllowanceTracker.Domain.Interfaces.Repositories;
+using StudentAllowanceTracker.Shared.Responses;
+using StudentAllowanceTracker.Shared.Enums;
 
 namespace StudentAllowanceTracker.Application.Commands.Allowances
 {
-    public class UpdateAllowanceCommandHandler : IRequestHandler<UpdateAllowanceCommand, AllowanceDTO>
+    public class UpdateAllowanceCommandHandler : IRequestHandler<UpdateAllowanceCommand, Result<AllowanceDTO>>
     {
         private readonly IBaseRepository<Allowance> _repository;
         private readonly IMapper _mapper;
@@ -23,14 +25,14 @@ namespace StudentAllowanceTracker.Application.Commands.Allowances
             _currentUser = currentUser;
         }
 
-        public async Task<AllowanceDTO> Handle(UpdateAllowanceCommand command, CancellationToken cancellationToken)
+        public async Task<Result<AllowanceDTO>> Handle(UpdateAllowanceCommand command, CancellationToken cancellationToken)
         {
             var userId = _currentUser.UserId;
 
             var allowance = await _repository.GetByIdAsync(command.AllowanceID);
 
             if (allowance == null || allowance.UserId != userId)
-                throw new UnauthorizedAccessException("Allowance not found or access denied.");
+                return Result<AllowanceDTO>.Fail(ResultStatus.Unauthorized, "Allowance not found or access denied.");
 
             allowance.Amount = command.Amount;
             allowance.Description = command.Description;
@@ -40,7 +42,8 @@ namespace StudentAllowanceTracker.Application.Commands.Allowances
 
             await _repository.UpdateAsync(allowance);
 
-            return _mapper.Map<AllowanceDTO>(allowance);
+            var dto = _mapper.Map<AllowanceDTO>(allowance);
+            return Result<AllowanceDTO>.Ok(dto);
         }
     }
 }

@@ -6,10 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StudentAllowanceTracker.Shared.Responses;
 
 namespace StudentAllowanceTracker.Application.Commands.Allowances
 {
-    public class UpdateAllowanceCommand: IRequest<AllowanceDTO>
+    public class UpdateAllowanceCommand: IRequest <Result<AllowanceDTO>>
     {
         public Guid AllowanceID { get; set; } = default!;
 

@@ -13,6 +13,7 @@ namespace StudentAllowanceTracker.Domain.Entities
         public string LastName { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
         public ICollection<Allowance> Allowances { get; set; } = new List<Allowance>();
+        public ICollection<Expense> Expenses { get; set; } = new List<Expense>();
 
     }
 }

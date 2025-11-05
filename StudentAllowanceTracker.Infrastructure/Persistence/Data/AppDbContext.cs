@@ -17,12 +17,14 @@ namespace StudentAllowanceTracker.Infrastructure.Persistence.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
         public DbSet<Allowance> Allowances { get; set; }
         public DbSet<EmailVerificationCode> EmailVerificationCodes { get; set; }
+        public DbSet<Expense> Expenses { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Allowance>().ToTable("Allowances");
             modelBuilder.Entity< EmailVerificationCode>().ToTable("EmailVerificationCodes");
+            modelBuilder.Entity<Expense>().ToTable("Expenses");
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         }
     }

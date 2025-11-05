@@ -42,10 +42,8 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
                     .GroupBy(f => f.PropertyName)
                     .ToDictionary(g => g.Key, g => g.Select(f => f.ErrorMessage).ToList());
 
-                // Log full technical details in backend
                 _logger.LogError("Validation failed for {RequestType}. Errors: {@Errors}", typeof(TRequest).Name, errors);
 
-                // Return BaseResponse with the validation errors so UI can see them
                 var response = Activator.CreateInstance(typeof(TResponse), new object?[] { default, ResultStatus.ValidationError, "Validation failed", errors });
                 return (TResponse)response!;
             }
@@ -56,7 +54,6 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
 
 }
 
-// Custom exception class for validation errors
 public class ValidationException : Exception
 {
     public Dictionary<string, List<string>> Errors { get; }
