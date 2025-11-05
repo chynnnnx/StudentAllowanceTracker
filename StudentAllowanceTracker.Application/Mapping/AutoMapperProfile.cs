@@ -8,6 +8,7 @@ using StudentAllowanceTracker.Application.Commands.Auth;
 using StudentAllowanceTracker.Domain.Entities;
 using StudentAllowanceTracker.Application.Commands.Allowances;
 using StudentAllowanceTracker.Application.DTOs;
+using StudentAllowanceTracker.Application.Commands.Expense;
 
 namespace StudentAllowanceTracker.Application.Mapping
 {
@@ -22,6 +23,12 @@ namespace StudentAllowanceTracker.Application.Mapping
                 .ForMember(dest =>dest.UserId, opt => opt.Ignore());
 
             CreateMap<Allowance, AllowanceDTO>().ReverseMap();
+
+            CreateMap<CreateExpenseCommand, ExpenseEntity>()
+                .ForMember(dest => dest.ExpenseID, opt => opt.MapFrom(_ => Guid.NewGuid()))
+                .ForMember(dest => dest.UserID, opt => opt.Ignore());
+
+            CreateMap<ExpenseEntity, ExpenseDTO>().ReverseMap();
 
         }
     }

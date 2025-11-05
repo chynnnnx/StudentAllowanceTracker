@@ -19,6 +19,6 @@ namespace StudentAllowanceTracker.Domain.Entities
         public AllowanceType Type { get; set; }
         public AppIdentityUser User { get; set; } = default!;
 
-        public ICollection<Expense> Expenses { get; set; } = new List <Expense>();
+        public ICollection<ExpenseEntity> Expenses { get; set; } = new List <ExpenseEntity>();
     }
 }

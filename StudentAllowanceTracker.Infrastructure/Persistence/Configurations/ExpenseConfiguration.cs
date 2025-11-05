@@ -9,14 +9,16 @@ using StudentAllowanceTracker.Domain.Entities;
 
 namespace StudentAllowanceTracker.Infrastructure.Persistence.Configurations
 {
-    public class ExpenseConfiguration: IEntityTypeConfiguration<Expense>
+    public class ExpenseConfiguration: IEntityTypeConfiguration<ExpenseEntity>
     {
-        public void Configure(EntityTypeBuilder<Expense> builder)
+        public void Configure(EntityTypeBuilder<ExpenseEntity> builder)
         {
             builder.HasKey(e => e.ExpenseID);
             builder.Property(e => e.Category)
                 .IsRequired()
                 .HasMaxLength(200);
+            builder.Property(e => e.Description)
+                .HasMaxLength(500);
 
             builder.Property(e =>e.Amount)
                 .IsRequired()

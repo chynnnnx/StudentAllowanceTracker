@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace StudentAllowanceTracker.Domain.Entities
 {
-    public class Expense
+    public class ExpenseEntity
     {
         public Guid ExpenseID { get; set; }
         public string UserID { get; set; } = string.Empty;
         public Guid AllowanceID { get; set; }
         public string Category { get; set; } = string.Empty;  // e.g., "Food", "Entertainment"
+        public string? Description { get; set; }
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
 

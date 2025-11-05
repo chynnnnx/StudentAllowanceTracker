@@ -26,7 +26,7 @@ namespace StudentAllowanceTracker.Api.Controllers
             if (!result.Success)
                 return BadRequest(result.Errors);
 
-            return Ok(new { Data = result.Data });
+            return Ok(result.Data);
         }
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAllowance(Guid id, [FromBody] UpdateAllowanceCommand command)
