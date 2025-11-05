@@ -34,11 +34,8 @@ namespace StudentAllowanceTracker.Application.Commands.Allowances
             if (allowance == null || allowance.UserId != userId)
                 return Result<AllowanceDTO>.Fail(ResultStatus.Unauthorized, "Allowance not found or access denied.");
 
-            allowance.Amount = command.Amount;
-            allowance.Description = command.Description;
-            allowance.StartDate = command.StartDate;
-            allowance.EndDate = command.EndDate;
-            allowance.Type = command.Type;
+            _mapper.Map(command, allowance);
+
 
             await _repository.UpdateAsync(allowance);
 

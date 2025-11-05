@@ -21,12 +21,21 @@ namespace StudentAllowanceTracker.Application.Mapping
             CreateMap<CreateAllowanceCommand, Allowance>()
                 .ForMember(dest =>  dest.AllowanceID, opt  =>opt.MapFrom(_=> Guid.NewGuid()))
                 .ForMember(dest =>dest.UserId, opt => opt.Ignore());
+            CreateMap<UpdateAllowanceCommand, Allowance>()
+            .ForMember(dest => dest.AllowanceID, opt => opt.Ignore())  
+            .ForMember(dest => dest.UserId, opt => opt.Ignore());       
+
 
             CreateMap<Allowance, AllowanceDTO>().ReverseMap();
 
             CreateMap<CreateExpenseCommand, ExpenseEntity>()
                 .ForMember(dest => dest.ExpenseID, opt => opt.MapFrom(_ => Guid.NewGuid()))
                 .ForMember(dest => dest.UserID, opt => opt.Ignore());
+            CreateMap<UpdateAllowanceCommand, ExpenseEntity>()
+                .ForMember(dest => dest.ExpenseID, opt => opt.Ignore())
+                .ForMember(dest => dest.UserID, opt => opt.Ignore());
+
+
 
             CreateMap<ExpenseEntity, ExpenseDTO>().ReverseMap();
 
