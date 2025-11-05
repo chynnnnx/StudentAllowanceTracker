@@ -19,12 +19,14 @@ namespace StudentAllowanceTracker.Application.Commands.Expense
         private readonly IBaseRepository<ExpenseEntity> _expenseRepo;
         public readonly IMapper _mapper;
         public readonly ICurrentUserService _currentUser;
+        private readonly IBaseRepository<Allowance> _allowanceRepo;
 
-        public CreateExpenseCommandHandler(IBaseRepository<ExpenseEntity> expenseRepo,IMapper mapper, ICurrentUserService currentUser)
+        public CreateExpenseCommandHandler(IBaseRepository<ExpenseEntity> expenseRepo,IMapper mapper, ICurrentUserService currentUser, IBaseRepository<Allowance> allowanceRepo)
         {
             _expenseRepo = expenseRepo;
             _mapper = mapper;
             _currentUser = currentUser;
+            _allowanceRepo = allowanceRepo;
         }
 
         public async Task <Result<ExpenseDTO>> Handle (CreateExpenseCommand command, CancellationToken cancellationToken)
@@ -32,6 +34,21 @@ namespace StudentAllowanceTracker.Application.Commands.Expense
             var userId = _currentUser.UserId;
             if (string.IsNullOrEmpty(userId))
                 return Result<ExpenseDTO>.Fail(ResultStatus.Unauthorized, "User not logged in.");
+
+            var allowance = await _allowanceRepo.GetByIdAsync(command.AllowanceID);
+            if (allowance == null)
+                return Result<ExpenseDTO>.Fail(ResultStatus.NotFound, "Allowance not found.");
+
+            try
+            {
+                allowance.Deduct(command.Amount);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Result<ExpenseDTO>.Fail(ResultStatus.ValidationError, ex.Message);
+            }
+            await _allowanceRepo.UpdateAsync(allowance);
+
 
             var expenses = _mapper.Map<ExpenseEntity>(command);
             expenses.ExpenseID = Guid.NewGuid();

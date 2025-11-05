@@ -16,7 +16,10 @@ namespace StudentAllowanceTracker.Domain.Entities
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
 
+
         public AppIdentityUser User { get; set; }= default!;
         public Allowance Allowance { get; set; } = default!;
+      
     }
+
 }
