@@ -116,48 +116,42 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
             return allowance.EndDate.Value >= DateTime.Today;
         }
 
-        protected decimal GetThisMonthTotal()
+        protected decimal GetAllowanceTotal( DateTime periodStart, DateTime periodEnd, Func<DateTime, DateTime, int> getUnits = null)
         {
-            var now = DateTime.Now;
-            var monthStart = new DateTime(now.Year, now.Month, 1);
-            var monthEnd = now; 
             decimal total = 0;
 
             foreach (var allowance in allowances.Where(IsActive))
             {
-                if (allowance.StartDate > now) continue;
+                if (allowance.StartDate > periodEnd) continue;
 
-                var effectiveStart = allowance.StartDate > monthStart ? allowance.StartDate : monthStart;
+                var effectiveStart = allowance.StartDate > periodStart ? allowance.StartDate : periodStart;
+                var effectiveEnd = allowance.EndDate.HasValue && allowance.EndDate.Value < periodEnd
+                    ? allowance.EndDate.Value
+                    : periodEnd;
 
                 switch (allowance.Type)
                 {
                     case AllowanceType.OneTime:
-                        if (allowance.StartDate.Month == now.Month && allowance.StartDate.Year == now.Year && allowance.StartDate <= now)
-                        {
+                        if (allowance.StartDate >= periodStart && allowance.StartDate <= periodEnd)
                             total += allowance.Amount;
-                        }
                         break;
 
                     case AllowanceType.Daily:
-                        var days = (now - effectiveStart).Days + 1;
-                        total += allowance.Amount * days;
+                        total += allowance.Amount * ((effectiveEnd - effectiveStart).Days + 1);
                         break;
 
                     case AllowanceType.Weekly:
-                        var weeks = (now - effectiveStart).Days / 7;
-                        total += allowance.Amount * weeks;
+                        total += allowance.Amount * (((effectiveEnd - effectiveStart).Days + 1) / 7m);
                         break;
 
                     case AllowanceType.Monthly:
-                        if (effectiveStart.Month == now.Month && effectiveStart <= now)
-                        {
+                        if (effectiveStart.Month == periodStart.Month && effectiveStart.Year == periodStart.Year)
                             total += allowance.Amount;
-                        }
                         break;
 
                     case AllowanceType.Yearly:
-                    var yearDays = DateTime.IsLeapYear(now.Year) ? 366 : 365;
-                        var daysPassed = now.DayOfYear;
+                        var yearDays = DateTime.IsLeapYear(periodStart.Year) ? 366 : 365;
+                        var daysPassed = (effectiveEnd - effectiveStart).Days + 1;
                         total += (allowance.Amount / yearDays) * daysPassed;
                         break;
                 }
@@ -166,6 +160,15 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
             return total;
         }
 
+        protected decimal GetThisMonthTotal()
+        {
+            var now = DateTime.Now;
+            var monthStart = new DateTime(now.Year, now.Month, 1);
+            var monthEnd = now;
+            return GetAllowanceTotal(monthStart, monthEnd);
+        }
+
+       
         protected string GetFrequencyIcon(AllowanceType type) => type switch
         {
             AllowanceType.OneTime => Icons.Material.Filled.EventAvailable,
