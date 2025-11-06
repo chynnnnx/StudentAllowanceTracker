@@ -24,5 +24,14 @@ namespace StudentAllowanceTracker.Api.Controllers
                 return BadRequest(result.Errors);
             return Ok(result.Data);
         }
+
+        [HttpPut("{id}")]
+        public async Task <IActionResult> UpdateExpense(Guid id, [FromBody] UpdateExpenseCommand command)
+        {
+            if (id != command.ExpenseID)
+                return BadRequest("Mismatched Expense ID.");
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
     }
 }

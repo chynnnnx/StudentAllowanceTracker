@@ -31,9 +31,10 @@ namespace StudentAllowanceTracker.Application.Mapping
             CreateMap<CreateExpenseCommand, ExpenseEntity>()
                 .ForMember(dest => dest.ExpenseID, opt => opt.MapFrom(_ => Guid.NewGuid()))
                 .ForMember(dest => dest.UserID, opt => opt.Ignore());
-            CreateMap<UpdateAllowanceCommand, ExpenseEntity>()
+            CreateMap<UpdateExpenseCommand, ExpenseEntity>()
                 .ForMember(dest => dest.ExpenseID, opt => opt.Ignore())
-                .ForMember(dest => dest.UserID, opt => opt.Ignore());
+                .ForMember(dest => dest.UserID, opt => opt.Ignore())
+                .ForMember(dest => dest.AllowanceID, opt => opt.Ignore());
 
 
 

@@ -10,11 +10,11 @@ namespace StudentAllowanceTracker.Domain.Entities
     {
         public Guid AllowanceID { get; set; }
         public string UserId { get; set; } = string.Empty;
-        public decimal Amount { get; set; }        // Allowance amount (e.g., 500.00)
-        public string? Description { get; set; }   // Optional note (e.g., "Weekly allowance from parents")
+        public decimal Amount { get; set; }      
+        public string? Description { get; set; }  
 
-        public DateTime StartDate { get; set; }    // When this allowance starts
-        public DateTime? EndDate { get; set; }     // Optional end date 
+        public DateTime StartDate { get; set; }  
+        public DateTime? EndDate { get; set; }  
 
         public AllowanceType Type { get; set; }
         public AppIdentityUser User { get; set; } = default!;
