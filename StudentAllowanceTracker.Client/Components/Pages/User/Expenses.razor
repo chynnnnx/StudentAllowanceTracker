@@ -1,0 +1,260 @@
+﻿@page "/expenses"
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@using StudentAllowanceTracker.Client.Components.Dialogs
+@inject IExpenseService ExpenseService
+
+<div class="max-w-7xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <MudText Typo="Typo.h4" Style="color: hsl(0, 0%, 10.6%); font-weight: 600; margin-bottom: 0.25rem;">
+                Expenses
+            </MudText>
+            <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 52.2%);">
+                Track your spending
+            </MudText>
+        </div>
+        <MudButton Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   OnClick="OpenAddDialog"
+                   Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%);
+                          color: white; text-transform: none; padding: 0.75rem 1.5rem;
+                          border-radius: 0.5rem; font-weight: 500;">
+            Add Expense
+        </MudButton>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center py-12">
+            <MudProgressCircular Color="Color.Success" Indeterminate="true" />
+            <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 52.2%); margin-top: 1rem;">Loading expenses...</MudText>
+        </div>
+    }
+    else
+    {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <MudCard Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%);
+                            border-radius: 0.75rem; padding: 1.25rem;">
+                <MudCardContent Class="pa-0">
+                    <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.9); margin-bottom: 0.5rem; font-size: 0.875rem;">This Month</MudText>
+                    <MudText Typo="Typo.h4" Class="text-2xl sm:text-3xl" Style="color: white; font-weight: 700;">₱@GetThisMonthTotal().ToString("N2")</MudText>
+                </MudCardContent>
+            </MudCard>
+
+            <MudCard Style="background-color: white; border: 2px solid hsl(162, 41.8%, 89.2%);
+                            border-radius: 0.75rem; padding: 1.25rem;">
+                <MudCardContent Class="pa-0">
+                    <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 52.2%); margin-bottom: 0.5rem; font-size: 0.875rem;">Today</MudText>
+                    <MudText Typo="Typo.h4" Class="text-2xl sm:text-3xl" Style="color: hsl(0, 0%, 10.6%); font-weight: 700;">₱@GetTodayTotal().ToString("N2")</MudText>
+                </MudCardContent>
+            </MudCard>
+
+            <MudCard Style="background-color: white; border: 2px solid hsl(162, 41.8%, 89.2%);
+                            border-radius: 0.75rem; padding: 1.25rem;"
+                     Class="sm:col-span-2 lg:col-span-1">
+                <MudCardContent Class="pa-0">
+                    <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 52.2%); margin-bottom: 0.5rem; font-size: 0.875rem;">Total Items</MudText>
+                    <MudText Typo="Typo.h4" Class="text-2xl sm:text-3xl" Style="color: hsl(0, 0%, 10.6%); font-weight: 700;">@expenses.Count</MudText>
+                </MudCardContent>
+            </MudCard>
+        </div>
+
+        <!-- Filters and List -->
+        <MudCard Style="background-color: white; border: 2px solid hsl(162, 41.8%, 89.2%);
+                        border-radius: 1rem; padding: 2rem;">
+            <!-- Filter Bar -->
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
+                <MudText Typo="Typo.h6" Style="color: hsl(0, 0%, 10.6%); font-weight: 600;">Your Expenses</MudText>
+
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+                    <MudSelect T="string"
+                               @bind-Value="selectedCategory"
+                               Label="Category"
+                               Variant="Variant.Outlined"
+                               Dense="true"
+                               Clearable="true"
+                               Class="w-full sm:w-auto"
+                               Style="min-width: 150px;">
+                        @foreach (var category in expenses.Select(e => e.Category).Distinct())
+                        {
+                            <MudSelectItem Value="@category">@category</MudSelectItem>
+                        }
+                    </MudSelect>
+
+                    <MudDateRangePicker @bind-DateRange="dateRange"
+                                        Label="Date Range"
+                                        Variant="Variant.Outlined"
+                                        Dense="true"
+                                        Clearable="true"
+                                        Color="Color.Success"
+                                        Class="w-full sm:w-auto"
+                                        Style="min-width: 240px;" />
+                </div>
+            </div>
+
+            <!-- Expenses Table -->
+            @if (GetFilteredExpenses().Any())
+            {
+                <MudTable Items="@GetFilteredExpenses()" Hover="true" Breakpoint="Breakpoint.Sm" Class="rounded-xl">
+                    <HeaderContent>
+                        <MudTh>Date</MudTh>
+                        <MudTh>Description</MudTh>
+                        <MudTh>Category</MudTh>
+                        <MudTh Style="text-align:right;">Amount</MudTh>
+                        <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd>@context.Date.ToString("MMM dd, yyyy")</MudTd>
+                        <MudTd>@context.Description</MudTd>
+                        <MudTd>
+                            <MudChip T="string" Size="Size.Small"
+                                     Style="@($"background-color:{GetCategoryColor(context.Category)}15; color:{GetCategoryColor(context.Category)}; font-weight:500;")">
+                                <div class="flex items-center gap-1">
+                                    <MudIcon Icon="@GetCategoryIcon(context.Category)" Size="Size.Small" />
+                                    <span>@context.Category</span>
+                                </div>
+                            </MudChip>
+                        </MudTd>
+                        <MudTd Style="text-align:right;">₱@context.Amount.ToString("N2")</MudTd>
+                        <MudTd Style="text-align:right;">
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small"
+                                           Style="color:hsl(162,86.6%,32.2%);" OnClick="@(() => OpenEditDialog(context))" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small"
+                                           Style="color:hsl(0,84.2%,60.2%);" OnClick="@(() => DeleteExpense(context))" />
+                        </MudTd>
+                    </RowTemplate>
+                </MudTable>
+            }
+            else
+            {
+                <div class="text-center py-12 px-4">
+                    <MudIcon Icon="@Icons.Material.Outlined.Receipt"
+                             Style="color:hsl(0,0%,81.2%); font-size:4rem; margin-bottom:1rem;" />
+                    <MudText Typo="Typo.h6" Style="color:hsl(0,0%,52.2%); margin-bottom:0.5rem;">No expenses found</MudText>
+                    <MudText Typo="Typo.body2" Style="color:hsl(0,0%,71%);">
+                        @((!string.IsNullOrEmpty(selectedCategory) || dateRange != null)
+                            ? "Try adjusting your filters"
+                            : "Click 'Add Expense' to start tracking")
+                    </MudText>
+                </div>
+            }
+        </MudCard>
+    }
+</div>
+
+@code {
+    private List<ExpenseDTO> expenses = new();
+    private bool isLoading;
+    private string? selectedCategory;
+    private DateRange? dateRange;
+
+    protected override async Task OnInitializedAsync() => await LoadExpenses();
+
+    private async Task LoadExpenses()
+    {
+        try
+        {
+            isLoading = true;
+            var result = await ExpenseService.GetExpensesByUser();
+            expenses = result?.OrderByDescending(e => e.Date).ToList() ?? new();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to load expenses: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task OpenAddDialog()
+    {
+        var dialog = await DialogService.ShowAsync<ExpenseDialog>(
+            "Add Expense",
+            new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true }
+        );
+
+        var result = await dialog.Result;
+        if (!result.Canceled)
+            await LoadExpenses();
+    }
+
+    private async Task OpenEditDialog(ExpenseDTO expense)
+    {
+        var parameters = new DialogParameters { ["Expense"] = expense };
+        var dialog = await DialogService.ShowAsync<ExpenseDialog>(
+            "Edit Expense",
+            parameters,
+            new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true }
+        );
+
+        var result = await dialog.Result;
+        if (!result.Canceled)
+            await LoadExpenses();
+    }
+
+    private async Task DeleteExpense(ExpenseDTO expense)
+    {
+        bool? confirm = await DialogService.ShowMessageBox(
+            "Delete Expense",
+            $"Are you sure you want to delete '{expense.Description}'?",
+            yesText: "Delete",
+            cancelText: "Cancel");
+
+        if (confirm == true)
+        {
+            await ExpenseService.DeleteExpense(expense.ExpenseID);
+            Snackbar.Add("Expense deleted successfully", Severity.Success);
+            await LoadExpenses();
+        }
+    }
+
+    private List<ExpenseDTO> GetFilteredExpenses()
+    {
+        var filtered = expenses.AsEnumerable();
+
+        if (!string.IsNullOrEmpty(selectedCategory))
+            filtered = filtered.Where(e => e.Category == selectedCategory);
+
+        if (dateRange?.Start != null && dateRange?.End != null)
+            filtered = filtered.Where(e => e.Date >= dateRange.Start && e.Date <= dateRange.End);
+
+        return filtered.OrderByDescending(e => e.Date).ToList();
+    }
+
+    private decimal GetThisMonthTotal() =>
+        expenses.Where(e => e.Date.Month == DateTime.Now.Month && e.Date.Year == DateTime.Now.Year)
+                 .Sum(e => e.Amount);
+
+    private decimal GetTodayTotal() =>
+        expenses.Where(e => e.Date.Date == DateTime.Today)
+                 .Sum(e => e.Amount);
+
+    private string GetCategoryColor(string category) => category.ToLower() switch
+    {
+        "food" => "hsl(25, 95%, 53%)",
+        "transportation" => "hsl(217, 91%, 60%)",
+        "education" => "hsl(162, 86.6%, 32.2%)",
+        "entertainment" => "hsl(291, 47%, 51%)",
+        "shopping" => "hsl(340, 82%, 52%)",
+        "bills" => "hsl(45, 93%, 47%)",
+        "healthcare" => "hsl(4, 90%, 58%)",
+        _ => "hsl(0, 0%, 52.2%)"
+    };
+
+    private string GetCategoryIcon(string category) => category.ToLower() switch
+    {
+        "food" => Icons.Material.Filled.Restaurant,
+        "transportation" => Icons.Material.Filled.DirectionsBus,
+        "education" => Icons.Material.Filled.School,
+        "entertainment" => Icons.Material.Filled.Movie,
+        "shopping" => Icons.Material.Filled.ShoppingBag,
+        "bills" => Icons.Material.Filled.Receipt,
+        "healthcare" => Icons.Material.Filled.LocalHospital,
+        _ => Icons.Material.Filled.Category
+    };
+}

@@ -1,0 +1,254 @@
+﻿@inject IExpenseService ExpenseService
+@inject IAllowanceService AllowanceService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        <div class="space-y-4" style="padding: 0.5rem 0;">
+
+            <!-- Total Allowance display -->
+            <MudPaper Class="pa-4 mb-4" Elevation="1"
+                      Style="background-color:hsl(162, 97%, 26%); color:white; border-radius:12px;">
+                <div class="flex justify-between items-center">
+                    <span class="font-semibold text-lg">Total Allowance Balance</span>
+                    <span class="text-xl font-bold">₱@totalAllowance.ToString("N2")</span>
+                </div>
+            </MudPaper>
+
+            <!-- Allowance Dropdown -->
+            <MudSelect T="Guid"
+                       Label="Select Allowance"
+                       Variant="Variant.Outlined"
+                       @bind-Value="selectedAllowanceId"
+                       Required="true"
+                       RequiredError="Allowance is required"
+                       Class="mb-4">
+                @foreach (var allowance in allowances)
+                {
+                    <MudSelectItem Value="@allowance.AllowanceID">
+                        ₱@allowance.Amount.ToString("N2") — @allowance.StartDate.ToString("MMM dd, yyyy")
+                    </MudSelectItem>
+                }
+            </MudSelect>
+
+            <!-- Description -->
+            <MudTextField @bind-Value="description"
+                          Label="Description"
+                          Variant="Variant.Outlined"
+                          Required="true"
+                          RequiredError="Description is required"
+                          MaxLength="200"
+                          Counter="200"
+                          HelperText="What did you spend on?"
+                          Class="mb-4" />
+
+            <!-- Amount -->
+            <MudNumericField @bind-Value="amount"
+                             Label="Amount"
+                             Variant="Variant.Outlined"
+                             Required="true"
+                             RequiredError="Amount is required"
+                             Min="0.01m"
+                             Step="0.01m"
+                             Format="N2"
+                             Adornment="Adornment.Start"
+                             AdornmentText="₱"
+                             AdornmentColor="Color.Success"
+                             HelperText="Enter the amount spent"
+                             Class="mb-4" />
+
+            <!-- Category -->
+            <MudSelect @bind-Value="category"
+                       Label="Category"
+                       Variant="Variant.Outlined"
+                       Required="true"
+                       RequiredError="Category is required"
+                       AnchorOrigin="Origin.BottomCenter"
+                       Class="mb-4">
+                @foreach (var categoryItem in categories)
+                {
+                    <MudSelectItem Value="@categoryItem.Name">
+                        <div class="flex items-center gap-2">
+                            <MudIcon Icon="@categoryItem.Icon"
+                                     Size="Size.Small"
+                                     Style="@($"color: {categoryItem.Color};")" />
+                            <span>@categoryItem.Name</span>
+                        </div>
+                    </MudSelectItem>
+                }
+            </MudSelect>
+
+            @if (category == "Other")
+            {
+                <MudTextField @bind-Value="customCategory"
+                              Label="Specify Category"
+                              Variant="Variant.Outlined"
+                              Required="true"
+                              RequiredError="Please enter a category name"
+                              HelperText="Enter your custom category"
+                              Class="mb-4" />
+            }
+
+            <MudDatePicker @bind-Date="date"
+                           Label="Date"
+                           Variant="Variant.Outlined"
+                           Required="true"
+                           RequiredError="Date is required"
+                           MaxDate="DateTime.Today"
+                           Color="Color.Success"
+                           DateFormat="MMM dd, yyyy"
+                           HelperText="When did you make this expense?"
+                           Class="mb-4" />
+        </div>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="Cancel"
+                   Variant="Variant.Text"
+                   Style="color: hsl(0, 0%, 52.2%); text-transform: none;">
+            Cancel
+        </MudButton>
+        <MudButton OnClick="Submit"
+                   Variant="Variant.Filled"
+                   Disabled="isSaving"
+                   Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%);
+                          color: white; text-transform: none;">
+            @if (isSaving)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" />
+            }
+            else
+            {
+                <span>@(IsEditMode ? "Update" : "Add") Expense</span>
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
+    [Parameter] public ExpenseDTO? Expense { get; set; }
+
+    private string description = string.Empty;
+    private decimal amount;
+    private string category = "Food";
+    private string customCategory = string.Empty; 
+    private DateTime? date = DateTime.Today;
+    private bool isSaving;
+    private bool IsEditMode => Expense != null;
+
+    private Guid selectedAllowanceId;
+    private List<AllowanceDTO> allowances = new();
+    private decimal totalAllowance;
+
+    private List<CategoryItem> categories = new()
+    {
+        new("Food", Icons.Material.Filled.Restaurant, "hsl(25, 95%, 53%)"),
+        new("Transportation", Icons.Material.Filled.DirectionsBus, "hsl(217, 91%, 60%)"),
+        new("Education", Icons.Material.Filled.School, "hsl(162, 86.6%, 32.2%)"),
+        new("Entertainment", Icons.Material.Filled.Movie, "hsl(291, 47%, 51%)"),
+        new("Shopping", Icons.Material.Filled.ShoppingBag, "hsl(340, 82%, 52%)"),
+        new("Bills", Icons.Material.Filled.Receipt, "hsl(45, 93%, 47%)"),
+        new("Healthcare", Icons.Material.Filled.LocalHospital, "hsl(4, 90%, 58%)"),
+    new("Other", Icons.Material.Filled.Category, "hsl(0, 0%, 52.2%)")
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        allowances = await AllowanceService.GetAllowanceByUser();
+        totalAllowance = allowances.Sum(a => a.Amount);
+
+        if (IsEditMode && Expense != null)
+        {
+            description = Expense.Description;
+            amount = Expense.Amount;
+            category = Expense.Category;
+            date = Expense.Date;
+            selectedAllowanceId = Expense.AllowanceID;
+
+            if (!categories.Any(c => c.Name == Expense.Category))
+                customCategory = Expense.Category;
+        }
+    }
+
+    private async Task Submit()
+    {
+        if (selectedAllowanceId == Guid.Empty)
+        {
+            Snackbar.Add("Please select an allowance", Severity.Error);
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(description))
+        {
+            Snackbar.Add("Description is required", Severity.Error);
+            return;
+        }
+
+        if (amount <= 0)
+        {
+            Snackbar.Add("Amount must be greater than zero", Severity.Error);
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(category))
+        {
+            Snackbar.Add("Category is required", Severity.Error);
+            return;
+        }
+
+        if (category == "Other" && string.IsNullOrWhiteSpace(customCategory))
+        {
+            Snackbar.Add("Please specify a category name", Severity.Error);
+            return;
+        }
+
+        if (date == null)
+        {
+            Snackbar.Add("Date is required", Severity.Error);
+            return;
+        }
+
+        try
+        {
+            isSaving = true;
+
+            var finalCategory = category == "Other" ? customCategory.Trim() : category;
+
+            var dto = new ExpenseDTO
+                {
+                    ExpenseID = Expense?.ExpenseID ?? Guid.Empty,
+                    AllowanceID = selectedAllowanceId,
+                    Description = description.Trim(),
+                    Amount = amount,
+                    Category = finalCategory,
+                    Date = date!.Value
+                };
+
+            if (IsEditMode)
+            {
+                await ExpenseService.UpdateExpense(dto);
+                Snackbar.Add("Expense updated successfully", Severity.Success);
+            }
+            else
+            {
+                await ExpenseService.AddExpense(dto);
+                Snackbar.Add("Expense added successfully", Severity.Success);
+            }
+
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to save expense: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private record CategoryItem(string Name, string Icon, string Color);
+}
