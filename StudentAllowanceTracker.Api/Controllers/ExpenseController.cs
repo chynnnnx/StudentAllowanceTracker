@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StudentAllowanceTracker.Application.Commands.Expense;
+using StudentAllowanceTracker.Application.Queries.Expense;
 
 namespace StudentAllowanceTracker.Api.Controllers
 {
@@ -30,8 +31,22 @@ namespace StudentAllowanceTracker.Api.Controllers
         {
             if (id != command.ExpenseID)
                 return BadRequest("Mismatched Expense ID.");
-            var result = await _mediator.Send(command);
+            var result = await _mediator.Send(command)  ;
             return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task <IActionResult> GetExpenses()
+        {
+            var query = new GetExpenseByUserQuery { };
+            var expenses = await _mediator.Send(query);
+            return Ok(expenses);
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteExpense(Guid id)
+        {
+            await _mediator.Send(new DeleteExpenseCommand { ExpenseID = id });
+            return NoContent();
         }
     }
 }
