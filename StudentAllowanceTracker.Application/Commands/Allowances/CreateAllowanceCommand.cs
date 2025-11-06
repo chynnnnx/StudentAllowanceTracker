@@ -13,7 +13,6 @@ namespace StudentAllowanceTracker.Application.Commands.Allowances
     public class CreateAllowanceCommand: IRequest<Result<AllowanceDTO>>
     {
 
-        public string IdentityId { get; set; } = default!; 
         public decimal Amount { get; set; }
         public string? Description { get; set; }
 

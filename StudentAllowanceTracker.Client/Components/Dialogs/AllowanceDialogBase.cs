@@ -96,17 +96,12 @@ namespace StudentAllowanceTracker.Client.Components.Dialogs
                         return;
                     }
 
-                    var identityId = user.FindFirst(c => c.Type == "sub")?.Value
-                                     ?? user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-                    allowance.IdentityId = identityId;
-
                     var success = await AllowanceService.AddAllowance(allowance);
 
                     if (success)
                     {
                         Snackbar.Add("Allowance added successfully!", Severity.Success);
-                        MudDialog.Close(DialogResult.Ok(allowance));
+                        MudDialog.Close(DialogResult.Ok(success));
                     }
                     else
                     {
@@ -119,6 +114,7 @@ namespace StudentAllowanceTracker.Client.Components.Dialogs
                 Snackbar.Add($"An error occurred: {ex.Message}", Severity.Error);
             }
         }
+
 
         protected void Cancel() => MudDialog.Cancel();
 

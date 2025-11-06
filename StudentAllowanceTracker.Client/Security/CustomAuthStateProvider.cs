@@ -41,8 +41,9 @@ namespace StudentAllowanceTracker.Client.Security
 
             foreach (var claim in jwtToken.Claims)
             {
-                // Normalize roles so Blazor recognizes them
-                if (claim.Type == "role" || claim.Type == ClaimTypes.Role)
+                if (claim.Type == JwtRegisteredClaimNames.Sub || claim.Type == "sub")
+                    claims.Add(new Claim(ClaimTypes.NameIdentifier, claim.Value));
+                else if (claim.Type == "role")
                     claims.Add(new Claim(ClaimTypes.Role, claim.Value));
                 else
                     claims.Add(claim);
@@ -50,8 +51,8 @@ namespace StudentAllowanceTracker.Client.Security
 
             var identity = new ClaimsIdentity(claims, "jwt");
             var user = new ClaimsPrincipal(identity);
-
             return new AuthenticationState(user);
+
         }
 
         public void NotifyUserAuthentication(string token)
@@ -66,7 +67,9 @@ namespace StudentAllowanceTracker.Client.Security
 
             foreach (var claim in jwtToken.Claims)
             {
-                if (claim.Type == "role" || claim.Type == ClaimTypes.Role)
+                if (claim.Type == JwtRegisteredClaimNames.Sub || claim.Type == "sub")
+                    claims.Add(new Claim(ClaimTypes.NameIdentifier, claim.Value));
+                else if (claim.Type == "role")
                     claims.Add(new Claim(ClaimTypes.Role, claim.Value));
                 else
                     claims.Add(claim);

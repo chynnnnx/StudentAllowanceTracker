@@ -23,6 +23,7 @@ namespace StudentAllowanceTracker.Infrastructure.Services
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, userId),
+                new Claim(ClaimTypes.NameIdentifier, userId),
                 new Claim(JwtRegisteredClaimNames.Email, email),
                 new Claim("firstName", firstName),
                 new Claim("lastName", lastName)
