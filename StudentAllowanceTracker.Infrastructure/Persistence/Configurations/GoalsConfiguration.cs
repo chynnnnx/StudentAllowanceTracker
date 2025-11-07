@@ -9,9 +9,9 @@ using StudentAllowanceTracker.Domain.Entities;
 
 namespace StudentAllowanceTracker.Infrastructure.Persistence.Configurations
 {
-    public class GoalsConfiguration: IEntityTypeConfiguration<Goals>
+    public class GoalsConfiguration: IEntityTypeConfiguration<GoalsEntity>
     {
-        public void Configure(EntityTypeBuilder<Goals> builder) 
+        public void Configure(EntityTypeBuilder<GoalsEntity> builder) 
         {
         builder.HasKey(g => g.GoalID);
             builder.Property(g => g.GoalName)

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StudentAllowanceTracker.Domain.Entities
 {
-    public class Goals
+    public class GoalsEntity
     {
         public Guid GoalID { get; set; }
         public string UserID { get; set; } = string.Empty;
@@ -15,7 +15,7 @@ namespace StudentAllowanceTracker.Domain.Entities
         public decimal TargetAmount { get; set; }
         public decimal CurrentAmount { get; set; }
         public DateTime TargetDate { get; set; }
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
         public AppIdentityUser User { get; set; } = default!;
 
 

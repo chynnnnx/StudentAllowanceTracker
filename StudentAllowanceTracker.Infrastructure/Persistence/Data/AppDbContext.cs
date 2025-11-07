@@ -18,7 +18,7 @@ namespace StudentAllowanceTracker.Infrastructure.Persistence.Data
         public DbSet<Allowance> Allowances { get; set; }
         public DbSet<EmailVerificationCode> EmailVerificationCodes { get; set; }
         public DbSet<ExpenseEntity> Expenses { get; set; }
-        public DbSet<Goals> StudentGoals { get; set; }
+        public DbSet<GoalsEntity> StudentGoals { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
