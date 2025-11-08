@@ -9,6 +9,7 @@ using StudentAllowanceTracker.Domain.Entities;
 using StudentAllowanceTracker.Application.Commands.Allowances;
 using StudentAllowanceTracker.Application.DTOs;
 using StudentAllowanceTracker.Application.Commands.Expense;
+using StudentAllowanceTracker.Application.Commands.Goals;
 
 namespace StudentAllowanceTracker.Application.Mapping
 {
@@ -17,10 +18,12 @@ namespace StudentAllowanceTracker.Application.Mapping
         public AutoMapperProfile()
         {
             CreateMap<RegisterCommand, AppIdentityUser>();
-              
+
+            //Allowance Mappings
             CreateMap<CreateAllowanceCommand, Allowance>()
-                .ForMember(dest =>  dest.AllowanceID, opt  =>opt.MapFrom(_=> Guid.NewGuid()))
-                .ForMember(dest =>dest.UserId, opt => opt.Ignore());
+                .ForMember(dest => dest.AllowanceID, opt => opt.Ignore())
+                .ForMember(dest => dest.UserId, opt => opt.Ignore());
+
             CreateMap<UpdateAllowanceCommand, Allowance>()
             .ForMember(dest => dest.AllowanceID, opt => opt.Ignore())  
             .ForMember(dest => dest.UserId, opt => opt.Ignore());       
@@ -28,17 +31,27 @@ namespace StudentAllowanceTracker.Application.Mapping
 
             CreateMap<Allowance, AllowanceDTO>().ReverseMap();
 
+            //Expense Mappings
             CreateMap<CreateExpenseCommand, ExpenseEntity>()
-                .ForMember(dest => dest.ExpenseID, opt => opt.MapFrom(_ => Guid.NewGuid()))
+                .ForMember(dest => dest.ExpenseID, opt => opt.Ignore())
                 .ForMember(dest => dest.UserID, opt => opt.Ignore());
             CreateMap<UpdateExpenseCommand, ExpenseEntity>()
                 .ForMember(dest => dest.ExpenseID, opt => opt.Ignore())
                 .ForMember(dest => dest.UserID, opt => opt.Ignore())
                 .ForMember(dest => dest.AllowanceID, opt => opt.Ignore());
 
-
-
             CreateMap<ExpenseEntity, ExpenseDTO>().ReverseMap();
+
+            // Goal Mappings
+            CreateMap<CreateGoalCommand, GoalsEntity>()
+            .ForMember(dest => dest.GoalID, opt => opt.Ignore())
+            .ForMember(dest => dest.UserID, opt => opt.Ignore());
+
+            CreateMap<UpdateGoalCommand, GoalsEntity>()
+                .ForMember(dest => dest.GoalID, opt => opt.Ignore())
+                .ForMember(dest => dest.UserID, opt => opt.Ignore());
+            CreateMap<GoalsEntity, GoalsDTO>().ReverseMap();
+
 
         }
     }

@@ -15,10 +15,7 @@ public class CreateAllowanceCommandHandler : IRequestHandler<CreateAllowanceComm
     private readonly IMapper _mapper;
     private readonly ICurrentUserService _currentUser;
 
-    public CreateAllowanceCommandHandler(
-        IBaseRepository<Allowance> allowanceRepo,
-        IMapper mapper,
-        ICurrentUserService currentUser)
+    public CreateAllowanceCommandHandler( IBaseRepository<Allowance> allowanceRepo, IMapper mapper, ICurrentUserService currentUser)
     {
         _allowanceRepo = allowanceRepo;
         _mapper = mapper;
@@ -33,11 +30,12 @@ public class CreateAllowanceCommandHandler : IRequestHandler<CreateAllowanceComm
 
         var allowance = _mapper.Map<Allowance>(command);
         allowance.AllowanceID = Guid.NewGuid();
-        allowance.UserId = userId; 
+        allowance.UserId = userId;
 
         await _allowanceRepo.AddAsync(allowance);
 
         var dto = _mapper.Map<AllowanceDTO>(allowance);
         return Result<AllowanceDTO>.Ok(dto);
     }
+
 }

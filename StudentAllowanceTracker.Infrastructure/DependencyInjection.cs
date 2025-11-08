@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options; // Ensure this is included
+using Microsoft.Extensions.Options; 
 using StudentAllowanceTracker.Application.Interfaces;
 using StudentAllowanceTracker.Application.Interfaces.Repositories;
 using StudentAllowanceTracker.Infrastructure.Persistence.Data;
