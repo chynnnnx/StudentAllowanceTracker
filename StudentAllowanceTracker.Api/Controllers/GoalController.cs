@@ -4,6 +4,7 @@ using MediatR;
 using StudentAllowanceTracker.Application.Commands.Goals;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using StudentAllowanceTracker.Application.Queries.Goal;
 
 namespace StudentAllowanceTracker.Api.Controllers
 {
@@ -34,6 +35,19 @@ namespace StudentAllowanceTracker.Api.Controllers
             var result = await _mediator.Send(command);
             return Ok(result);
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteGoal(Guid id)
+        {
+            await _mediator.Send(new DeleteGoalCommand { GoalID = id });
+            return NoContent();
+        }
 
+        [HttpGet]
+        public async Task<IActionResult> GetGoalsByUser()
+        {
+           var query = new GetGoalByUserQuery { };
+            var goals = await _mediator.Send(query);
+            return Ok(goals);
+        }
     }
 }
