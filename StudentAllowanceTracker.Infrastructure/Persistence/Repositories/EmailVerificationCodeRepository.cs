@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StudentAllowanceTracker.Application.Interfaces;
 using StudentAllowanceTracker.Domain.Entities;
-using StudentAllowanceTracker.Domain.Interfaces.Repositories;
+using StudentAllowanceTracker.Application.Interfaces.Repositories;
 using StudentAllowanceTracker.Infrastructure.Persistence.Data;
 using System.Linq;
 using System.Threading.Tasks;

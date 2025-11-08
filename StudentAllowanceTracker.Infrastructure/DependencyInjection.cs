@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options; // Ensure this is included
 using StudentAllowanceTracker.Application.Interfaces;
-using StudentAllowanceTracker.Domain.Interfaces.Repositories;
+using StudentAllowanceTracker.Application.Interfaces.Repositories;
 using StudentAllowanceTracker.Infrastructure.Persistence.Data;
 using StudentAllowanceTracker.Infrastructure.Persistence.Repositories;
 using StudentAllowanceTracker.Infrastructure.Services;

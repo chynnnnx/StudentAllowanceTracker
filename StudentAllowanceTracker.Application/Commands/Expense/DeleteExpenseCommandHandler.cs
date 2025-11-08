@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MediatR;
-using StudentAllowanceTracker.Domain.Interfaces.Repositories;
+using StudentAllowanceTracker.Application.Interfaces.Repositories;
 using StudentAllowanceTracker.Shared.Responses;
 using StudentAllowanceTracker.Domain.Entities;
 using StudentAllowanceTracker.Shared.Enums;

@@ -3,7 +3,7 @@ using MediatR;
 using StudentAllowanceTracker.Application.DTOs;
 using StudentAllowanceTracker.Application.Interfaces;
 using StudentAllowanceTracker.Domain.Entities;
-using StudentAllowanceTracker.Domain.Interfaces.Repositories;
+using StudentAllowanceTracker.Application.Interfaces.Repositories;
 using StudentAllowanceTracker.Shared.Responses;
 using StudentAllowanceTracker.Shared.Enums;
 

@@ -5,7 +5,7 @@ using StudentAllowanceTracker.Application.Commands.Allowances;
 using StudentAllowanceTracker.Application.DTOs;
 using StudentAllowanceTracker.Application.Interfaces;
 using StudentAllowanceTracker.Domain.Entities;
-using StudentAllowanceTracker.Domain.Interfaces.Repositories;
+using StudentAllowanceTracker.Application.Interfaces.Repositories;
 using StudentAllowanceTracker.Shared.Enums;
 using StudentAllowanceTracker.Shared.Responses;
 

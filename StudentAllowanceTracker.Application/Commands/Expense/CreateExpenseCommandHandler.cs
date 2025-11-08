@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using StudentAllowanceTracker.Shared.Responses;
 using StudentAllowanceTracker.Application.DTOs;
-using StudentAllowanceTracker.Domain.Interfaces.Repositories;
+using StudentAllowanceTracker.Application.Interfaces.Repositories;
 using StudentAllowanceTracker.Domain.Entities;
 using AutoMapper;
 using StudentAllowanceTracker.Application.Interfaces;

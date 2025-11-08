@@ -26,5 +26,13 @@ namespace StudentAllowanceTracker.Api.Controllers
 
             return Ok(result.Data);
         }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateGoal(Guid id, [FromBody] UpdateGoalCommand command)
+        {
+            if (id != command.GoalID)
+                return BadRequest("Mismatched Goal ID.");
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
     }
 }

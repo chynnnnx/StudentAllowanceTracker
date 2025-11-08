@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StudentAllowanceTracker.Domain.Interfaces.Repositories
+namespace StudentAllowanceTracker.Application.Interfaces.Repositories
 {
     public interface IBaseRepository<T> where T : class
     {
