@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StudentAllowanceTracker.Application.Interfaces
 {
-    public interface ICodeGenerator
+    public interface ICodeGeneratorService
     {
         string Generate(int length);
     }

@@ -20,15 +20,16 @@ namespace StudentAllowanceTracker.Infrastructure
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
-            services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IEmailService, EmailService>();
-            services.AddScoped<ICodeGenerator, CodeGenerator>();
-            services.AddScoped<IEmailVerificationCodeRepository, EmailVerificationCodeRepository>();
-
             services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
             services.AddHttpContextAccessor();
-           services.AddScoped<ICurrentUserService, CurrentUserService>();
 
+
+            var assembly = typeof(CurrentUserService).Assembly;
+            services.Scan(scan => scan
+                .FromAssemblies(assembly)
+                .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Repository") || type.Name.EndsWith("Service")))
+                .AsImplementedInterfaces()
+                .WithScopedLifetime());
 
             return services;
         }

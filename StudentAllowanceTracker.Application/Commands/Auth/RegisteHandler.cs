@@ -17,10 +17,10 @@ namespace StudentAllowanceTracker.Application.Commands.Auth
         private readonly UserManager<AppIdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailVerificationCodeRepository _codeRepo;
-        private readonly ICodeGenerator _codeGenerator;
+        private readonly ICodeGeneratorService _codeGenerator;
         private readonly IEmailService _emailService;
 
-        public RegisterHandler(UserManager<AppIdentityUser> userManager, RoleManager<IdentityRole> roleManager, IEmailVerificationCodeRepository codeRepo, ICodeGenerator codeGenerator,
+        public RegisterHandler(UserManager<AppIdentityUser> userManager, RoleManager<IdentityRole> roleManager, IEmailVerificationCodeRepository codeRepo, ICodeGeneratorService codeGenerator,
             IEmailService emailService)
         {
             _userManager = userManager;
