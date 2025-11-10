@@ -8,13 +8,13 @@ using StudentAllowanceTracker.Shared.Responses;
 using StudentAllowanceTracker.Application.DTOs;
 using StudentAllowanceTracker.Application.Interfaces.Repositories;
 using StudentAllowanceTracker.Shared.Enums;
-
+using StudentAllowanceTracker.Domain.Entities;
 namespace StudentAllowanceTracker.Application.Commands.Goals
 {
     public class DeleteGoalCommandHandler: IRequestHandler<DeleteGoalCommand, Result<object>>
     {
-        private readonly IBaseRepository<Domain.Entities.GoalsEntity> _goalsRepo;
-        public DeleteGoalCommandHandler(IBaseRepository<Domain.Entities.GoalsEntity> goalsRepo)
+        private readonly IBaseRepository<GoalsEntity> _goalsRepo;
+        public DeleteGoalCommandHandler(IBaseRepository<GoalsEntity> goalsRepo)
         {
             _goalsRepo = goalsRepo;
         }

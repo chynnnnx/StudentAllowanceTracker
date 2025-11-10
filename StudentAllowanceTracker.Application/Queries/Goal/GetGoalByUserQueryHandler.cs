@@ -17,9 +17,11 @@ namespace StudentAllowanceTracker.Application.Queries.Goal
         private readonly IBaseRepository<GoalsEntity> _goalsRepo;
         private readonly ICurrentUserService _currentUserService;
         private readonly IMapper _mapper;
-        public GetGoalByUserQueryHandler(IBaseRepository<GoalsEntity> goalsRepo)
+        public GetGoalByUserQueryHandler(IBaseRepository<GoalsEntity> goalsRepo, ICurrentUserService currentUserService, IMapper mapper)
         {
             _goalsRepo = goalsRepo;
+            _currentUserService = currentUserService;
+            _mapper = mapper;
         }
 
         public async Task<List<GoalsDTO>> Handle(GetGoalByUserQuery request, CancellationToken cancellationToken)
