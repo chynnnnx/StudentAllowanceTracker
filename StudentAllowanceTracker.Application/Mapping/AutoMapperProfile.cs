@@ -49,7 +49,9 @@ namespace StudentAllowanceTracker.Application.Mapping
 
             CreateMap<UpdateGoalCommand, GoalsEntity>()
                 .ForMember(dest => dest.GoalID, opt => opt.Ignore())
-                .ForMember(dest => dest.UserID, opt => opt.Ignore());
+                .ForMember(dest => dest.UserID, opt => opt.Ignore())
+                .ForMember(dest => dest.IsCompleted, opt => opt.Ignore());
+
             CreateMap<GoalsEntity, GoalsDTO>().ReverseMap();
 
 

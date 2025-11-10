@@ -1,22 +1,19 @@
 ﻿@page "/goals"
-@inject IDialogService DialogService
-@inject ISnackbar Snackbar
-@inject IGoalService GoalService
-@using StudentAllowanceTracker.Client.Components.Dialogs
+@inherits GoalsBase
 
 <div class="max-w-7xl mx-auto px-4 py-6">
 
     <!-- Header -->
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <div>
-            <h1 class="text-3xl font-semibold text-gray-900 mb-1">🎯 Savings Goals</h1>
+            <h1 class="text-3xl font-semibold text-gray-900 mb-1"> Savings Goals</h1>
             <p class="text-sm text-gray-500">Set and track your financial goals</p>
         </div>
         <MudButton Variant="Variant.Filled"
-                   StartIcon="@Icons.Material.Filled.Add"
-                   OnClick="OpenAddDialog"
-                   Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); color: white; text-transform: none;"
-                   Class="px-6 py-3 rounded-lg font-medium">
+        StartIcon="@Icons.Material.Filled.Add"
+        OnClick="OpenAddDialog"
+        Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); color: white; text-transform: none;"
+        Class="px-6 py-3 rounded-lg font-medium">
             Create Goal
         </MudButton>
     </div>
@@ -59,13 +56,13 @@
         <div class="mb-6">
             <MudButtonGroup Variant="Variant.Outlined" Size="Size.Small">
                 <MudButton OnClick="@(() => showCompleted = false)"
-                           Style="@GetFilterStyle(!showCompleted)"
-                           Class="px-4 py-2">
+                Style="@GetFilterStyle(!showCompleted)"
+                Class="px-4 py-2">
                     Active
                 </MudButton>
                 <MudButton OnClick="@(() => showCompleted = true)"
-                           Style="@GetFilterStyle(showCompleted)"
-                           Class="px-4 py-2">
+                Style="@GetFilterStyle(showCompleted)"
+                Class="px-4 py-2">
                     Completed
                 </MudButton>
             </MudButtonGroup>
@@ -81,7 +78,7 @@
                     var isCompleted = goal.IsCompleted;
 
                     <div class="bg-white rounded-2xl p-6 border-2 transition-all hover:shadow-lg"
-                         style="@($"border-color: {(isCompleted ? "hsl(162, 86.6%, 32.2%)" : "hsl(162, 41.8%, 89.2%)")}; cursor: pointer;")">
+                    style="@($"border-color: {(isCompleted ? "hsl(162, 86.6%, 32.2%)" : "hsl(162, 41.8%, 89.2%)")}; cursor: pointer;")">
 
                         <!-- Goal Header -->
                         <div class="flex items-start justify-between mb-4">
@@ -92,7 +89,7 @@
                             @if (isCompleted)
                             {
                                 <MudIcon Icon="@Icons.Material.Filled.CheckCircle"
-                                         Style="color: hsl(162, 86.6%, 32.2%); font-size: 1.5rem;" />
+                                Style="color: hsl(162, 86.6%, 32.2%); font-size: 1.5rem;" />
                             }
                         </div>
 
@@ -105,9 +102,9 @@
                                 </span>
                             </div>
                             <MudProgressLinear Color="Color.Success"
-                                               Value="@progress"
-                                               Size="Size.Medium"
-                                               Class="rounded-full" />
+                            Value="@progress"
+                            Size="Size.Medium"
+                            Class="rounded-full" />
                         </div>
 
                         <!-- Amount Info -->
@@ -124,10 +121,10 @@
 
                         <!-- Deadline -->
                         <div class="flex items-center gap-2 mb-4 p-3 rounded-lg"
-                             style="background-color: hsl(162, 41.8%, 95%);">
+                        style="background-color: hsl(162, 41.8%, 95%);">
                             <MudIcon Icon="@Icons.Material.Filled.CalendarToday"
-                                     Size="Size.Small"
-                                     Style="color: hsl(162, 86.6%, 32.2%);" />
+                            Size="Size.Small"
+                            Style="color: hsl(162, 86.6%, 32.2%);" />
                             <span class="text-sm text-gray-700">
                                 @{
                                     var daysLeft = (goal.TargetDate - DateTime.Today).Days;
@@ -156,29 +153,29 @@
                             @if (!isCompleted)
                             {
                                 <MudButton Variant="Variant.Filled"
-                                           StartIcon="@Icons.Material.Filled.Add"
-                                           OnClick="@(() => AddContribution(goal))"
-                                           Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); color: white; text-transform: none;"
-                                           Class="flex-1 py-2 rounded-lg text-sm font-medium">
+                                StartIcon="@Icons.Material.Filled.Add"
+                                OnClick="@(() => AddContribution(goal))"
+                                Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); color: white; text-transform: none;"
+                                Class="flex-1 py-2 rounded-lg text-sm font-medium">
                                     Add Money
                                 </MudButton>
                             }
                             else
                             {
                                 <div class="flex-1 text-center py-2 px-4 rounded-lg font-medium text-sm"
-                                     style="background-color: hsl(162, 86.6%, 95%); color: hsl(162, 86.6%, 32.2%);">
-                                    Goal Achieved! 🎉
+                                style="background-color: hsl(162, 86.6%, 95%); color: hsl(162, 86.6%, 32.2%);">
+                                    Goal Achieved! 
                                 </div>
                             }
 
                             <MudIconButton Icon="@Icons.Material.Filled.Edit"
-                                           Size="Size.Small"
-                                           Style="color: hsl(162, 86.6%, 32.2%);"
-                                           OnClick="@(() => EditGoal(goal))" />
+                            Size="Size.Small"
+                            Style="color: hsl(162, 86.6%, 32.2%);"
+                            OnClick="@(() => EditGoal(goal))" />
                             <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                           Size="Size.Small"
-                                           Style="color: hsl(0, 84.2%, 60.2%);"
-                                           OnClick="@(() => DeleteGoal(goal))" />
+                            Size="Size.Small"
+                            Style="color: hsl(0, 84.2%, 60.2%);"
+                            OnClick="@(() => DeleteGoal(goal))" />
                         </div>
 
                     </div>
@@ -189,8 +186,8 @@
         {
             <div class="bg-white rounded-2xl p-12 border-2 text-center" style="border-color: hsl(162, 41.8%, 89.2%);">
                 <MudIcon Icon="@Icons.Material.Outlined.TrackChanges"
-                         Class="text-gray-300 mb-4"
-                         Style="font-size: 5rem;" />
+                Class="text-gray-300 mb-4"
+                Style="font-size: 5rem;" />
                 <h3 class="text-xl font-semibold text-gray-500 mb-2">
                     @(showCompleted ? "No completed goals yet" : "No active goals yet")
                 </h3>
@@ -200,10 +197,10 @@
                 @if (!showCompleted)
                 {
                     <MudButton Variant="Variant.Filled"
-                               StartIcon="@Icons.Material.Filled.Add"
-                               OnClick="OpenAddDialog"
-                               Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); color: white; text-transform: none;"
-                               Class="px-8 py-3 rounded-lg font-medium">
+                    StartIcon="@Icons.Material.Filled.Add"
+                    OnClick="OpenAddDialog"
+                    Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); color: white; text-transform: none;"
+                    Class="px-8 py-3 rounded-lg font-medium">
                         Create Your First Goal
                     </MudButton>
                 }
@@ -213,136 +210,3 @@
     }
 
 </div>
-
-@code {
-
-    private List<GoalDTO> goals = new();
-    private bool isLoading = false;
-    private bool showCompleted = false;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadGoals();
-    }
-
-    private async Task LoadGoals()
-    {
-        isLoading = true;
-        try
-        {
-            var result = await GoalService.GetGoalsByUser();
-            if (result != null)
-            {
-                goals = result;
-            }
-            else
-            {
-                goals = new List<GoalDTO>();
-                Snackbar.Add("Failed to load goals", Severity.Warning);
-            }
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Error loading goals: {ex.Message}", Severity.Error);
-            goals = new List<GoalDTO>();
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
-
-    private async Task OpenAddDialog()
-    {
-        var parameters = new DialogParameters();
-        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
-
-        var dialog = await DialogService.ShowAsync<GoalsDialog>("Create New Goal", parameters, options);
-        var result = await dialog.Result;
-
-        if (!result.Canceled)
-        {
-            await LoadGoals();
-        }
-    }
-
-    private async Task AddContribution(GoalDTO goal)
-    {
-        var parameters = new DialogParameters
-        {
-            { "Goal", goal }
-        };
-        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
-
-        var dialog = await DialogService.ShowAsync<GoalsDialog>("Add Contribution", parameters, options);
-        var result = await dialog.Result;
-
-        if (!result.Canceled)
-        {
-            await LoadGoals();
-        }
-    }
-
-    private async Task EditGoal(GoalDTO goal)
-    {
-        var parameters = new DialogParameters
-        {
-            { "Goal", goal }
-        };
-        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
-
-        var dialog = await DialogService.ShowAsync<GoalsDialog>("Edit Goal", parameters, options);
-        var result = await dialog.Result;
-
-        if (!result.Canceled)
-        {
-            await LoadGoals();
-        }
-    }
-
-    private async Task DeleteGoal(GoalDTO goal)
-    {
-        bool? confirm = await DialogService.ShowMessageBox(
-            "Delete Goal",
-            $"Are you sure you want to delete '{goal.GoalName}'?",
-            yesText: "Delete", cancelText: "Cancel");
-
-        if (confirm == true)
-        {
-            try
-            {
-                await GoalService.DeleteGoal(goal.GoalID);
-                Snackbar.Add("Goal deleted successfully", Severity.Success);
-                await LoadGoals();
-            }
-            catch (Exception ex)
-            {
-                Snackbar.Add($"Error deleting goal: {ex.Message}", Severity.Error);
-            }
-        }
-    }
-
-    private List<GoalDTO> GetFilteredGoals()
-    {
-        return goals.Where(g => g.IsCompleted == showCompleted)
-                   .OrderBy(g => g.TargetDate)
-                   .ToList();
-    }
-
-    private decimal GetTotalSaved()
-    {
-        return goals.Sum(g => g.CurrentAmount);
-    }
-
-    private decimal GetTotalTarget()
-    {
-        return goals.Where(g => !g.IsCompleted).Sum(g => g.TargetAmount);
-    }
-
-    private string GetFilterStyle(bool isActive)
-    {
-        return isActive
-            ? "text-transform: none; color: white; background-color: hsl(162, 86.6%, 32.2%); border-color: hsl(162, 86.6%, 32.2%);"
-            : "text-transform: none; color: hsl(0, 0%, 52.2%); border-color: hsl(0, 0%, 81.2%);";
-    }
-}

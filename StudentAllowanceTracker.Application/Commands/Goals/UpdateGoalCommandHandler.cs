@@ -31,7 +31,9 @@ namespace StudentAllowanceTracker.Application.Commands.Goals
             if (goal == null || goal.UserID != userId)
                 return Result<GoalsDTO>.Fail(ResultStatus.NotFound, "Goal not found.");
 
-           _mapper.Map(command, goal);
+            _mapper.Map(command, goal);
+
+            goal.IsCompleted = decimal.Round(goal.CurrentAmount, 2) >= decimal.Round(goal.TargetAmount, 2);
 
             await _goalsRepo.UpdateAsync(goal);
 

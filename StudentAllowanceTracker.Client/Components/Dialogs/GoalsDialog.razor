@@ -18,29 +18,35 @@
                               Lines="3"
                               Variant="Variant.Outlined"
                               HelperText="Add more details about your goal (optional)" />
+                <MudNumericField @bind-Value="model.CurrentAmount"
+                                 Label="Current Amount"
+                                 Min="0m"
+                                 Format="N2"
+                                 Adornment="Adornment.Start"
+                                 AdornmentText="₱"
+                                 Variant="Variant.Outlined"
+                                 HelperText="How much have you saved so far?"
+                                 Immediate="true"
+                                 @oninput="@(e => UpdateCompletionStatus())" />
+                @if (model.IsCompleted)
+                {
+                    <MudText Color="Color.Success" Class="mt-2">Goal Completed!</MudText>
+                }
+
 
                 <MudNumericField @bind-Value="model.TargetAmount"
                                  Label="Target Amount"
                                  Required="true"
-                                 RequiredError="Target amount is required"
                                  Min="0.01m"
                                  Format="N2"
                                  Adornment="Adornment.Start"
                                  AdornmentText="₱"
                                  Variant="Variant.Outlined"
-                                 HelperText="How much do you need to save?" />
+                                 HelperText="How much do you need to save?"
+                                 Immediate="true"
+                                 @oninput="@(e => UpdateCompletionStatus())" />
 
-                @if (IsEditMode)
-                {
-                    <MudNumericField @bind-Value="model.CurrentAmount"
-                                     Label="Current Amount"
-                                     Min="0m"
-                                     Format="N2"
-                                     Adornment="Adornment.Start"
-                                     AdornmentText="₱"
-                                     Variant="Variant.Outlined"
-                                     HelperText="How much have you saved so far?" />
-                }
+
 
                 <MudDatePicker @bind-Date="targetDate"
                                Label="Target Date"
@@ -49,6 +55,7 @@
                                MinDate="DateTime.Today"
                                Variant="Variant.Outlined"
                                HelperText="When do you want to reach this goal?" />
+
 
             </div>
         </MudForm>
@@ -75,6 +82,7 @@
             }
         </MudButton>
     </DialogActions>
+
 </MudDialog>
 
 @code {
@@ -120,6 +128,14 @@
             targetDate = model.TargetDate;
         }
     }
+    private void UpdateCompletionStatus()
+    {
+        model.IsCompleted = decimal.Round(model.CurrentAmount, 2) >= decimal.Round(model.TargetAmount, 2);
+
+        StateHasChanged();
+    }
+
+
 
     private void Cancel()
     {

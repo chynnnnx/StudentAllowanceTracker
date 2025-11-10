@@ -31,6 +31,10 @@ namespace StudentAllowanceTracker.Infrastructure.Persistence.Configurations
 
             builder.Property(g => g.Description)
                 .HasMaxLength(1000);
+            builder.Property(g => g.IsCompleted)
+                   .IsRequired()
+                   .HasDefaultValue(false);
+
 
             builder.HasOne(g => g.User)
                 .WithMany(u => u.Goals)
