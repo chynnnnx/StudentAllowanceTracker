@@ -118,6 +118,25 @@
                                 <p class="text-lg font-bold text-gray-900">₱@goal.TargetAmount.ToString("N2")</p>
                             </div>
                         </div>
+                        @if (!isCompleted)
+                        {
+                            var daysleft = (goal.TargetDate - DateTime.Today).Days;
+                            var suggested = GetSuggestedSavings(goal); 
+                            var suggestedPerWeek = suggested.perWeek;
+                            var suggestedPerMonth = suggested.perMonth;
+
+                            <div class="mb-4 text-sm text-gray-700">
+                                Suggested savings:
+                                <span class="font-semibold" style="color: hsl(162, 86.6%, 32.2%);">
+                                    ₱@suggestedPerWeek / week
+                                </span>
+                                or
+                                <span class="font-semibold" style="color: hsl(162, 86.6%, 32.2%);">
+                                    ₱@suggestedPerMonth / month
+                                </span>
+                            </div>
+                        }
+
 
                         <!-- Deadline -->
                         <div class="flex items-center gap-2 mb-4 p-3 rounded-lg"

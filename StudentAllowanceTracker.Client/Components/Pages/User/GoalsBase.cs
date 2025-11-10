@@ -141,5 +141,26 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
                 ? "text-transform: none; color: white; background-color: hsl(162, 86.6%, 32.2%); border-color: hsl(162, 86.6%, 32.2%);"
                 : "text-transform: none; color: hsl(0, 0%, 52.2%); border-color: hsl(0, 0%, 81.2%);";
         }
+        protected (decimal perWeek, decimal perMonth) GetSuggestedSavings(GoalDTO goal)
+        {
+            var remaining = goal.TargetAmount - goal.CurrentAmount;
+            if (remaining <= 0) return (0, 0);
+
+            var daysLeft = (goal.TargetDate - DateTime.Today).Days;
+            if (daysLeft <= 0) return (remaining, remaining); 
+
+            var weeks = Math.Max(1, Math.Ceiling(daysLeft / 7.0));
+            var perWeek = remaining / (decimal)weeks;
+
+            var months = Math.Max(1, Math.Ceiling(daysLeft / 30.0));
+            var perMonth = remaining / (decimal)months;
+
+            perWeek = decimal.Round(perWeek, 2);
+            perMonth = decimal.Round(perMonth, 2);
+
+            return (perWeek, perMonth);
+        }
+
+
     }
 }
