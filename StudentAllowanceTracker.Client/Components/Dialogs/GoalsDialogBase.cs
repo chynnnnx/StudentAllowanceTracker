@@ -28,17 +28,7 @@ namespace StudentAllowanceTracker.Client.Components.Dialogs
         {
             if (IsEditMode && Goal != null)
             {
-                model = new GoalDTO
-                {
-                    GoalID = Goal.GoalID,
-                    UserID = Goal.UserID,
-                    GoalName = Goal.GoalName,
-                    Description = Goal.Description,
-                    TargetAmount = Goal.TargetAmount,
-                    CurrentAmount = Goal.CurrentAmount,
-                    TargetDate = Goal.TargetDate
-                };
-                targetDate = Goal.TargetDate;
+                model = Goal.Clone();
             }
             else
             {
@@ -47,9 +37,11 @@ namespace StudentAllowanceTracker.Client.Components.Dialogs
                     CurrentAmount = 0,
                     TargetDate = DateTime.Today.AddMonths(3)
                 };
-                targetDate = model.TargetDate;
             }
+
+            targetDate = model.TargetDate;
         }
+
         protected void UpdateCompletionStatus()
         {
             model.IsCompleted = decimal.Round(model.CurrentAmount, 2) >= decimal.Round(model.TargetAmount, 2);
