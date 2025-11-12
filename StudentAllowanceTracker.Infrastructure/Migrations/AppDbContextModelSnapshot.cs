@@ -267,6 +267,69 @@ namespace StudentAllowanceTracker.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.BudgetEntity", b =>
+                {
+                    b.Property<Guid>("BudgetID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("NeedsPercentage")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("SavingsPercentage")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("TotalAllowance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("WantsPercentage")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.HasKey("BudgetID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Budgets", (string)null);
+                });
+
+            modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.CategoryEntity", b =>
+                {
+                    b.Property<Guid>("CategoryID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("BudgetAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("CategoryID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Categories", (string)null);
+                });
+
             modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.EmailVerificationCode", b =>
                 {
                     b.Property<Guid>("Id")
@@ -311,10 +374,8 @@ namespace StudentAllowanceTracker.Infrastructure.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                    b.Property<Guid>("CategoryID")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -330,6 +391,8 @@ namespace StudentAllowanceTracker.Infrastructure.Migrations
                     b.HasKey("ExpenseID");
 
                     b.HasIndex("AllowanceID");
+
+                    b.HasIndex("CategoryID");
 
                     b.HasIndex("UserID");
 
@@ -438,6 +501,28 @@ namespace StudentAllowanceTracker.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.BudgetEntity", b =>
+                {
+                    b.HasOne("StudentAllowanceTracker.Domain.Entities.AppIdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.CategoryEntity", b =>
+                {
+                    b.HasOne("StudentAllowanceTracker.Domain.Entities.AppIdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.EmailVerificationCode", b =>
                 {
                     b.HasOne("StudentAllowanceTracker.Domain.Entities.AppIdentityUser", "User")
@@ -457,6 +542,12 @@ namespace StudentAllowanceTracker.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("StudentAllowanceTracker.Domain.Entities.CategoryEntity", "Category")
+                        .WithMany("Expenses")
+                        .HasForeignKey("CategoryID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("StudentAllowanceTracker.Domain.Entities.AppIdentityUser", "User")
                         .WithMany("Expenses")
                         .HasForeignKey("UserID")
@@ -464,6 +555,8 @@ namespace StudentAllowanceTracker.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Allowance");
+
+                    b.Navigation("Category");
 
                     b.Navigation("User");
                 });
@@ -491,6 +584,11 @@ namespace StudentAllowanceTracker.Infrastructure.Migrations
                     b.Navigation("Expenses");
 
                     b.Navigation("Goals");
+                });
+
+            modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.CategoryEntity", b =>
+                {
+                    b.Navigation("Expenses");
                 });
 #pragma warning restore 612, 618
         }

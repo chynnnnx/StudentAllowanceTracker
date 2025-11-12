@@ -14,9 +14,7 @@ namespace StudentAllowanceTracker.Infrastructure.Persistence.Configurations
         public void Configure(EntityTypeBuilder<ExpenseEntity> builder)
         {
             builder.HasKey(e => e.ExpenseID);
-            builder.Property(e => e.Category)
-                .IsRequired()
-                .HasMaxLength(200);
+           
             builder.Property(e => e.Description)
                 .HasMaxLength(500);
 
@@ -36,6 +34,12 @@ namespace StudentAllowanceTracker.Infrastructure.Persistence.Configurations
                 .WithMany(a => a.Expenses)
                 .HasForeignKey(e => e.AllowanceID)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(e => e.Category)
+           .WithMany(c => c.Expenses)
+           .HasForeignKey(e => e.CategoryID)
+           .OnDelete(DeleteBehavior.Restrict);
+
             builder.ToTable("Expenses");
         }
 

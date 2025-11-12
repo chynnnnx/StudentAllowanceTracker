@@ -12,7 +12,6 @@ namespace StudentAllowanceTracker.Domain.Entities
         public string UserID { get; set; } = string.Empty;
         public Guid AllowanceID { get; set; }
         public Guid CategoryID { get; set; }          
-        public string Category { get; set; } = string.Empty;  // e.g., "Food", "Entertainment"
         public string? Description { get; set; }
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
@@ -20,7 +19,7 @@ namespace StudentAllowanceTracker.Domain.Entities
 
         public AppIdentityUser User { get; set; }= default!;
         public Allowance Allowance { get; set; } = default!;
-        public CategoryEntity Categories { get; set; } = default!;
+        public CategoryEntity Category { get; set; } = default!;
 
     }
 

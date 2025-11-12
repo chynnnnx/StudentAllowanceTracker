@@ -10,6 +10,8 @@ using StudentAllowanceTracker.Application.Commands.Allowances;
 using StudentAllowanceTracker.Application.DTOs;
 using StudentAllowanceTracker.Application.Commands.Expense;
 using StudentAllowanceTracker.Application.Commands.Goals;
+using StudentAllowanceTracker.Application.Commands.Budget;
+using StudentAllowanceTracker.Application.Commands.Category;
 
 namespace StudentAllowanceTracker.Application.Mapping
 {
@@ -34,11 +36,14 @@ namespace StudentAllowanceTracker.Application.Mapping
             //Expense Mappings
             CreateMap<CreateExpenseCommand, ExpenseEntity>()
                 .ForMember(dest => dest.ExpenseID, opt => opt.Ignore())
-                .ForMember(dest => dest.UserID, opt => opt.Ignore());
+                .ForMember(dest => dest.UserID, opt => opt.Ignore())
+                .ForMember(dest => dest.Category, opt => opt.Ignore());
             CreateMap<UpdateExpenseCommand, ExpenseEntity>()
                 .ForMember(dest => dest.ExpenseID, opt => opt.Ignore())
                 .ForMember(dest => dest.UserID, opt => opt.Ignore())
-                .ForMember(dest => dest.AllowanceID, opt => opt.Ignore());
+                .ForMember(dest => dest.AllowanceID, opt => opt.Ignore())
+                 .ForMember(dest => dest.Category, opt => opt.Ignore());
+
 
             CreateMap<ExpenseEntity, ExpenseDTO>().ReverseMap();
 
@@ -53,6 +58,29 @@ namespace StudentAllowanceTracker.Application.Mapping
                 .ForMember(dest => dest.IsCompleted, opt => opt.Ignore());
 
             CreateMap<GoalsEntity, GoalsDTO>().ReverseMap();
+
+            // Category Mappings
+            CreateMap<CreateCategoryCommand, CategoryEntity>()
+                .ForMember(dest => dest.CategoryID, opt => opt.Ignore())
+                .ForMember(dest => dest.UserID, opt => opt.Ignore());
+
+            CreateMap<UpdateCategoryCommand, CategoryEntity>()
+                .ForMember(dest => dest.CategoryID, opt => opt.Ignore())
+                .ForMember(dest => dest.UserID, opt => opt.Ignore());
+
+            CreateMap<CategoryEntity, CategoryDTO>().ReverseMap();
+
+
+            // Budget Mappings
+            CreateMap<CreateBudgetCommand, BudgetEntity>()
+                .ForMember(dest => dest.BudgetID, opt => opt.Ignore())
+                .ForMember(dest => dest.UserID, opt => opt.Ignore());
+
+            CreateMap<UpdateBudgetCommand, BudgetEntity>()
+                .ForMember(dest => dest.BudgetID, opt => opt.Ignore())
+                .ForMember(dest => dest.UserID, opt => opt.Ignore());
+
+            CreateMap<BudgetEntity, BudgetDTO>().ReverseMap();
 
 
         }

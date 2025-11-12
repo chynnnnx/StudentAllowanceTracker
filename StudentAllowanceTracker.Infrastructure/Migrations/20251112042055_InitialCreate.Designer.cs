@@ -12,15 +12,15 @@ using StudentAllowanceTracker.Infrastructure.Persistence.Data;
 namespace StudentAllowanceTracker.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251102091804_AddRoleToUser")]
-    partial class AddRoleToUser
+    [Migration("20251112042055_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.8")
+                .HasAnnotation("ProductVersion", "9.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -270,6 +270,69 @@ namespace StudentAllowanceTracker.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.BudgetEntity", b =>
+                {
+                    b.Property<Guid>("BudgetID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("NeedsPercentage")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("SavingsPercentage")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("TotalAllowance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("WantsPercentage")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.HasKey("BudgetID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Budgets", (string)null);
+                });
+
+            modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.CategoryEntity", b =>
+                {
+                    b.Property<Guid>("CategoryID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("BudgetAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("CategoryID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Categories", (string)null);
+                });
+
             modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.EmailVerificationCode", b =>
                 {
                     b.Property<Guid>("Id")
@@ -300,6 +363,83 @@ namespace StudentAllowanceTracker.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("EmailVerificationCodes", (string)null);
+                });
+
+            modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.ExpenseEntity", b =>
+                {
+                    b.Property<Guid>("ExpenseID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AllowanceID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("CategoryID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ExpenseID");
+
+                    b.HasIndex("AllowanceID");
+
+                    b.HasIndex("CategoryID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Expenses", (string)null);
+                });
+
+            modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.GoalsEntity", b =>
+                {
+                    b.Property<Guid>("GoalID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("CurrentAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("GoalName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsCompleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<decimal>("TargetAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("TargetDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("GoalID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Goals", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -364,6 +504,28 @@ namespace StudentAllowanceTracker.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.BudgetEntity", b =>
+                {
+                    b.HasOne("StudentAllowanceTracker.Domain.Entities.AppIdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.CategoryEntity", b =>
+                {
+                    b.HasOne("StudentAllowanceTracker.Domain.Entities.AppIdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.EmailVerificationCode", b =>
                 {
                     b.HasOne("StudentAllowanceTracker.Domain.Entities.AppIdentityUser", "User")
@@ -375,9 +537,61 @@ namespace StudentAllowanceTracker.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.ExpenseEntity", b =>
+                {
+                    b.HasOne("StudentAllowanceTracker.Domain.Entities.Allowance", "Allowance")
+                        .WithMany("Expenses")
+                        .HasForeignKey("AllowanceID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StudentAllowanceTracker.Domain.Entities.CategoryEntity", "Category")
+                        .WithMany("Expenses")
+                        .HasForeignKey("CategoryID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("StudentAllowanceTracker.Domain.Entities.AppIdentityUser", "User")
+                        .WithMany("Expenses")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Allowance");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.GoalsEntity", b =>
+                {
+                    b.HasOne("StudentAllowanceTracker.Domain.Entities.AppIdentityUser", "User")
+                        .WithMany("Goals")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.Allowance", b =>
+                {
+                    b.Navigation("Expenses");
+                });
+
             modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.AppIdentityUser", b =>
                 {
                     b.Navigation("Allowances");
+
+                    b.Navigation("Expenses");
+
+                    b.Navigation("Goals");
+                });
+
+            modelBuilder.Entity("StudentAllowanceTracker.Domain.Entities.CategoryEntity", b =>
+                {
+                    b.Navigation("Expenses");
                 });
 #pragma warning restore 612, 618
         }

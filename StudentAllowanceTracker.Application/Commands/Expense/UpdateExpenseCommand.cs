@@ -14,7 +14,7 @@ namespace StudentAllowanceTracker.Application.Commands.Expense
         public Guid ExpenseID { get; set; }
 
         public Guid AllowanceID { get; set; }
-        public string Category { get; set; } = string.Empty;  
+        public Guid CategoryID { get; set; }
         public string? Description { get; set; }
 
         public decimal Amount { get; set; }

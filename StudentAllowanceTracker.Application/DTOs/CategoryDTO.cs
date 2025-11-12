@@ -1,22 +1,20 @@
-﻿using System;
+﻿using StudentAllowanceTracker.Shared.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StudentAllowanceTracker.Shared.Enums;
 
-namespace StudentAllowanceTracker.Domain.Entities
+namespace StudentAllowanceTracker.Application.DTOs
 {
-    public class CategoryEntity
+    public class CategoryDTO
     {
         public Guid CategoryID { get; set; }
         public string UserID { get; set; } = string.Empty;
 
         public string CategoryName { get; set; } = string.Empty;
         public CategoryType Type { get; set; } = CategoryType.Needs;  // enum for 50/30/20
-        public decimal? BudgetAmount { get; set; }  
+        public decimal? BudgetAmount { get; set; }
 
-        public AppIdentityUser User { get; set; } = default!;
-        public ICollection<ExpenseEntity> Expenses { get; set; } = new List<ExpenseEntity>();
     }
 }

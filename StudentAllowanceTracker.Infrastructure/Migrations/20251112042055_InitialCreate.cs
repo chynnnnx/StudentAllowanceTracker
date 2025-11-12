@@ -32,6 +32,7 @@ namespace StudentAllowanceTracker.Infrastructure.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -182,6 +183,51 @@ namespace StudentAllowanceTracker.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Budgets",
+                columns: table => new
+                {
+                    BudgetID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TotalAllowance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    NeedsPercentage = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
+                    WantsPercentage = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
+                    SavingsPercentage = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Budgets", x => x.BudgetID);
+                    table.ForeignKey(
+                        name: "FK_Budgets_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    CategoryID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CategoryName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    BudgetAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.CategoryID);
+                    table.ForeignKey(
+                        name: "FK_Categories_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "EmailVerificationCodes",
                 columns: table => new
                 {
@@ -201,6 +247,64 @@ namespace StudentAllowanceTracker.Infrastructure.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Goals",
+                columns: table => new
+                {
+                    GoalID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    GoalName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    TargetAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CurrentAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TargetDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    IsCompleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Goals", x => x.GoalID);
+                    table.ForeignKey(
+                        name: "FK_Goals_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Expenses",
+                columns: table => new
+                {
+                    ExpenseID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AllowanceID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CategoryID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Expenses", x => x.ExpenseID);
+                    table.ForeignKey(
+                        name: "FK_Expenses_Allowances_AllowanceID",
+                        column: x => x.AllowanceID,
+                        principalTable: "Allowances",
+                        principalColumn: "AllowanceID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Expenses_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Expenses_Categories_CategoryID",
+                        column: x => x.CategoryID,
+                        principalTable: "Categories",
+                        principalColumn: "CategoryID",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -248,17 +352,44 @@ namespace StudentAllowanceTracker.Infrastructure.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Budgets_UserID",
+                table: "Budgets",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_UserID",
+                table: "Categories",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EmailVerificationCodes_UserId",
                 table: "EmailVerificationCodes",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Expenses_AllowanceID",
+                table: "Expenses",
+                column: "AllowanceID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Expenses_CategoryID",
+                table: "Expenses",
+                column: "CategoryID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Expenses_UserID",
+                table: "Expenses",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Goals_UserID",
+                table: "Goals",
+                column: "UserID");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Allowances");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -275,10 +406,25 @@ namespace StudentAllowanceTracker.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Budgets");
+
+            migrationBuilder.DropTable(
                 name: "EmailVerificationCodes");
 
             migrationBuilder.DropTable(
+                name: "Expenses");
+
+            migrationBuilder.DropTable(
+                name: "Goals");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Allowances");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
