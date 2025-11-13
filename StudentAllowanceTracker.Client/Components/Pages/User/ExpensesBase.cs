@@ -2,7 +2,7 @@
 using StudentAllowanceTracker.Client.DTOs;
 using StudentAllowanceTracker.Client.Services.Interfaces;
 using MudBlazor;
-using StudentAllowanceTracker.Client.Components.Dialogs;
+using StudentAllowanceTracker.Client.Components.Dialogs.User;
 namespace StudentAllowanceTracker.Client.Components.Pages.User
 {
     public class ExpensesBase: LayoutComponentBase

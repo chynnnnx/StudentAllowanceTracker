@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using StudentAllowanceTracker.Client.Services.Interfaces;
 using MudBlazor;
-using StudentAllowanceTracker.Client.Components.Dialogs;
+using StudentAllowanceTracker.Client.Components.Dialogs.User;
 using StudentAllowanceTracker.Client.DTOs;
 using StudentAllowanceTracker.Shared.Enums;
 namespace StudentAllowanceTracker.Client.Components.Pages.User
