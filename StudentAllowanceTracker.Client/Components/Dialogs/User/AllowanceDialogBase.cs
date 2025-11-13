@@ -5,7 +5,7 @@ using StudentAllowanceTracker.Client.Services.Interfaces;
 using StudentAllowanceTracker.Shared.Enums;
 using StudentAllowanceTracker.Client.DTOs;
 
-namespace StudentAllowanceTracker.Client.Components.Dialogs
+namespace StudentAllowanceTracker.Client.Components.Dialogs.User
 {
     public class AllowanceDialogBase: LayoutComponentBase
     {

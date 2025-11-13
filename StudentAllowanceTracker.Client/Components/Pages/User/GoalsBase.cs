@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using StudentAllowanceTracker.Client.Components.Dialogs;
+using StudentAllowanceTracker.Client.Components.Dialogs.User ;
 using StudentAllowanceTracker.Client.DTOs;
 using StudentAllowanceTracker.Client.Services.Interfaces;
 
