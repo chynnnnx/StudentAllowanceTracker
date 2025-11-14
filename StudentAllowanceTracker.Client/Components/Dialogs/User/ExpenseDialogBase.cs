@@ -2,6 +2,7 @@
 using MudBlazor;
 using StudentAllowanceTracker.Client.Services.Interfaces;
 using StudentAllowanceTracker.Client.DTOs;
+using StudentAllowanceTracker.Shared.Enums;
 namespace StudentAllowanceTracker.Client.Components.Dialogs.User
 {
     public class ExpenseDialogBase: LayoutComponentBase
@@ -10,8 +11,11 @@ namespace StudentAllowanceTracker.Client.Components.Dialogs.User
         [Inject] protected ISnackbar Snackbar { get; set; } = default!;
         [Inject] protected IExpenseService ExpenseService { get; set; } = default!;
         [Inject] protected IAllowanceService AllowanceService { get; set; } = default!;
+        [Inject] protected ICategoryService CategoryService { get; set; } = default!;
 
         [Parameter] public ExpenseDTO? Expense { get; set; }
+        protected List<CategoryDTO> categories = new();
+
 
         protected string description = string.Empty;
         protected decimal amount;
@@ -27,22 +31,16 @@ namespace StudentAllowanceTracker.Client.Components.Dialogs.User
         protected record CategoryItem(string Name, string Icon, string Color);
 
 
-        protected List<CategoryItem> categories = new()
-    {
-        new("Food", Icons.Material.Filled.Restaurant, "hsl(25, 95%, 53%)"),
-        new("Transportation", Icons.Material.Filled.DirectionsBus, "hsl(217, 91%, 60%)"),
-        new("Education", Icons.Material.Filled.School, "hsl(162, 86.6%, 32.2%)"),
-        new("Entertainment", Icons.Material.Filled.Movie, "hsl(291, 47%, 51%)"),
-        new("Shopping", Icons.Material.Filled.ShoppingBag, "hsl(340, 82%, 52%)"),
-        new("Bills", Icons.Material.Filled.Receipt, "hsl(45, 93%, 47%)"),
-        new("Healthcare", Icons.Material.Filled.LocalHospital, "hsl(4, 90%, 58%)"),
-        new("Other", Icons.Material.Filled.Category, "hsl(0, 0%, 52.2%)")
-    };
+    
 
         protected override async Task OnInitializedAsync()
         {
+            // Load allowances
             allowances = await AllowanceService.GetAllowanceByUser();
             totalAllowance = allowances.Sum(a => a.Amount);
+
+            // Load categories from CategoryService
+            await LoadCategories();
 
             if (IsEditMode && Expense != null)
             {
@@ -52,10 +50,34 @@ namespace StudentAllowanceTracker.Client.Components.Dialogs.User
                 date = Expense.Date;
                 selectedAllowanceId = Expense.AllowanceID;
 
-                if (!categories.Any(c => c.Name == Expense.Category))
+                if (!categories.Any(c => c.CategoryName == Expense.Category))
                     customCategory = Expense.Category;
             }
         }
+
+        private async Task LoadCategories()
+        {
+            try
+            {
+                categories = await CategoryService.GetAllCategories();
+
+                // Ensure "Other" option exists for custom categories
+                if (!categories.Any(c => c.CategoryName == "Other"))
+                {
+                    categories.Add(new CategoryDTO
+                    {
+                        CategoryID = Guid.Empty,
+                        CategoryName = "Other",
+                        Type = CategoryType.Needs, // type doesn’t matter here
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Failed to load categories: {ex.Message}", Severity.Error);
+            }
+        }
+
 
         protected async Task Submit()
         {

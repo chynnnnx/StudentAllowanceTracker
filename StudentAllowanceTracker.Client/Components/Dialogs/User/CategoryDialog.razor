@@ -1,0 +1,172 @@
+﻿@using StudentAllowanceTracker.Client.DTOs
+@using StudentAllowanceTracker.Shared.Enums
+
+<MudDialog>
+    <TitleContent>
+        <div class="flex items-center gap-3">
+            <MudIcon Icon="@(IsEditing ? Icons.Material.Filled.Edit : Icons.Material.Filled.Add)"
+                     Style="color: hsl(162, 86.6%, 32.2%); font-size: 1.75rem;" />
+            <MudText Typo="Typo.h6" Class="font-bold text-gray-900">
+                @(IsEditing ? "Edit Category" : "Add New Category")
+            </MudText>
+        </div>
+    </TitleContent>
+
+    <DialogContent>
+        <div class="space-y-5 pt-2">
+            <!-- Category Name -->
+            <MudTextField @bind-Value="CategoryForm.CategoryName"
+                          Label="Category Name"
+                          Variant="Variant.Outlined"
+                          Required="true"
+                          Placeholder="e.g., Groceries, Entertainment"
+                          HelperText="Give your category a descriptive name"
+                          FullWidth="true" />
+
+            <!-- Category Type -->
+            <div>
+                <MudText Typo="Typo.body2" Class="text-gray-700 mb-3 font-medium">
+                    Category Type <span class="text-red-500">*</span>
+                </MudText>
+                <div class="grid grid-cols-3 gap-3">
+                    <!-- Needs -->
+                    <MudPaper Class="p-4 cursor-pointer transition-all border-2"
+                              Style="@GetTypeCardStyle(CategoryType.Needs)"
+                              Elevation="0"
+                              @onclick="() => CategoryForm.Type = CategoryType.Needs">
+                        <div class="text-center">
+                            <MudIcon Icon="@Icons.Material.Filled.Home"
+                                     Style="@GetTypeIconStyle(CategoryType.Needs)"
+                                     Class="mb-2" />
+                            <MudText Typo="Typo.body2" Class="font-semibold text-gray-900">Needs</MudText>
+                            <MudText Typo="Typo.caption" Class="text-gray-500">50%</MudText>
+                        </div>
+                    </MudPaper>
+
+                    <!-- Wants -->
+                    <MudPaper Class="p-4 cursor-pointer transition-all border-2"
+                              Style="@GetTypeCardStyle(CategoryType.Wants)"
+                              Elevation="0"
+                              @onclick="() => CategoryForm.Type = CategoryType.Wants">
+                        <div class="text-center">
+                            <MudIcon Icon="@Icons.Material.Filled.Favorite"
+                                     Style="@GetTypeIconStyle(CategoryType.Wants)"
+                                     Class="mb-2" />
+                            <MudText Typo="Typo.body2" Class="font-semibold text-gray-900">Wants</MudText>
+                            <MudText Typo="Typo.caption" Class="text-gray-500">30%</MudText>
+                        </div>
+                    </MudPaper>
+
+                    <!-- Savings -->
+                    <MudPaper Class="p-4 cursor-pointer transition-all border-2"
+                              Style="@GetTypeCardStyle(CategoryType.Savings)"
+                              Elevation="0"
+                              @onclick="() => CategoryForm.Type = CategoryType.Savings">
+                        <div class="text-center">
+                            <MudIcon Icon="@Icons.Material.Filled.Savings"
+                                     Style="@GetTypeIconStyle(CategoryType.Savings)"
+                                     Class="mb-2" />
+                            <MudText Typo="Typo.body2" Class="font-semibold text-gray-900">Savings</MudText>
+                            <MudText Typo="Typo.caption" Class="text-gray-500">20%</MudText>
+                        </div>
+                    </MudPaper>
+                </div>
+                <MudText Typo="Typo.caption" Class="text-gray-500 mt-2">
+                    Choose based on the 50/30/20 budgeting rule
+                </MudText>
+            </div>
+
+            <!-- Budget Amount -->
+            <div>
+                <MudNumericField @bind-Value="CategoryForm.BudgetAmount"
+                                 Label="Monthly Budget (Optional)"
+                                 Variant="Variant.Outlined"
+                                 Min="0m"
+                                 Format="N2"
+                                 Adornment="Adornment.Start"
+                                 AdornmentText="₱"
+                                 Placeholder="0.00"
+                                 HelperText="Set a monthly spending limit for this category"
+                                 FullWidth="true" />
+            </div>
+        </div>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="Cancel"
+                   Variant="Variant.Text"
+                   Class="text-gray-600 font-medium"
+                   Style="text-transform: none;">
+            Cancel
+        </MudButton>
+        <MudButton OnClick="Submit"
+                   Variant="Variant.Filled"
+                   Disabled="@(!IsFormValid())"
+                   Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); color: white; text-transform: none;"
+                   Class="px-6 font-medium">
+            @(IsEditing ? "Update Category" : "Create Category")
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter]
+    public CategoryDTO CategoryForm { get; set; } = new();
+
+    [Parameter]
+    public bool IsEditing { get; set; } = false;
+
+    [Parameter]
+    public EventCallback<CategoryDTO> OnSubmit { get; set; }
+
+    private void Submit()
+    {
+        if (IsFormValid())
+        {
+            MudDialog.Close(DialogResult.Ok(CategoryForm));
+        }
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    private bool IsFormValid()
+    {
+        return !string.IsNullOrWhiteSpace(CategoryForm.CategoryName);
+    }
+
+    private string GetTypeCardStyle(CategoryType type)
+    {
+        var isSelected = CategoryForm.Type == type;
+        var (color, _, bgColor) = GetTypeStyle(type);
+
+        if (isSelected)
+        {
+            return $"border-color: {color}; background-color: {bgColor}; border-radius: 0.75rem;";
+        }
+        return $"border-color: hsl(0, 0%, 85%); background-color: white; border-radius: 0.75rem;";
+    }
+
+    private string GetTypeIconStyle(CategoryType type)
+    {
+        var isSelected = CategoryForm.Type == type;
+        var (color, _, _) = GetTypeStyle(type);
+
+        return $"color: {color}; font-size: 2rem; opacity: {(isSelected ? "1" : "0.4")};";
+    }
+
+    private (string color, string icon, string bgColor) GetTypeStyle(CategoryType type)
+    {
+        return type switch
+        {
+            CategoryType.Needs => ("hsl(162, 86.6%, 32.2%)", Icons.Material.Filled.Home, "hsl(162, 41.8%, 95%)"),
+            CategoryType.Wants => ("hsl(280, 86.6%, 60%)", Icons.Material.Filled.Favorite, "hsl(280, 41.8%, 95%)"),
+            CategoryType.Savings => ("hsl(210, 86.6%, 50%)", Icons.Material.Filled.Savings, "hsl(210, 41.8%, 95%)"),
+            _ => ("hsl(162, 86.6%, 32.2%)", Icons.Material.Filled.Category, "hsl(162, 41.8%, 95%)")
+        };
+    }
+}

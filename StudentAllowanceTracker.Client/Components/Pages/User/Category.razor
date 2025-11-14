@@ -1,12 +1,9 @@
 ﻿@page "/categories"
-@using StudentAllowanceTracker.Client.DTOs
-@using StudentAllowanceTracker.Shared.Enums
-@inject ICategoryService CategoryService
-@inject ISnackbar Snackbar
+@inherits CategoryBase
 
-<div class="min-h-screen p-6" style="background: linear-gradient(135deg, hsl(162, 41.8%, 97%) 0%, hsl(162, 30%, 95%) 100%);">
+<div class="min-h-screen py-8 px-4 sm:px-6 lg:px-8" style="background: linear-gradient(135deg, hsl(162, 41.8%, 97%) 0%, hsl(162, 30%, 95%) 100%);">
     <div class="max-w-7xl mx-auto">
-        
+
         <!-- Page Header -->
         <div class="flex items-center justify-between mb-8">
             <div>
@@ -23,25 +20,27 @@
         </div>
 
         <!-- Budget Overview Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             <!-- Needs (50%) -->
-            <MudPaper Class="p-5 border-2"
+            <MudPaper Class="p-6 border-2 transition-all hover:shadow-lg"
                       Style="border-color: hsl(162, 86.6%, 32.2%); border-radius: 1rem; background: linear-gradient(135deg, hsl(162, 41.8%, 97%) 0%, white 100%);"
                       Elevation="0">
                 <div class="flex items-center justify-between gap-4">
-                    <div class="flex items-center gap-3">
-                        <MudIcon Icon="@Icons.Material.Filled.Home" 
-                                 Style="color: hsl(162, 86.6%, 32.2%); font-size: 2.5rem;" />
+                    <div class="flex items-center gap-4">
+                        <div class="p-3 rounded-xl" style="background-color: hsl(162, 41.8%, 95%);">
+                            <MudIcon Icon="@Icons.Material.Filled.Home"
+                                     Style="color: hsl(162, 86.6%, 32.2%); font-size: 2rem;" />
+                        </div>
                         <div>
-                            <MudText Typo="Typo.h6" Class="font-bold text-gray-900">Needs</MudText>
+                            <MudText Typo="Typo.h6" Class="font-bold text-gray-900 mb-1">Needs</MudText>
                             <MudText Typo="Typo.caption" Class="text-gray-500">50% of budget</MudText>
                         </div>
                     </div>
                     <div class="text-right">
-                        <MudText Typo="Typo.h5" Class="font-bold" Style="color: hsl(162, 86.6%, 32.2%);">
+                        <MudText Typo="Typo.h5" Class="font-bold mb-1" Style="color: hsl(162, 86.6%, 32.2%);">
                             @needsCategories.Count
                         </MudText>
-                        <MudText Typo="Typo.caption" Class="text-gray-600">
+                        <MudText Typo="Typo.caption" Class="text-gray-600 font-medium">
                             ₱@needsTotal.ToString("N0")
                         </MudText>
                     </div>
@@ -49,23 +48,25 @@
             </MudPaper>
 
             <!-- Wants (30%) -->
-            <MudPaper Class="p-5 border-2"
+            <MudPaper Class="p-6 border-2 transition-all hover:shadow-lg"
                       Style="border-color: hsl(280, 86.6%, 60%); border-radius: 1rem; background: linear-gradient(135deg, hsl(280, 41.8%, 97%) 0%, white 100%);"
                       Elevation="0">
                 <div class="flex items-center justify-between gap-4">
-                    <div class="flex items-center gap-3">
-                        <MudIcon Icon="@Icons.Material.Filled.Favorite" 
-                                 Style="color: hsl(280, 86.6%, 60%); font-size: 2.5rem;" />
+                    <div class="flex items-center gap-4">
+                        <div class="p-3 rounded-xl" style="background-color: hsl(280, 41.8%, 95%);">
+                            <MudIcon Icon="@Icons.Material.Filled.Favorite"
+                                     Style="color: hsl(280, 86.6%, 60%); font-size: 2rem;" />
+                        </div>
                         <div>
-                            <MudText Typo="Typo.h6" Class="font-bold text-gray-900">Wants</MudText>
+                            <MudText Typo="Typo.h6" Class="font-bold text-gray-900 mb-1">Wants</MudText>
                             <MudText Typo="Typo.caption" Class="text-gray-500">30% of budget</MudText>
                         </div>
                     </div>
                     <div class="text-right">
-                        <MudText Typo="Typo.h5" Class="font-bold" Style="color: hsl(280, 86.6%, 60%);">
+                        <MudText Typo="Typo.h5" Class="font-bold mb-1" Style="color: hsl(280, 86.6%, 60%);">
                             @wantsCategories.Count
                         </MudText>
-                        <MudText Typo="Typo.caption" Class="text-gray-600">
+                        <MudText Typo="Typo.caption" Class="text-gray-600 font-medium">
                             ₱@wantsTotal.ToString("N0")
                         </MudText>
                     </div>
@@ -73,23 +74,25 @@
             </MudPaper>
 
             <!-- Savings (20%) -->
-            <MudPaper Class="p-5 border-2"
+            <MudPaper Class="p-6 border-2 transition-all hover:shadow-lg"
                       Style="border-color: hsl(210, 86.6%, 50%); border-radius: 1rem; background: linear-gradient(135deg, hsl(210, 41.8%, 97%) 0%, white 100%);"
                       Elevation="0">
                 <div class="flex items-center justify-between gap-4">
-                    <div class="flex items-center gap-3">
-                        <MudIcon Icon="@Icons.Material.Filled.Savings" 
-                                 Style="color: hsl(210, 86.6%, 50%); font-size: 2.5rem;" />
+                    <div class="flex items-center gap-4">
+                        <div class="p-3 rounded-xl" style="background-color: hsl(210, 41.8%, 95%);">
+                            <MudIcon Icon="@Icons.Material.Filled.Savings"
+                                     Style="color: hsl(210, 86.6%, 50%); font-size: 2rem;" />
+                        </div>
                         <div>
-                            <MudText Typo="Typo.h6" Class="font-bold text-gray-900">Savings</MudText>
+                            <MudText Typo="Typo.h6" Class="font-bold text-gray-900 mb-1">Savings</MudText>
                             <MudText Typo="Typo.caption" Class="text-gray-500">20% of budget</MudText>
                         </div>
                     </div>
                     <div class="text-right">
-                        <MudText Typo="Typo.h5" Class="font-bold" Style="color: hsl(210, 86.6%, 50%);">
+                        <MudText Typo="Typo.h5" Class="font-bold mb-1" Style="color: hsl(210, 86.6%, 50%);">
                             @savingsCategories.Count
                         </MudText>
-                        <MudText Typo="Typo.caption" Class="text-gray-600">
+                        <MudText Typo="Typo.caption" Class="text-gray-600 font-medium">
                             ₱@savingsTotal.ToString("N0")
                         </MudText>
                     </div>
@@ -100,81 +103,118 @@
         <!-- Categories by Type -->
         @foreach (var type in Enum.GetValues<CategoryType>())
         {
-            var typeCategories = GetCategoriesByType(type);
+            var typeCategories = GetPagedCategories(type);
             var (color, icon, bgColor) = GetTypeStyle(type);
 
-            <MudPaper Class="p-6 mb-6" 
-                      Style="border-radius: 1rem;"
-                      Elevation="1">
-                <div class="flex items-center gap-3 mb-6">
-                    <MudIcon Icon="@icon" Style="@($"color: {color}; font-size: 1.75rem;")" />
-                    <MudText Typo="Typo.h5" Class="font-bold text-gray-900">@type.ToString()</MudText>
-                    <MudChip T="string"Size="Size.Small" Style="@($"background-color: {bgColor}; color: {color};")">
-                        @typeCategories.Count
+            <MudPaper Class="p-6 mb-6 shadow-sm"
+                      Style="border-radius: 1rem; background: white;"
+                      Elevation="0">
+                <div class="flex items-center gap-3 mb-6 pb-4" style="border-bottom: 2px solid hsl(0, 0%, 95%);">
+                    <div class="p-2 rounded-lg" style="@($"background-color: {bgColor};")">
+                        <MudIcon Icon="@icon" Style="@($"color: {color}; font-size: 1.5rem;")" />
+                    </div>
+                    <MudText Typo="Typo.h5" Class="font-bold text-gray-900 flex-1">@type.ToString()</MudText>
+                    <MudChip T="string" Size="Size.Medium" Style="@($"background-color: {bgColor}; color: {color}; font-weight: 600;")">
+                        @GetCategoriesByType(type).Count @(GetCategoriesByType(type).Count == 1 ? "category" : "categories")
                     </MudChip>
                 </div>
 
                 @if (typeCategories.Any())
                 {
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                         @foreach (var category in typeCategories)
                         {
-                            <MudPaper Class="p-5 border-2 transition-all hover:shadow-md"
-                                      Style="@($"border-color: {color}; border-radius: 0.75rem;")"
+                            <MudPaper Class="p-5 border-2 transition-all hover:shadow-lg hover:-translate-y-1"
+                                      Style="@($"border-color: {color}; border-radius: 0.75rem; background: white;")"
                                       Elevation="0">
-                                <div class="flex items-start justify-between mb-3 gap-3">
-                                    <div class="flex-1">
-                                        <MudText Typo="Typo.subtitle1" Class="font-semibold text-gray-900 mb-1">
+                                <div class="flex items-start justify-between mb-4 gap-3">
+                                    <div class="flex-1 min-w-0">
+                                        <MudText Typo="Typo.subtitle1" Class="font-bold text-gray-900 mb-2 truncate">
                                             @category.CategoryName
                                         </MudText>
                                         @if (category.BudgetAmount.HasValue)
                                         {
-                                            <MudText Typo="Typo.body2" Class="text-gray-600">
-                                                Budget: <span class="font-bold" style="@($"color: {color};")">₱@category.BudgetAmount.Value.ToString("N2")</span>
-                                            </MudText>
+                                            <div class="flex items-baseline gap-2">
+                                                <MudText Typo="Typo.caption" Class="text-gray-500">Budget:</MudText>
+                                                <MudText Typo="Typo.body2" Class="font-bold" style="@($"color: {color};")">
+                                                    ₱@category.BudgetAmount.Value.ToString("N2")
+                                                </MudText>
+                                            </div>
                                         }
                                         else
                                         {
-                                            <MudText Typo="Typo.body2" Class="text-gray-500 italic">
+                                            <MudText Typo="Typo.caption" Class="text-gray-400 italic">
                                                 No budget set
                                             </MudText>
                                         }
                                     </div>
-                                    <MudChip T="string"Size="Size.Small" 
-                                             Style="@($"background-color: {bgColor}; color: {color};")"
-                                             Class="font-medium">
+                                    <MudChip T="string" Size="Size.Small"
+                                             Style="@($"background-color: {bgColor}; color: {color}; font-weight: 500; flex-shrink: 0;")"
+                                             Class="px-3">
                                         @type.ToString()
                                     </MudChip>
                                 </div>
 
-                                <div class="flex items-center gap-2 pt-3" style="border-top: 1px solid hsl(0, 0%, 90%);">
+                                <div class="flex items-center gap-2 pt-4 mt-2" style="border-top: 1px solid hsl(0, 0%, 92%);">
                                     <MudIconButton Icon="@Icons.Material.Filled.Edit"
-                                                   Size="Size.Small"
+                                                   Size="Size.Medium"
                                                    Style="@($"color: {color};")"
+                                                   Class="hover:bg-opacity-10"
                                                    OnClick="@(() => EditCategory(category))" />
                                     <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                                   Size="Size.Small"
+                                                   Size="Size.Medium"
                                                    Style="color: hsl(0, 84.2%, 60.2%);"
+                                                   Class="hover:bg-opacity-10"
                                                    OnClick="@(() => DeleteCategory(category))" />
                                 </div>
                             </MudPaper>
                         }
                     </div>
+
+                    @if (GetTotalPages(type) > 1)
+                    {
+                        <div class="flex justify-center items-center gap-4 mt-6 pt-6" style="border-top: 1px solid hsl(0, 0%, 92%);">
+                            <MudButton Variant="Variant.Outlined"
+                                       Disabled="@(currentPages[type] == 0)"
+                                       OnClick="@(() => ChangePage(type, currentPages[type] - 1))"
+                                       Style="@($"border-color: {color}; color: {color}; text-transform: none;")"
+                                       Class="px-6">
+                                Previous
+                            </MudButton>
+
+                            <MudText Typo="Typo.body2" Class="font-medium text-gray-600 px-4">
+                                Page @(currentPages[type] + 1) of @GetTotalPages(type)
+                            </MudText>
+
+                            <MudButton Variant="Variant.Outlined"
+                                       Disabled="@(currentPages[type] + 1 >= GetTotalPages(type))"
+                                       OnClick="@(() => ChangePage(type, currentPages[type] + 1))"
+                                       Style="@($"border-color: {color}; color: {color}; text-transform: none;")"
+                                       Class="px-6">
+                                Next
+                            </MudButton>
+                        </div>
+                    }
                 }
                 else
                 {
-                    <MudPaper Class="p-8 text-center border-2 border-dashed"
+                    <MudPaper Class="p-10 text-center border-2 border-dashed transition-all hover:border-solid"
                               Style="@($"border-color: {color}; border-radius: 0.75rem; background-color: {bgColor};")"
                               Elevation="0">
-                        <MudIcon Icon="@icon" Class="mb-3" Style="@($"color: {color}; font-size: 3rem; opacity: 0.4;")" />
-                        <MudText Typo="Typo.body1" Class="text-gray-500 mb-3">
+                        <div class="p-4 rounded-full inline-block mb-4" style="@($"background-color: white;")">
+                            <MudIcon Icon="@icon" Style="@($"color: {color}; font-size: 3rem; opacity: 0.6;")" />
+                        </div>
+                        <MudText Typo="Typo.h6" Class="text-gray-700 mb-2 font-semibold">
                             No @type.ToString().ToLower() categories yet
                         </MudText>
-                        <MudButton Variant="Variant.Text"
+                        <MudText Typo="Typo.body2" Class="text-gray-500 mb-4">
+                            Start organizing your expenses by adding a category
+                        </MudText>
+                        <MudButton Variant="Variant.Filled"
                                    StartIcon="@Icons.Material.Filled.Add"
                                    OnClick="OpenAddDialog"
-                                   Style="@($"color: {color}; text-transform: none;")"
-                                   Class="font-medium">
+                                   Style="@($"background-color: {color}; color: white; text-transform: none;")"
+                                   Class="font-medium px-6 py-2 shadow-md">
                             Add @type.ToString() Category
                         </MudButton>
                     </MudPaper>
@@ -183,167 +223,3 @@
         }
     </div>
 </div>
-
-<!-- Add/Edit Dialog -->
-<MudDialog @bind-IsVisible="showDialog" Options="dialogOptions">
-    <TitleContent>
-        <MudText Typo="Typo.h6" Class="font-bold">
-            @(isEditing ? "Edit Category" : "Add New Category")
-        </MudText>
-    </TitleContent>
-    <DialogContent>
-        <div class="space-y-4">
-            <MudTextField @bind-Value="categoryForm.CategoryName"
-                          Label="Category Name"
-                          Variant="Variant.Outlined"
-                          Required="true"
-                          HelperText="e.g., Groceries, Entertainment, Emergency Fund" />
-
-            <MudSelect @bind-Value="categoryForm.Type"
-                       Label="Category Type"
-                       Variant="Variant.Outlined"
-                       Required="true"
-                       HelperText="Choose based on 50/30/20 rule">
-                @foreach (var type in Enum.GetValues<CategoryType>())
-                {
-                    <MudSelectItem Value="@type">@type.ToString()</MudSelectItem>
-                }
-            </MudSelect>
-
-            <MudNumericField @bind-Value="categoryForm.BudgetAmount"
-                             Label="Budget Amount (Optional)"
-                             Variant="Variant.Outlined"
-                             Min="0m"
-                             Format="N2"
-                             Adornment="Adornment.Start"
-                             AdornmentText="₱"
-                             HelperText="Set a monthly budget for this category" />
-        </div>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="CloseDialog"
-                   Variant="Variant.Text"
-                   Class="text-gray-600">
-            Cancel
-        </MudButton>
-        <MudButton OnClick="SaveCategory"
-                   Variant="Variant.Filled"
-                   Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); color: white; text-transform: none;">
-            @(isEditing ? "Update" : "Create")
-        </MudButton>
-    </DialogActions>
-</MudDialog>
-
-@code {
-    private List<CategoryDTO> categories = new();
-    private List<CategoryDTO> needsCategories => categories.Where(c => c.Type == CategoryType.Needs).ToList();
-    private List<CategoryDTO> wantsCategories => categories.Where(c => c.Type == CategoryType.Wants).ToList();
-    private List<CategoryDTO> savingsCategories => categories.Where(c => c.Type == CategoryType.Savings).ToList();
-    
-    private decimal needsTotal => needsCategories.Sum(c => c.BudgetAmount ?? 0);
-    private decimal wantsTotal => wantsCategories.Sum(c => c.BudgetAmount ?? 0);
-    private decimal savingsTotal => savingsCategories.Sum(c => c.BudgetAmount ?? 0);
-
-    private bool showDialog = false;
-    private bool isEditing = false;
-    private CategoryDTO categoryForm = new();
-    
-    private DialogOptions dialogOptions = new() 
-    { 
-        MaxWidth = MaxWidth.Small, 
-        FullWidth = true,
-        CloseButton = true
-    };
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadCategories();
-    }
-
-    private async Task LoadCategories()
-    {
-        categories = await CategoryService.GetAllCategories();
-    }
-
-    private List<CategoryDTO> GetCategoriesByType(CategoryType type)
-    {
-        return categories.Where(c => c.Type == type).ToList();
-    }
-
-    private (string color, string icon, string bgColor) GetTypeStyle(CategoryType type)
-    {
-        return type switch
-        {
-            CategoryType.Needs => ("hsl(162, 86.6%, 32.2%)", Icons.Material.Filled.Home, "hsl(162, 41.8%, 95%)"),
-            CategoryType.Wants => ("hsl(280, 86.6%, 60%)", Icons.Material.Filled.Favorite, "hsl(280, 41.8%, 95%)"),
-            CategoryType.Savings => ("hsl(210, 86.6%, 50%)", Icons.Material.Filled.Savings, "hsl(210, 41.8%, 95%)"),
-            _ => ("hsl(162, 86.6%, 32.2%)", Icons.Material.Filled.Category, "hsl(162, 41.8%, 95%)")
-        };
-    }
-
-    private void OpenAddDialog()
-    {
-        isEditing = false;
-        categoryForm = new CategoryDTO();
-        showDialog = true;
-    }
-
-    private void EditCategory(CategoryDTO category)
-    {
-        isEditing = true;
-        categoryForm = new CategoryDTO
-        {
-            CategoryID = category.CategoryID,
-            CategoryName = category.CategoryName,
-            Type = category.Type,
-            BudgetAmount = category.BudgetAmount
-        };
-        showDialog = true;
-    }
-
-    private async Task SaveCategory()
-    {
-        bool success;
-        
-        if (isEditing)
-        {
-            success = await CategoryService.UpdateCategory(categoryForm.CategoryID, categoryForm);
-        }
-        else
-        {
-            success = await CategoryService.AddCategory(categoryForm);
-        }
-
-        if (success)
-        {
-            Snackbar.Add(isEditing ? "Category updated successfully!" : "Category created successfully!", Severity.Success);
-            await LoadCategories();
-            CloseDialog();
-        }
-        else
-        {
-            Snackbar.Add("Failed to save category", Severity.Error);
-        }
-    }
-
-    private async Task DeleteCategory(CategoryDTO category)
-    {
-        var success = await CategoryService.DeleteCategory(category.CategoryID);
-        
-        if (success)
-        {
-            Snackbar.Add("Category deleted successfully!", Severity.Success);
-            await LoadCategories();
-        }
-        else
-        {
-            Snackbar.Add("Failed to delete category", Severity.Error);
-        }
-    }
-
-    private void CloseDialog()
-    {
-        showDialog = false;
-        categoryForm = new();
-    }
-}
