@@ -1,29 +1,86 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using StudentAllowanceTracker.Client.DTOs;
+using StudentAllowanceTracker.Client.Services.Interfaces;
 using StudentAllowanceTracker.Shared.Enums;
 
 namespace StudentAllowanceTracker.Client.Components.Dialogs.User
 {
-    public class CategoryDialogBase: LayoutComponentBase
-
+    public class CategoryDialogBase : LayoutComponentBase
     {
-        [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
+        [CascadingParameter] protected IMudDialogInstance MudDialog { get; set; } = default!;
+        [Inject] protected ICategoryService CategoryService { get; set; } = default!;
+        [Inject] protected ISnackbar Snackbar { get; set; } = default!;
 
-        [Parameter]
-        public CategoryDTO CategoryForm { get; set; } = new();
+        [Parameter] public CategoryDTO? Category { get; set; }
 
-        [Parameter]
-        public bool IsEditing { get; set; } = false;
+        protected CategoryDTO CategoryForm { get; set; } = new();
+        protected bool IsEditing => Category != null;
+        protected bool isSaving = false;
 
-        [Parameter]
-        public EventCallback<CategoryDTO> OnSubmit { get; set; }
-
-        protected void Submit()
+        protected override void OnInitialized()
         {
-            if (IsFormValid())
+            if (IsEditing && Category != null)
             {
-                MudDialog.Close(DialogResult.Ok(CategoryForm));
+                // Copy values from the passed category
+                CategoryForm = new CategoryDTO
+                {
+                    CategoryID = Category.CategoryID,
+                    UserID = Category.UserID,
+                    CategoryName = Category.CategoryName,
+                    Type = Category.Type,
+                    BudgetAmount = Category.BudgetAmount
+                };
+            }
+            else
+            {
+                // New category
+                CategoryForm = new CategoryDTO
+                {
+                    Type = CategoryType.Needs
+                };
+            }
+        }
+
+        protected async Task Submit()
+        {
+            if (!IsFormValid())
+            {
+                Snackbar.Add("Please enter a category name", Severity.Error);
+                return;
+            }
+
+            isSaving = true;
+            bool success = false;
+
+            try
+            {
+                if (IsEditing)
+                {
+                    success = await CategoryService.UpdateCategory(CategoryForm.CategoryID, CategoryForm);
+                }
+                else
+                {
+                    success = await CategoryService.AddCategory(CategoryForm);
+                }
+
+                if (success)
+                {
+                    Snackbar.Add(IsEditing ? "Category updated successfully" : "Category added successfully", Severity.Success);
+                    MudDialog.Close(DialogResult.Ok(true));
+                }
+                else
+                {
+                    Snackbar.Add("Failed to save category", Severity.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            }
+            finally
+            {
+                isSaving = false;
             }
         }
 
@@ -53,7 +110,6 @@ namespace StudentAllowanceTracker.Client.Components.Dialogs.User
         {
             var isSelected = CategoryForm.Type == type;
             var (color, _, _) = GetTypeStyle(type);
-
             return $"color: {color}; font-size: 2rem; opacity: {(isSelected ? "1" : "0.4")};";
         }
 
@@ -67,6 +123,5 @@ namespace StudentAllowanceTracker.Client.Components.Dialogs.User
                 _ => ("hsl(162, 86.6%, 32.2%)", Icons.Material.Filled.Category, "hsl(162, 41.8%, 95%)")
             };
         }
-
     }
 }

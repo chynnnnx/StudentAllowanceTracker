@@ -14,5 +14,17 @@ namespace StudentAllowanceTracker.Client.DTOs
         public DateTime? EndDate { get; set; }
 
         public AllowanceType Type { get; set; }
-    }
+        public override string ToString()
+        {
+            return $"₱{Amount:N2} — {StartDate:MMM dd, yyyy}";
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is AllowanceDTO dto && AllowanceID == dto.AllowanceID;
+        }
+
+        public override int GetHashCode() => AllowanceID.GetHashCode();
+    
+}
 }

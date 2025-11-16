@@ -10,5 +10,17 @@ namespace StudentAllowanceTracker.Client.DTOs
         public string CategoryName { get; set; } = string.Empty;
         public CategoryType Type { get; set; } = CategoryType.Needs;  // enum for 50/30/20
         public decimal? BudgetAmount { get; set; }
+
+        public override string ToString()
+        {
+            return CategoryName;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is CategoryDTO dto && CategoryID == dto.CategoryID;
+        }
+
+        public override int GetHashCode() => CategoryID.GetHashCode();
     }
 }

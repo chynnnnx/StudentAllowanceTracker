@@ -29,11 +29,22 @@
         <!-- Summary Cards -->
         <div class="grid gap-4 mb-6" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
 
-            <!-- This Month -->
+            <!-- Total Remaining -->
             <MudCard Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); border-radius: 1rem; padding: 1.5rem;">
                 <MudCardContent Style="padding: 0;">
-                    <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.9); margin-bottom: 0.5rem;">This Month</MudText>
-                    <MudText Typo="Typo.h4" Style="color: white; font-weight: 700;">₱@GetThisMonthTotal().ToString("N2")</MudText>
+                    <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.9); margin-bottom: 0.5rem;">Total Remaining</MudText>
+                    <MudText Typo="Typo.h4" Style="color: white; font-weight: 700;">₱@GetTotalRemaining().ToString("N2")</MudText>
+                    <MudText Typo="Typo.caption" Style="color: rgba(255,255,255,0.8); margin-top: 0.5rem;">
+                        of ₱@allowances.Sum(a => a.Amount).ToString("N2") total
+                    </MudText>
+                </MudCardContent>
+            </MudCard>
+
+            <!-- This Month -->
+            <MudCard Style="background-color: white; border: 2px solid hsl(162, 41.8%, 89.2%); border-radius: 1rem; padding: 1.5rem;">
+                <MudCardContent Style="padding: 0;">
+                    <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 52.2%); margin-bottom: 0.5rem;">This Month</MudText>
+                    <MudText Typo="Typo.h4" Style="color: hsl(0, 0%, 10.6%); font-weight: 700;">₱@GetThisMonthTotal().ToString("N2")</MudText>
                 </MudCardContent>
             </MudCard>
 
@@ -70,51 +81,106 @@
                     @foreach (var allowance in GetFilteredAllowances())
                     {
                         var active = IsActive(allowance);
+                        var remaining = GetAllowanceRemaining(allowance.AllowanceID);
+                        var spent = GetAllowanceSpent(allowance.AllowanceID);
+                        var percentage = GetPercentageUsed(allowance.AllowanceID);
                         var bgColor = active ? "hsl(103, 96.4%, 89%)" : "hsl(0, 0%, 96%)";
                         var borderColor = active ? "hsl(162, 86.6%, 32.2%)" : "hsl(0, 0%, 81.2%)";
 
-                        <div style="background-color: @bgColor; border-left: 4px solid @borderColor; border-radius: 0.75rem; padding: 1rem; display: flex; align-items: center; justify-content: space-between;">
-                            <div class="flex items-center" style="gap: 1rem;">
-                                <MudIcon Icon="@GetFrequencyIcon(allowance.Type)"
-                                         Style="@GetIconStyle(active)" />
-                                <div>
-                                    <MudText Typo="Typo.body1" Style="color: hsl(0, 0%, 10.6%); font-weight: 500;">@allowance.Description</MudText>
-                                    <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 52.2%);">
-                                        @GetFrequencyLabel(allowance.Type) • @(active ? "Active" : "Ended")
-                                    </MudText>
-                                    @if (!active && allowance.EndDate.HasValue)
-                                    {
-                                        <MudText Typo="Typo.caption" Style="color: hsl(0, 0%, 71%);">
-                                            Ended: @allowance.EndDate.Value.ToString("MMM dd, yyyy")
+                        <div style="background-color: @bgColor; border-left: 4px solid @borderColor; border-radius: 0.75rem; padding: 1.5rem;">
+                            <div style="display: flex; align-items: start; justify-content: space-between; margin-bottom: 1rem;">
+                                <div class="flex items-center" style="gap: 1rem;">
+                                    <MudIcon Icon="@GetFrequencyIcon(allowance.Type)"
+                                             Style="@GetIconStyle(active)" />
+                                    <div>
+                                        <MudText Typo="Typo.body1" Style="color: hsl(0, 0%, 10.6%); font-weight: 500;">@allowance.Description</MudText>
+                                        <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 52.2%);">
+                                            @GetFrequencyLabel(allowance.Type) • @(active ? "Active" : "Ended")
                                         </MudText>
-                                    }
-                                    else if (active)
-                                    {
-                                        <MudText Typo="Typo.caption" Style="color: hsl(0, 0%, 71%);">
-                                            Started: @allowance.StartDate.ToString("MMM dd, yyyy")
+                                        @if (!active && allowance.EndDate.HasValue)
+                                        {
+                                            <MudText Typo="Typo.caption" Style="color: hsl(0, 0%, 71%);">
+                                                Ended: @allowance.EndDate.Value.ToString("MMM dd, yyyy")
+                                            </MudText>
+                                        }
+                                        else if (active)
+                                        {
+                                            <MudText Typo="Typo.caption" Style="color: hsl(0, 0%, 71%);">
+                                                Started: @allowance.StartDate.ToString("MMM dd, yyyy")
+                                            </MudText>
+                                        }
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="text-align: right;">
+                                        <MudText Typo="Typo.h6" Style="@GetAmountStyle(active)">
+                                            ₱@allowance.Amount.ToString("N2")
                                         </MudText>
-                                    }
+                                        <MudText Typo="Typo.caption" Style="color: hsl(0, 0%, 52.2%);">@GetFrequencyUnit(allowance.Type)</MudText>
+                                    </div>
+                                    <div style="display: flex; gap: 0.5rem;">
+                                        <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                                       Size="Size.Small"
+                                                       Style="color: hsl(162, 86.6%, 32.2%);"
+                                                       OnClick="@(() => OpenEditDialog(allowance))"
+                                                       Title="Edit allowance" />
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                       Size="Size.Small"
+                                                       Style="color: hsl(0, 84.2%, 60.2%);"
+                                                       OnClick="@(() => DeleteAllowance(allowance))"
+                                                       Title="Delete allowance" />
+                                    </div>
                                 </div>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 1rem;">
-                                <div style="text-align: right;">
-                                    <MudText Typo="Typo.h6" Style="@GetAmountStyle(active)">
-                                        ₱@allowance.Amount.ToString("N2")
-                                    </MudText>
-                                    <MudText Typo="Typo.caption" Style="color: hsl(0, 0%, 52.2%);">@GetFrequencyUnit(allowance.Type)</MudText>
+
+                            <!-- Balance Section -->
+                            <div style="background-color: white; border-radius: 0.5rem; padding: 1rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                                    <div>
+                                        <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 52.2%); margin-bottom: 0.25rem;">
+                                            @(spent > allowance.Amount ? "Overspent by" : "Balance")
+                                        </MudText>
+                                        <MudText Typo="Typo.h6" Style="@($"color: {GetBalanceTextColor(remaining, spent, allowance.Amount)}; font-weight: 600;")">
+                                            @if (spent > allowance.Amount)
+                                            {
+                                                <span>₱@((spent - allowance.Amount).ToString("N2"))</span>
+                                            }
+                                            else
+                                            {
+                                                <span>₱@remaining.ToString("N2")</span>
+                                            }
+                                        </MudText>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 52.2%); margin-bottom: 0.25rem;">Spent</MudText>
+                                        <MudText Typo="Typo.body1" Style="color: hsl(0, 0%, 10.6%); font-weight: 500;">
+                                            ₱@spent.ToString("N2")
+                                        </MudText>
+                                    </div>
+                                    <MudChip T="string"
+                                             Size="Size.Small"
+                                             Color="@GetBalanceColor(remaining, spent, allowance.Amount)"
+                                             Style="font-weight: 600;">
+                                        @percentage%
+                                    </MudChip>
                                 </div>
-                                <div style="display: flex; gap: 0.5rem;">
-                                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
-                                                   Size="Size.Small"
-                                                   Style="color: hsl(162, 86.6%, 32.2%);"
-                                                   OnClick="@(() => OpenEditDialog(allowance))"
-                                                   Title="Edit allowance" />
-                                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                                   Size="Size.Small"
-                                                   Style="color: hsl(0, 84.2%, 60.2%);"
-                                                   OnClick="@(() => DeleteAllowance(allowance))"
-                                                   Title="Delete allowance" />
-                                </div>
+                                <MudProgressLinear Color="@GetBalanceColor(remaining, spent, allowance.Amount)"
+                                                   Value="@percentage"
+                                                   Size="Size.Medium"
+                                                   Class="rounded" />
+
+                                @if (spent >= allowance.Amount)
+                                {
+                                    <MudAlert Severity="Severity.Error" Dense="true" Class="mt-2" NoIcon="false">
+                                        This allowance has been fully spent!
+                                    </MudAlert>
+                                }
+                                else if (remaining < 100)
+                                {
+                                    <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-2" NoIcon="false">
+                                        Running low! Less than ₱100 remaining.
+                                    </MudAlert>
+                                }
                             </div>
                         </div>
                     }

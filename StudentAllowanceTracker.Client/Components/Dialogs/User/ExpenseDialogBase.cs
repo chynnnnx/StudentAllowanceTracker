@@ -3,9 +3,10 @@ using MudBlazor;
 using StudentAllowanceTracker.Client.Services.Interfaces;
 using StudentAllowanceTracker.Client.DTOs;
 using StudentAllowanceTracker.Shared.Enums;
+
 namespace StudentAllowanceTracker.Client.Components.Dialogs.User
 {
-    public class ExpenseDialogBase: LayoutComponentBase
+    public class ExpenseDialogBase : LayoutComponentBase
     {
         [CascadingParameter] protected IMudDialogInstance MudDialog { get; set; } = null!;
         [Inject] protected ISnackbar Snackbar { get; set; } = default!;
@@ -14,141 +15,200 @@ namespace StudentAllowanceTracker.Client.Components.Dialogs.User
         [Inject] protected ICategoryService CategoryService { get; set; } = default!;
 
         [Parameter] public ExpenseDTO? Expense { get; set; }
+        protected DateTime? TempDate { get; set; } = DateTime.Today;
+
+        protected ExpenseDTO Model { get; set; } = new();
         protected List<CategoryDTO> categories = new();
+        protected List<AllowanceDTO> allowances = new();
+        protected List<ExpenseDTO> allExpenses = new();
+        protected AllowanceDTO? SelectedAllowance { get; set; }
 
-
-        protected string description = string.Empty;
-        protected decimal amount;
-        protected string category = "Food";
-        protected string customCategory = string.Empty;
-        protected DateTime? date = DateTime.Today;
+        protected decimal totalAllowance;
+        protected decimal totalAllowanceBalance; // Remaining balance after expenses
         protected bool isSaving;
         protected bool IsEditMode => Expense != null;
 
-        protected Guid selectedAllowanceId;
-        protected List<AllowanceDTO> allowances = new();
-        protected decimal totalAllowance;
-        protected record CategoryItem(string Name, string Icon, string Color);
+        protected CategoryType SelectedCategoryType { get; set; } = CategoryType.Needs;
+        protected CategoryDTO? SelectedCategory { get; set; }
 
+        // Budget tracking
+        protected decimal currentCategorySpending = 0;
+        protected bool showBudgetWarning = false;
+        protected string budgetWarningMessage = "";
 
-    
+        protected IEnumerable<CategoryDTO> FilteredCategories =>
+            categories.Where(c => c.Type == SelectedCategoryType);
 
         protected override async Task OnInitializedAsync()
         {
-            // Load allowances
+            // Load all data
             allowances = await AllowanceService.GetAllowanceByUser();
+            categories = await CategoryService.GetAllCategories();
+            allExpenses = await ExpenseService.GetExpensesByUser() ?? new List<ExpenseDTO>();
             totalAllowance = allowances.Sum(a => a.Amount);
 
-            // Load categories from CategoryService
-            await LoadCategories();
+            Model ??= new ExpenseDTO();
 
             if (IsEditMode && Expense != null)
             {
-                description = Expense.Description;
-                amount = Expense.Amount;
-                category = Expense.Category;
-                date = Expense.Date;
-                selectedAllowanceId = Expense.AllowanceID;
-
-                if (!categories.Any(c => c.CategoryName == Expense.Category))
-                    customCategory = Expense.Category;
-            }
-        }
-
-        private async Task LoadCategories()
-        {
-            try
-            {
-                categories = await CategoryService.GetAllCategories();
-
-                // Ensure "Other" option exists for custom categories
-                if (!categories.Any(c => c.CategoryName == "Other"))
+                Model = new ExpenseDTO
                 {
-                    categories.Add(new CategoryDTO
-                    {
-                        CategoryID = Guid.Empty,
-                        CategoryName = "Other",
-                        Type = CategoryType.Needs, // type doesn’t matter here
-                    });
+                    ExpenseID = Expense.ExpenseID,
+                    AllowanceID = Expense.AllowanceID,
+                    Amount = Expense.Amount,
+                    Description = Expense.Description,
+                    CategoryID = Expense.CategoryID,
+                    Date = Expense.Date
+                };
+
+                TempDate = Expense.Date;
+                SelectedAllowance = allowances.FirstOrDefault(a => a.AllowanceID == Expense.AllowanceID);
+                SelectedCategory = categories.FirstOrDefault(c => c.CategoryID == Expense.CategoryID);
+
+                if (SelectedCategory != null)
+                {
+                    SelectedCategoryType = SelectedCategory.Type;
+                    CheckCategoryBudget();
                 }
             }
-            catch (Exception ex)
+            else
             {
-                Snackbar.Add($"Failed to load categories: {ex.Message}", Severity.Error);
+                Model.Date = DateTime.Today;
+                TempDate = DateTime.Today;
+                SelectedCategory = null;
+                SelectedAllowance = null;
             }
         }
 
+        protected void OnCategoryChanged()
+        {
+            if (SelectedCategory != null)
+            {
+                CheckCategoryBudget();
+            }
+        }
+
+        protected void OnAmountChanged()
+        {
+            if (SelectedCategory != null && Model.Amount > 0)
+            {
+                CheckCategoryBudget();
+            }
+        }
+
+        protected void CheckCategoryBudget()
+        {
+            if (SelectedCategory == null || !SelectedCategory.BudgetAmount.HasValue)
+            {
+                showBudgetWarning = false;
+                return;
+            }
+
+            // Filter expenses by category (exclude current if editing)
+            var categoryExpenses = allExpenses
+                .Where(e => e.CategoryID == SelectedCategory.CategoryID && e.ExpenseID != Model.ExpenseID)
+                .ToList();
+
+            currentCategorySpending = categoryExpenses.Sum(e => e.Amount);
+            var projectedSpending = currentCategorySpending + Model.Amount;
+            var budget = SelectedCategory.BudgetAmount.Value;
+
+            if (projectedSpending > budget)
+            {
+                showBudgetWarning = true;
+                var excess = projectedSpending - budget;
+                var percentage = (projectedSpending / budget) * 100;
+
+                budgetWarningMessage = $"Warning! This expense will exceed your '{SelectedCategory.CategoryName}' budget by ₱{excess:N2} ({percentage:F0}% of budget).";
+            }
+            else if (projectedSpending >= budget * 0.8m) // 80% threshold
+            {
+                showBudgetWarning = true;
+                var percentage = (projectedSpending / budget) * 100;
+                var remaining = budget - projectedSpending;
+
+                budgetWarningMessage = $"Approaching budget limit! You'll have ₱{remaining:N2} remaining ({percentage:F0}% used).";
+            }
+            else
+            {
+                showBudgetWarning = false;
+            }
+        }
 
         protected async Task Submit()
         {
-            if (selectedAllowanceId == Guid.Empty)
+            if (SelectedAllowance == null ||
+                string.IsNullOrWhiteSpace(Model.Description) ||
+                Model.Amount <= 0 ||
+                SelectedCategory == null ||
+                TempDate == null)
             {
-                Snackbar.Add("Please select an allowance", Severity.Error);
+                Snackbar.Add("Complete all required fields", Severity.Error);
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(description))
+            // Check allowance balance
+            var allowanceExpenses = allExpenses
+                .Where(e => e.AllowanceID == SelectedAllowance.AllowanceID && e.ExpenseID != Model.ExpenseID)
+                .Sum(e => e.Amount);
+
+            var availableBalance = SelectedAllowance.Amount - allowanceExpenses;
+
+            if (Model.Amount > availableBalance)
             {
-                Snackbar.Add("Description is required", Severity.Error);
+                Snackbar.Add($"Insufficient allowance balance. Available: ₱{availableBalance:N2}", Severity.Error);
                 return;
             }
 
-            if (amount <= 0)
-            {
-                Snackbar.Add("Amount must be greater than zero", Severity.Error);
-                return;
-            }
+            isSaving = true;
 
-            if (string.IsNullOrWhiteSpace(category))
-            {
-                Snackbar.Add("Category is required", Severity.Error);
-                return;
-            }
+            Model.AllowanceID = SelectedAllowance.AllowanceID;
+            Model.CategoryID = SelectedCategory.CategoryID;
+            Model.Date = TempDate.Value;
+            Model.ExpenseID = Expense?.ExpenseID ?? Guid.Empty;
 
-            if (category == "Other" && string.IsNullOrWhiteSpace(customCategory))
-            {
-                Snackbar.Add("Please specify a category name", Severity.Error);
-                return;
-            }
-
-            if (date == null)
-            {
-                Snackbar.Add("Date is required", Severity.Error);
-                return;
-            }
+            bool success = false;
 
             try
             {
-                isSaving = true;
-
-                var finalCategory = category == "Other" ? customCategory.Trim() : category;
-
-                var dto = new ExpenseDTO
-                {
-                    ExpenseID = Expense?.ExpenseID ?? Guid.Empty,
-                    AllowanceID = selectedAllowanceId,
-                    Description = description.Trim(),
-                    Amount = amount,
-                    Category = finalCategory,
-                    Date = date!.Value
-                };
-
                 if (IsEditMode)
                 {
-                    await ExpenseService.UpdateExpense(dto);
-                    Snackbar.Add("Expense updated successfully", Severity.Success);
+                    var updated = await ExpenseService.UpdateExpense(Model);
+                    success = updated != null;
                 }
                 else
                 {
-                    await ExpenseService.AddExpense(dto);
-                    Snackbar.Add("Expense added successfully", Severity.Success);
+                    success = await ExpenseService.AddExpense(Model);
                 }
 
-                MudDialog.Close(DialogResult.Ok(true));
+                if (success)
+                {
+                    Snackbar.Add(IsEditMode ? "Expense updated successfully" : "Expense added successfully", Severity.Success);
+
+                    // Show budget notification if exceeded
+                    if (showBudgetWarning && SelectedCategory?.BudgetAmount.HasValue == true)
+                    {
+                        var projectedSpending = currentCategorySpending + Model.Amount;
+                        if (projectedSpending > SelectedCategory.BudgetAmount.Value)
+                        {
+                            Snackbar.Add(
+                                $"Budget exceeded for '{SelectedCategory.CategoryName}'! Total spent: ₱{projectedSpending:N2} / ₱{SelectedCategory.BudgetAmount.Value:N2}",
+                                Severity.Warning,
+                                config => { config.VisibleStateDuration = 5000; }
+                            );
+                        }
+                    }
+
+                    MudDialog.Close(DialogResult.Ok(true));
+                }
+                else
+                {
+                    Snackbar.Add("Failed to save expense. Please try again.", Severity.Error);
+                }
             }
             catch (Exception ex)
             {
-                Snackbar.Add($"Failed to save expense: {ex.Message}", Severity.Error);
+                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
             }
             finally
             {
@@ -158,5 +218,38 @@ namespace StudentAllowanceTracker.Client.Components.Dialogs.User
 
         protected void Cancel() => MudDialog.Cancel();
 
+        protected string GetBudgetProgressColor()
+        {
+            if (!SelectedCategory?.BudgetAmount.HasValue ?? true) return "info";
+
+            var projected = currentCategorySpending + Model.Amount;
+            var percentage = (projected / SelectedCategory.BudgetAmount.Value) * 100;
+
+            if (percentage >= 100) return "error";
+            if (percentage >= 80) return "warning";
+            return "success";
+        }
+
+        protected Color GetBudgetProgressMudColor()
+        {
+            var colorStr = GetBudgetProgressColor();
+            return colorStr switch
+            {
+                "error" => Color.Error,
+                "warning" => Color.Warning,
+                "success" => Color.Success,
+                _ => Color.Info
+            };
+        }
+
+        protected double GetBudgetProgressPercentage()
+        {
+            if (!SelectedCategory?.BudgetAmount.HasValue ?? true) return 0;
+
+            var projected = currentCategorySpending + Model.Amount;
+            var percentage = (double)((projected / SelectedCategory.BudgetAmount.Value) * 100);
+
+            return Math.Min(percentage, 100);
+        }
     }
 }

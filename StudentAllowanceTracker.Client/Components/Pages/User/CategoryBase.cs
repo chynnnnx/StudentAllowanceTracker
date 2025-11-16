@@ -1,19 +1,16 @@
 ﻿using Microsoft.AspNetCore.Components;
 using StudentAllowanceTracker.Client.DTOs;
-
 using StudentAllowanceTracker.Shared.Enums;
-
 using StudentAllowanceTracker.Client.Services.Interfaces;
-
 using StudentAllowanceTracker.Client.Components.Dialogs.User;
-
 using MudBlazor;
+
 namespace StudentAllowanceTracker.Client.Components.Pages.User
 {
-    public class CategoryBase: LayoutComponentBase
+    public class CategoryBase : LayoutComponentBase
     {
         [Inject] protected ICategoryService CategoryService { get; set; } = default!;
-        [CascadingParameter] protected IDialogService DialogService { get; set; } = null!;
+        [Inject] protected IDialogService DialogService { get; set; } = default!;
         [Inject] protected ISnackbar Snackbar { get; set; } = default!;
 
         protected List<CategoryDTO> categories = new();
@@ -27,11 +24,11 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
 
         // Pagination
         protected Dictionary<CategoryType, int> currentPages = new()
-    {
-        { CategoryType.Needs, 0 },
-        { CategoryType.Wants, 0 },
-        { CategoryType.Savings, 0 }
-    };
+        {
+            { CategoryType.Needs, 0 },
+            { CategoryType.Wants, 0 },
+            { CategoryType.Savings, 0 }
+        };
         protected const int itemsPerPage = 3;
 
         protected override async Task OnInitializedAsync()
@@ -91,12 +88,6 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
 
         protected async Task OpenAddDialog()
         {
-            var parameters = new DialogParameters
-        {
-            { "CategoryForm", new CategoryDTO { Type = CategoryType.Needs } },
-            { "IsEditing", false }
-        };
-
             var options = new DialogOptions
             {
                 MaxWidth = MaxWidth.Small,
@@ -105,29 +96,21 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
                 CloseOnEscapeKey = true
             };
 
-            var dialog = await DialogService.ShowAsync<CategoryDialog>("", parameters, options);
+            var dialog = await DialogService.ShowAsync<CategoryDialog>("Add Category", options);
             var result = await dialog.Result;
 
-            if (!result.Canceled && result.Data is CategoryDTO categoryForm)
+            if (!result.Canceled)
             {
-                await SaveCategory(categoryForm, false);
+                await LoadCategories();
             }
         }
 
         protected async Task EditCategory(CategoryDTO category)
         {
             var parameters = new DialogParameters
-        {
-            { "CategoryForm", new CategoryDTO
-                {
-                    CategoryID = category.CategoryID,
-                    CategoryName = category.CategoryName,
-                    Type = category.Type,
-                    BudgetAmount = category.BudgetAmount
-                }
-            },
-            { "IsEditing", true }
-        };
+            {
+                { "Category", category }  // Changed from "CategoryForm" to "Category"
+            };
 
             var options = new DialogOptions
             {
@@ -137,62 +120,58 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
                 CloseOnEscapeKey = true
             };
 
-            var dialog = await DialogService.ShowAsync<CategoryDialog>("", parameters, options);
+            var dialog = await DialogService.ShowAsync<CategoryDialog>("Edit Category", parameters, options);
             var result = await dialog.Result;
 
-            if (!result.Canceled && result.Data is CategoryDTO categoryForm)
+            if (!result.Canceled)
             {
-                await SaveCategory(categoryForm, true);
-            }
-        }
-
-        protected async Task SaveCategory(CategoryDTO categoryForm, bool isEditing)
-        {
-            try
-            {
-                bool success;
-
-                if (isEditing)
-                {
-                    success = await CategoryService.UpdateCategory(categoryForm.CategoryID, categoryForm);
-                }
-                else
-                {
-                    success = await CategoryService.AddCategory(categoryForm);
-                }
-
-                if (success)
-                {
-                    Snackbar.Add(
-                        isEditing ? "Category updated successfully!" : "Category created successfully!",
-                        Severity.Success
-                    );
-                    await LoadCategories();
-                }
-                else
-                {
-                    Snackbar.Add("Failed to save category", Severity.Error);
-                }
-            }
-            catch (Exception ex)
-            {
-                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+                await LoadCategories();
             }
         }
 
         protected async Task DeleteCategory(CategoryDTO category)
         {
-            bool? confirm = await DialogService.ShowMessageBox(
-                "Delete Category",
-                $"Are you sure you want to delete '{category.CategoryName}'?",
-                yesText: "Delete",
-                cancelText: "Cancel");
-
-            if (confirm == true)
+            var parameters = new DialogParameters
             {
-                var success = await CategoryService.DeleteCategory(category.CategoryID);
-                Snackbar.Add("Category deleted successfully", Severity.Success);
-                await LoadCategories();
+                { "Message", $"Are you sure you want to delete '{category.CategoryName}'?" },
+                { "ButtonText", "Delete" },
+                { "Color", Color.Error }
+            };
+
+            var options = new DialogOptions
+            {
+                CloseButton = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            };
+
+            var dialog = await DialogService.ShowMessageBox(
+                "Delete Category",
+                $"Are you sure you want to delete '{category.CategoryName}'? This action cannot be undone.",
+                yesText: "Delete",
+                cancelText: "Cancel"
+            );
+
+            if (dialog == true)
+            {
+                try
+                {
+                    var success = await CategoryService.DeleteCategory(category.CategoryID);
+
+                    if (success)
+                    {
+                        Snackbar.Add("Category deleted successfully", Severity.Success);
+                        await LoadCategories();
+                    }
+                    else
+                    {
+                        Snackbar.Add("Failed to delete category", Severity.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Snackbar.Add($"Error deleting category: {ex.Message}", Severity.Error);
+                }
             }
         }
     }

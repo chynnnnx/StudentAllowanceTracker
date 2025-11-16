@@ -1,120 +1,182 @@
-﻿    @inherits ExpenseDialogBase
+﻿@inherits ExpenseDialogBase
 
-    <MudDialog>
-        <DialogContent>
-            <div class="space-y-4" style="padding: 0.5rem 0;">
+<MudDialog>
+    <DialogContent>
+        <div class="space-y-4" style="padding: 0.5rem 0;">
 
-                <!-- Total Allowance display -->
-                <MudPaper Class="pa-4 mb-4" Elevation="1"
-                          Style="background-color:hsl(162, 97%, 26%); color:white; border-radius:12px;">
-                    <div class="flex justify-between items-center">
-                        <span class="font-semibold text-lg">Total Allowance Balance</span>
-                        <span class="text-xl font-bold">₱@totalAllowance.ToString("N2")</span>
+            <!-- Total Allowance -->
+            <MudPaper Class="pa-4 mb-4" Elevation="1"
+                      Style="background-color:hsl(162, 97%, 26%); color:white; border-radius:12px;">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <MudText Typo="Typo.caption" Class="opacity-90 mb-1">Remaining Balance</MudText>
+                        <span class="font-semibold text-lg">Total Allowance</span>
                     </div>
-                </MudPaper>
+                    <div class="text-right">
+                        <MudText Typo="Typo.h5" Class="font-bold">₱@totalAllowanceBalance.ToString("N2")</MudText>
+                        <MudText Typo="Typo.caption" Class="opacity-75">of ₱@totalAllowance.ToString("N2")</MudText>
+                    </div>
+                </div>
+            </MudPaper>
 
-                <!-- Allowance Dropdown -->
-                <MudSelect T="Guid"
-                           Label="Select Allowance"
-                           Variant="Variant.Outlined"
-                           @bind-Value="selectedAllowanceId"
-                           Required="true"
-                           RequiredError="Allowance is required"
-                           Class="mb-4">
-                    @foreach (var allowance in allowances)
-                    {
-                        <MudSelectItem Value="@allowance.AllowanceID">
-                            ₱@allowance.Amount.ToString("N2") — @allowance.StartDate.ToString("MMM dd, yyyy")
-                        </MudSelectItem>
-                    }
-                </MudSelect>
-
-                <!-- Description -->
-                <MudTextField @bind-Value="description"
-                              Label="Description"
-                              Variant="Variant.Outlined"
-                              Required="true"
-                              RequiredError="Description is required"
-                              MaxLength="200"
-                              Counter="200"
-                              HelperText="What did you spend on?"
-                              Class="mb-4" />
-
-                <!-- Amount -->
-                <MudNumericField @bind-Value="amount"
-                                 Label="Amount"
-                                 Variant="Variant.Outlined"
-                                 Required="true"
-                                 RequiredError="Amount is required"
-                                 Min="0.01m"
-                                 Step="0.01m"
-                                 Format="N2"
-                                 Adornment="Adornment.Start"
-                                 AdornmentText="₱"
-                                 AdornmentColor="Color.Success"
-                                 HelperText="Enter the amount spent"
-                                 Class="mb-4" />
-
-                <!-- Category -->
-            <MudSelect @bind-Value="category"
-                       Label="Category"
-                       Variant="Variant.Outlined"
+            <!-- Allowance Selection -->
+            <MudSelect T="AllowanceDTO"
+                       Label="Select Allowance"
+                       @bind-Value="SelectedAllowance"
                        Required="true"
-                       RequiredError="Category is required">
-                @foreach (var categoryItem in categories)
+                       Variant="Variant.Outlined"
+                       RequiredError="Select an allowance">
+                @foreach (var allowance in allowances)
                 {
-                    <MudSelectItem Value="@categoryItem.CategoryName">
-                        @categoryItem.CategoryName
+                    var spent = allExpenses.Where(e => e.AllowanceID == allowance.AllowanceID).Sum(e => e.Amount);
+                    var remaining = allowance.Amount - spent;
+                    
+                    <MudSelectItem Value="@allowance">
+                        <div class="flex items-center justify-between w-full">
+                            <span>@allowance.StartDate.ToString("MMM dd, yyyy")</span>
+                            <div class="text-right">
+                                <div class="font-semibold" style="color: @(remaining > 0 ? "hsl(162, 86.6%, 32.2%)" : "hsl(0, 84.2%, 60.2%)")">
+                                    ₱@remaining.ToString("N2")
+                                </div>
+                                <div class="text-xs text-gray-500">of ₱@allowance.Amount.ToString("N2")</div>
+                            </div>
+                        </div>
                     </MudSelectItem>
                 }
             </MudSelect>
 
+            <!-- Description -->
+            <MudTextField @bind-Value="Model.Description"
+                          Label="Description"
+                          Variant="Variant.Outlined"
+                          MaxLength="200"
+                          Counter="200"
+                          Placeholder="e.g., Groceries, Coffee, Bus fare" />
 
+            <!-- Amount -->
+            <MudNumericField Value="@Model.Amount"
+                             ValueChanged="@((decimal val) => { Model.Amount = val; OnAmountChanged(); })"
+                             Label="Amount"
+                             Variant="Variant.Outlined"
+                             Min="0.01m"
+                             Step="0.01m"
+                             Format="N2"
+                             Adornment="Adornment.Start"
+                             AdornmentText="₱" />
 
-                @if (category == "Other")
+            <!-- Category Type -->
+            <MudSelect T="CategoryType"
+                       Label="Category Type"
+                       @bind-Value="SelectedCategoryType"
+                       Required="true"
+                       Variant="Variant.Outlined"
+                       RequiredError="Select a category type">
+                @foreach (var type in Enum.GetValues<CategoryType>())
                 {
-                    <MudTextField @bind-Value="customCategory"
-                                  Label="Specify Category"
-                                  Variant="Variant.Outlined"
-                                  Required="true"
-                                  RequiredError="Please enter a category name"
-                                  HelperText="Enter your custom category"
-                                  Class="mb-4" />
+                    <MudSelectItem Value="@type">
+                        <div class="flex items-center gap-2">
+                            <span>@type.ToString()</span>
+                            <MudChip T =" string" Size="Size.Small" Color="Color.Default">
+                                @(type == CategoryType.Needs ? "50%" : type == CategoryType.Wants ? "30%" : "20%")
+                            </MudChip>
+                        </div>
+                    </MudSelectItem>
                 }
+            </MudSelect>
 
-                <MudDatePicker @bind-Date="date"
-                               Label="Date"
-                               Variant="Variant.Outlined"
-                               Required="true"
-                               RequiredError="Date is required"
-                               MaxDate="DateTime.Today"
-                               Color="Color.Success"
-                               DateFormat="MMM dd, yyyy"
-                               HelperText="When did you make this expense?"
-                               Class="mb-4" />
-            </div>
-        </DialogContent>
-
-        <DialogActions>
-            <MudButton OnClick="Cancel"
-                       Variant="Variant.Text"
-                       Style="color: hsl(0, 0%, 52.2%); text-transform: none;">
-                Cancel
-            </MudButton>
-            <MudButton OnClick="Submit"
-                       Variant="Variant.Filled"
-                       Disabled="isSaving"
-                       Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%);
-                              color: white; text-transform: none;">
-                @if (isSaving)
+            <!-- Category Name -->
+            <MudSelect T="CategoryDTO"
+                       Label="Category"
+                       Value="@SelectedCategory"
+                       ValueChanged="@((CategoryDTO cat) => { SelectedCategory = cat; OnCategoryChanged(); })"
+                       Required="true"
+                       Variant="Variant.Outlined"
+                       RequiredError="Select a category">
+                @foreach (var cat in FilteredCategories)
                 {
-                    <MudProgressCircular Size="Size.Small" Indeterminate="true" />
+                    <MudSelectItem Value="@cat">
+                        <div class="flex items-center justify-between w-full">
+                            <span>@cat.CategoryName</span>
+                            @if (cat.BudgetAmount.HasValue)
+                            {
+                                <MudChip T = "string"Size="Size.Small" Color="Color.Info">
+                                    Budget: ₱@cat.BudgetAmount.Value.ToString("N0")
+                                </MudChip>
+                            }
+                        </div>
+                    </MudSelectItem>
                 }
-                else
-                {
-                    <span>@(IsEditMode ? "Update" : "Add") Expense</span>
-                }
-            </MudButton>
-        </DialogActions>
-    </MudDialog>
+            </MudSelect>
 
+            <!-- Budget Warning/Progress - NEW SECTION -->
+            @if (SelectedCategory?.BudgetAmount.HasValue == true && Model.Amount > 0)
+            {
+                <MudPaper Class="pa-4" Elevation="0" 
+                          Style="@($"background-color: {(showBudgetWarning ? "hsl(38, 92%, 95%)" : "hsl(162, 41.8%, 95%)")}; border-radius: 8px; border: 2px solid {(showBudgetWarning ? "hsl(38, 92%, 50%)" : "hsl(162, 86.6%, 32.2%)")};")">
+                    <div class="mb-3">
+                        <div class="flex justify-between items-center mb-2">
+                            <MudText Typo="Typo.body2" Class="font-semibold">
+                                @SelectedCategory.CategoryName Budget
+                            </MudText>
+                            <MudText Typo="Typo.body2" Class="font-bold">
+                                ₱@((currentCategorySpending + Model.Amount).ToString("N2")) / ₱@SelectedCategory.BudgetAmount.Value.ToString("N2")
+                            </MudText>
+                        </div>
+                        <MudProgressLinear Color="@GetBudgetProgressMudColor()" 
+                                          Size="Size.Medium" 
+                                          Value="@GetBudgetProgressPercentage()" 
+                                          Class="rounded" />
+                    </div>
+
+                    @if (showBudgetWarning)
+                    {
+                        <MudAlert Severity="@(currentCategorySpending + Model.Amount > SelectedCategory.BudgetAmount.Value ? Severity.Error : Severity.Warning)" 
+                                  Dense="true" 
+                                  NoIcon="false"
+                                  Class="py-2">
+                            @budgetWarningMessage
+                        </MudAlert>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.caption" Class="text-gray-600">
+                            You're within budget. Keep it up! 💪
+                        </MudText>
+                    }
+                </MudPaper>
+            }
+
+            <!-- Date -->
+            <MudDatePicker @bind-Date="TempDate"
+                           Label="Date"
+                           Variant="Variant.Outlined"
+                           Required="true"
+                           RequiredError="Date is required"
+                           MaxDate="DateTime.Today"
+                           DateFormat="MMM dd, yyyy" />
+
+        </div>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="Cancel" 
+                   Variant="Variant.Text"
+                   Color="Color.Default">
+            Cancel
+        </MudButton>
+
+        <MudButton OnClick="Submit"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Disabled="isSaving">
+            @if (isSaving)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" />
+            }
+            else
+            {
+                <span>@(IsEditMode ? "Update" : "Add") Expense</span>
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>

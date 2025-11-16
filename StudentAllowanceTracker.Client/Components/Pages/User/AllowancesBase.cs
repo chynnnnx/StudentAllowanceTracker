@@ -4,16 +4,18 @@ using MudBlazor;
 using StudentAllowanceTracker.Client.Components.Dialogs.User;
 using StudentAllowanceTracker.Client.DTOs;
 using StudentAllowanceTracker.Shared.Enums;
+
 namespace StudentAllowanceTracker.Client.Components.Pages.User
 {
-    public class AllowancesBase: LayoutComponentBase
-
+    public class AllowancesBase : LayoutComponentBase
     {
         [Inject] protected IDialogService DialogService { get; set; } = default!;
         [Inject] protected IAllowanceService AllowanceService { get; set; } = default!;
+        [Inject] protected IExpenseService ExpenseService { get; set; } = default!;
         [Inject] protected ISnackbar Snackbar { get; set; } = default!;
 
         protected List<AllowanceDTO> allowances = new();
+        protected List<ExpenseDTO> allExpenses = new();
         protected bool isLoading = true;
         protected bool showAll = true;
 
@@ -27,11 +29,13 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
             isLoading = true;
             try
             {
-                var result = await AllowanceService.GetAllowanceByUser();
-                if (result != null)
-                {
-                    allowances = result.OrderByDescending(a => a.StartDate).ToList();
-                }
+                var allowanceTask = AllowanceService.GetAllowanceByUser();
+                var expenseTask = ExpenseService.GetExpensesByUser();
+
+                await Task.WhenAll(allowanceTask, expenseTask);
+
+                allowances = (await allowanceTask)?.OrderByDescending(a => a.StartDate).ToList() ?? new();
+                allExpenses = (await expenseTask) ?? new();
             }
             catch (Exception ex)
             {
@@ -41,6 +45,37 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
             {
                 isLoading = false;
             }
+        }
+
+        protected decimal GetAllowanceSpent(Guid allowanceId)
+        {
+            return allExpenses.Where(e => e.AllowanceID == allowanceId).Sum(e => e.Amount);
+        }
+
+        protected decimal GetAllowanceRemaining(Guid allowanceId)
+        {
+            var allowance = allowances.FirstOrDefault(a => a.AllowanceID == allowanceId);
+            if (allowance == null) return 0;
+
+            var spent = GetAllowanceSpent(allowanceId);
+            var remaining = allowance.Amount - spent;
+            return remaining < 0 ? 0 : remaining; // Return 0 instead of negative
+        }
+
+        protected decimal GetTotalRemaining()
+        {
+            var total = allowances.Sum(a => GetAllowanceRemaining(a.AllowanceID));
+            return total < 0 ? 0 : total; // Return 0 instead of negative
+        }
+
+        protected int GetPercentageUsed(Guid allowanceId)
+        {
+            var allowance = allowances.FirstOrDefault(a => a.AllowanceID == allowanceId);
+            if (allowance == null || allowance.Amount == 0) return 0;
+
+            var spent = GetAllowanceSpent(allowanceId);
+            var percentage = (spent / allowance.Amount) * 100;
+            return (int)Math.Min(percentage, 100);
         }
 
         protected async Task OpenAddDialog()
@@ -63,10 +98,10 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
         protected async Task OpenEditDialog(AllowanceDTO allowance)
         {
             var parameters = new DialogParameters<AllowanceDialog>
-        {
-            { x => x.AllowanceID, allowance.AllowanceID },
-           { x => x.IsEditMode, true }
-        };
+            {
+                { x => x.AllowanceID, allowance.AllowanceID },
+                { x => x.IsEditMode, true }
+            };
 
             var dialog = await DialogService.ShowAsync<AllowanceDialog>("", parameters, new DialogOptions
             {
@@ -116,7 +151,7 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
             return allowance.EndDate.Value >= DateTime.Today;
         }
 
-        protected decimal GetAllowanceTotal( DateTime periodStart, DateTime periodEnd, Func<DateTime, DateTime, int> getUnits = null)
+        protected decimal GetAllowanceTotal(DateTime periodStart, DateTime periodEnd, Func<DateTime, DateTime, int> getUnits = null)
         {
             decimal total = 0;
 
@@ -168,7 +203,6 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
             return GetAllowanceTotal(monthStart, monthEnd);
         }
 
-       
         protected string GetFrequencyIcon(AllowanceType type) => type switch
         {
             AllowanceType.OneTime => Icons.Material.Filled.EventAvailable,
@@ -213,7 +247,20 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
             isActive
             ? "color: hsl(162, 86.6%, 32.2%); font-weight: 600;"
             : "color: hsl(0, 0%, 52.2%); font-weight: 600;";
-    
 
-}
+        protected Color GetBalanceColor(decimal remaining, decimal spent, decimal total)
+        {
+            if (spent > total) return Color.Error;
+            if (remaining < 100) return Color.Warning;
+            return Color.Success;
+        }
+
+        protected string GetBalanceTextColor(decimal remaining, decimal spent, decimal total)
+        {
+            if (spent > total) return "hsl(0, 84.2%, 60.2%)"; 
+            if (remaining < 100) return "hsl(38, 92%, 50%)";  
+            return "hsl(162, 86.6%, 32.2%)";                  
+        }
+
+    }
 }
