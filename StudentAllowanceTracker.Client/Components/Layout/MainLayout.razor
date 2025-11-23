@@ -3,18 +3,25 @@
 @inject NavigationManager Navigation
 @inject ILocalStorageService LocalStorage
 
+<MudThemeProvider Theme="_theme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudPopoverProvider />
+    @if (_isLoading)
+    {
+        <Loader Visible="true" />
+    }
+    else
+    {
 <AuthorizeView Roles="User">
     <Authorized>
-        <MudThemeProvider Theme="_theme" />
-        <MudDialogProvider />
-        <MudSnackbarProvider />
-        <MudPopoverProvider />
+      
         <MudLayout>
             <MudAppBar Elevation="0" Style="background-color: white; border-bottom: 1px solid hsl(162, 41.8%, 89.2%);">
                 <MudIconButton Icon="@Icons.Material.Filled.Menu"
-                               Style="color: hsl(0, 0%, 27.8%);"
-                               Edge="Edge.Start"
-                               OnClick="@DrawerToggle" />
+                Style="color: hsl(0, 0%, 27.8%);"
+                Edge="Edge.Start"
+                OnClick="@DrawerToggle" />
 
                 <MudSpacer />
 
@@ -23,13 +30,13 @@
 
                     <!-- Notifications -->
                     <MudIconButton Icon="@Icons.Material.Outlined.Notifications"
-                                   Style="color: hsl(0, 0%, 27.8%);"
-                                   Size="Size.Medium" />
+                    Style="color: hsl(0, 0%, 27.8%);"
+                    Size="Size.Medium" />
 
                     <!-- Help -->
                     <MudIconButton Icon="@Icons.Material.Outlined.HelpOutline"
-                                   Style="color: hsl(0, 0%, 27.8%);"
-                                   Size="Size.Medium" />
+                    Style="color: hsl(0, 0%, 27.8%);"
+                    Size="Size.Medium" />
 
                     <!-- Divider -->
                     <MudDivider Vertical="true" FlexItem="true" Style="height: 24px; margin: 0 0.5rem;" />
@@ -38,8 +45,8 @@
                     <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
                         <ActivatorContent>
                             <MudButton Variant="Variant.Text"
-                                       Style="color: hsl(0, 0%, 27.8%); text-transform: none; padding: 0.5rem 1rem;"
-                                       StartIcon="@Icons.Material.Filled.AccountCircle">
+                            Style="color: hsl(0, 0%, 27.8%); text-transform: none; padding: 0.5rem 1rem;"
+                            StartIcon="@Icons.Material.Filled.AccountCircle">
                                 <MudHidden Breakpoint="Breakpoint.SmAndDown">
                                     <span style="margin-left: 0.5rem;">Account</span>
                                 </MudHidden>
@@ -57,9 +64,9 @@
             </MudAppBar>
 
             <MudDrawer @bind-Open="_drawerOpen"
-                       Class="white-drawer"
-                       Elevation="0"
-                       Style="border-right: 2px solid hsl(162, 41.8%, 89.2%);">
+            Class="white-drawer"
+            Elevation="0"
+            Style="border-right: 2px solid hsl(162, 41.8%, 89.2%);">
                 <NavMenu />
             </MudDrawer>
 
@@ -79,10 +86,16 @@
         </div>
     </NotAuthorized>
 </AuthorizeView>
-
+}
 @code {
     private bool _drawerOpen = true;
+    private bool _isLoading = true;
 
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        _isLoading = false;
+    }
     void DrawerToggle() => _drawerOpen = !_drawerOpen;
 
     private async Task Logout()

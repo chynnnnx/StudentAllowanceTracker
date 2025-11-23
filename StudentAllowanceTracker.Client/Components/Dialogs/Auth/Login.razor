@@ -18,38 +18,40 @@
         </div>
     </TitleContent>
     <DialogContent>
+        <Loader Visible="_isLoading" />
+
         <div class="py-4">
             <MudForm @ref="form" @bind-IsValid="@success">
                 <div class="mb-4">
                     <MudText Typo="Typo.body1" Class="mb-2 font-semibold text-gray-900">Email</MudText>
-                    <MudTextField @bind-Value="email"
-                                  Variant="Variant.Outlined"
-                                  Required="true"
-                                  RequiredError="Email is required"
-                                  Placeholder="you@example.com"
-                                  Style="background-color: #f0fdf4;"
-                                  Class="rounded-lg" />
+                    <MudTextField @bind-Value="loginDTO.Email" 
+                    Variant="Variant.Outlined"
+                    Required="true"
+                    RequiredError="Email is required"
+                    Placeholder="you@example.com"
+                    Style="background-color: #f0fdf4;"
+                    Class="rounded-lg" />
                 </div>
 
                 <div class="mb-6">
                     <MudText Typo="Typo.body1" Class="mb-2 font-semibold text-gray-900">Password</MudText>
-                    <MudTextField @bind-Value="password"
-                                  Variant="Variant.Outlined"
-                                  InputType="InputType.Password"
-                                  Required="true"
-                                  RequiredError="Password is required"
-                                  Placeholder="••••••••"
-                                  Style="background-color: #f0fdf4;"
-                                  Class="rounded-lg" />
+                    <MudTextField @bind-Value="loginDTO.Password" 
+                    Variant="Variant.Outlined"
+                    InputType="InputType.Password"
+                    Required="true"
+                    RequiredError="Password is required"
+                    Placeholder="••••••••"
+                    Style="background-color: #f0fdf4;"
+                    Class="rounded-lg" />
                 </div>
 
                 <MudButton Variant="Variant.Filled"
-                           Color="Color.Success"
-                           FullWidth="true"
-                           Size="Size.Large"
-                           OnClick="HandleLogin"
-                           Class="mb-4 rounded-lg"
-                           Style="text-transform: none; font-weight: 600; padding: 12px;">
+                Color="Color.Success"
+                FullWidth="true"
+                Size="Size.Large"
+                OnClick="HandleLogin"
+                Class="mb-4 rounded-lg"
+                Style="text-transform: none; font-weight: 600; padding: 12px;">
                     Login
                 </MudButton>
 
@@ -66,40 +68,30 @@
 
 @code {
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
-
+    private bool _isLoading;
     private MudForm form;
     private bool success;
-    private string email = "";
-    private string password = "";
+    private LoginDTO loginDTO = new LoginDTO();
+
 
     private async Task HandleLogin()
     {
         await form.Validate();
         if (!success)
             return;
+        _isLoading = true;
+        StateHasChanged();
+        await Task.Delay(3000);
 
         try
         {
-            var dto = new LoginDTO
-                {
-                    Email = email,
-                    Password = password
-                };
+            var result = await AuthService.LoginAsync(loginDTO);
 
-            var result = await AuthService.LoginAsync(dto);
-
-            if (string.IsNullOrWhiteSpace(result))
+            if (string.IsNullOrWhiteSpace(result) || result.StartsWith("Login failed", StringComparison.OrdinalIgnoreCase))
             {
-                Snackbar.Add("Login failed. Please try again.", Severity.Error);
+                Snackbar.Add(result ?? "Login failed. Please try again.", Severity.Error);
                 return;
             }
-
-            if (result.StartsWith("Login failed", StringComparison.OrdinalIgnoreCase))
-            {
-                Snackbar.Add(result, Severity.Error);
-                return;
-            }
-            Snackbar.Add("Login successful!", Severity.Success);
 
             await _localStorage.SetItemAsync("authToken", result);
 
@@ -108,19 +100,28 @@
 
             MudDialog.Close(DialogResult.Ok(true));
             Navigation.NavigateTo("/dashboard", forceLoad: true);
-
         }
         catch (Exception ex)
         {
             Snackbar.Add($"Error: {ex.Message}", Severity.Error);
         }
+        finally
+        {
+            _isLoading = false;
+            StateHasChanged();
+        }
     }
+
 
 
 
     private void HandleSignUpClick()
     {
         MudDialog.Close();
+        var parameters = new DialogParameters();
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+
+        DialogService.Show<SignUp>("", parameters, options);
     }
 
     private void Cancel()

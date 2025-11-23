@@ -1,0 +1,17 @@
+﻿<link href="css/loader.css" rel="stylesheet" />
+<MudOverlay Visible="@Visible" Style="z-index: 9999;">
+    <MudPaper Class="d-flex justify-center align-center"
+              Elevation="0"
+              Style="background-color: box-shadow: none; width:100%; height:100%; position:relative;">
+        <div class="loader" style="transform: scale(0.7);">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+    </MudPaper>
+</MudOverlay>
+@code {
+    [Parameter]
+    public bool Visible { get; set; }
+}
