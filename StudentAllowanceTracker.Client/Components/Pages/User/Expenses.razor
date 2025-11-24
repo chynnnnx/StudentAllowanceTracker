@@ -74,11 +74,13 @@
                                Clearable="true"
                                Class="w-full sm:w-auto"
                                Style="min-width: 150px;">
-                        @foreach (var category in expenses.Select(e => e.Category).Distinct())
+                        @foreach (var category in categories)
                         {
-                            <MudSelectItem Value="@category">@category</MudSelectItem>
+                            <MudSelectItem Value="@category.CategoryName">@category.CategoryName</MudSelectItem>
                         }
                     </MudSelect>
+
+
 
                     <MudDateRangePicker @bind-DateRange="dateRange"
                                         Label="Date Range"
@@ -94,35 +96,65 @@
             <!-- Expenses Table -->
             @if (GetFilteredExpenses().Any())
             {
-                <MudTable Items="@GetFilteredExpenses()" Hover="true" Breakpoint="Breakpoint.Sm" Class="rounded-xl">
-                    <HeaderContent>
-                        <MudTh>Date</MudTh>
-                        <MudTh>Description</MudTh>
-                        <MudTh>Category</MudTh>
-                        <MudTh Style="text-align:right;">Amount</MudTh>
-                        <MudTh></MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd>@context.Date.ToString("MMM dd, yyyy")</MudTd>
-                        <MudTd>@context.Description</MudTd>
-                        <MudTd>
-                            <MudChip T="string" Size="Size.Small"
-                                     Style="@($"background-color:{GetCategoryColor(context.Category)}15; color:{GetCategoryColor(context.Category)}; font-weight:500;")">
-                                <div class="flex items-center gap-1">
-                                    <MudIcon Icon="@GetCategoryIcon(context.Category)" Size="Size.Small" />
-                                    <span>@context.Category</span>
-                                </div>
-                            </MudChip>
-                        </MudTd>
-                        <MudTd Style="text-align:right;">₱@context.Amount.ToString("N2")</MudTd>
-                        <MudTd Style="text-align:right;">
-                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small"
-                                           Style="color:hsl(162,86.6%,32.2%);" OnClick="@(() => OpenEditDialog(context))" />
-                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small"
-                                           Style="color:hsl(0,84.2%,60.2%);" OnClick="@(() => DeleteExpense(context))" />
-                        </MudTd>
-                    </RowTemplate>
-                </MudTable>
+                <MudDataGrid T="ExpenseDTO"
+                             Items="GetFilteredExpenses()"
+                             Hover="true"
+                             Bordered="true"
+                             Striped="true"
+                             Class="rounded-xl">
+
+                    <Columns>
+                        <TemplateColumn T="ExpenseDTO" Title="Date">
+                            <CellTemplate Context="cell">
+                                @cell.Item.Date.ToString("MMM dd, yyyy")
+                            </CellTemplate>
+                        </TemplateColumn>
+
+                        <TemplateColumn T="ExpenseDTO" Title="Description">
+                            <CellTemplate Context="cell">
+                                @cell.Item.Description
+                            </CellTemplate>
+                        </TemplateColumn>
+
+                        <TemplateColumn T="ExpenseDTO" Title="Category">
+                            <CellTemplate Context="cell">
+                                @{
+                                    var category = categories.FirstOrDefault(c => c.CategoryID == cell.Item.CategoryID)?.CategoryName ?? "";
+                                }
+                                <MudChip T="string" Size="Size.Small"
+                                         Style="@($"background-color:{GetCategoryColor(category)}15; color:{GetCategoryColor(category)}; font-weight:500;")">
+                                    <div class="flex items-center gap-1">
+                                        <MudIcon Icon="@GetCategoryIcon(category)" Size="Size.Small" />
+                                        <span>@category</span>
+                                    </div>
+                                </MudChip>
+                            </CellTemplate>
+                        </TemplateColumn>
+
+                        <TemplateColumn T="ExpenseDTO" Title="Amount" Align="Align.Right">
+                            <CellTemplate Context="cell">
+                                ₱@cell.Item.Amount.ToString("N2")
+                            </CellTemplate>
+                        </TemplateColumn>
+
+                        <TemplateColumn T="ExpenseDTO" Title="" Align="Align.Right">
+                            <CellTemplate Context="cell">
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small"
+                                               Style="color:hsl(162,86.6%,32.2%)" OnClick="@(() => OpenEditDialog(cell.Item))" />
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small"
+                                               Style="color:hsl(0,84.2%,60.2%)" OnClick="@(() => DeleteExpense(cell.Item))" />
+                            </CellTemplate>
+                        </TemplateColumn>
+                    </Columns>
+
+                    <!-- Explicit pager slot -->
+                    <PagerContent>
+                        <MudDataGridPager T="ExpenseDTO" />
+                    </PagerContent>
+                </MudDataGrid>
+    
+
+
             }
             else
             {

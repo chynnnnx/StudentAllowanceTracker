@@ -12,6 +12,7 @@ namespace StudentAllowanceTracker.Application.DTOs
         public string UserID { get; set; } = string.Empty;
         public Guid AllowanceID { get; set; }
         public Guid CategoryID { get; set; }
+
         public string? Description { get; set; }
 
         public decimal Amount { get; set; }

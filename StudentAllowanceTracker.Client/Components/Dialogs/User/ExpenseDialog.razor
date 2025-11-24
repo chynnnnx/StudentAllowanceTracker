@@ -13,8 +13,12 @@
                         <span class="font-semibold text-lg">Total Allowance</span>
                     </div>
                     <div class="text-right">
-                        <MudText Typo="Typo.h5" Class="font-bold">₱@totalAllowanceBalance.ToString("N2")</MudText>
-                        <MudText Typo="Typo.caption" Class="opacity-75">of ₱@totalAllowance.ToString("N2")</MudText>
+                        <MudText Typo="Typo.h5" Class="font-bold">
+                            ₱@Math.Max(totalAllowanceBalance, 0).ToString("N2")
+                        </MudText>
+                        <MudText Typo="Typo.caption" Class="opacity-75">
+                            of ₱@totalAllowance.ToString("N2")
+                        </MudText>
                     </div>
                 </div>
             </MudPaper>
@@ -23,14 +27,18 @@
             <MudSelect T="AllowanceDTO"
                        Label="Select Allowance"
                        @bind-Value="SelectedAllowance"
-                       Required="true"
                        Variant="Variant.Outlined"
-                       RequiredError="Select an allowance">
+                       Required="true"
+                       RequiredError="Select an allowance"
+                       @onchange="OnAllowanceChanged">
+
                 @foreach (var allowance in allowances)
                 {
-                    var spent = allExpenses.Where(e => e.AllowanceID == allowance.AllowanceID).Sum(e => e.Amount);
+                    var spent = allExpenses
+                                .Where(e => e.AllowanceID == allowance.AllowanceID && e.ExpenseID != Model.ExpenseID)
+                                .Sum(e => e.Amount);
                     var remaining = allowance.Amount - spent;
-                    
+
                     <MudSelectItem Value="@allowance">
                         <div class="flex items-center justify-between w-full">
                             <span>@allowance.StartDate.ToString("MMM dd, yyyy")</span>
@@ -55,7 +63,7 @@
 
             <!-- Amount -->
             <MudNumericField Value="@Model.Amount"
-                             ValueChanged="@((decimal val) => { Model.Amount = val; OnAmountChanged(); })"
+                             ValueChanged="@((decimal val) => { Model.Amount = val; OnAmountChanged(); OnAllowanceChanged(); })"
                              Label="Amount"
                              Variant="Variant.Outlined"
                              Min="0.01m"
@@ -99,7 +107,7 @@
                             <span>@cat.CategoryName</span>
                             @if (cat.BudgetAmount.HasValue)
                             {
-                                <MudChip T = "string"Size="Size.Small" Color="Color.Info">
+                                <MudChip T = "string" Size="Size.Small" Color="Color.Info">
                                     Budget: ₱@cat.BudgetAmount.Value.ToString("N0")
                                 </MudChip>
                             }
@@ -108,7 +116,7 @@
                 }
             </MudSelect>
 
-            <!-- Budget Warning/Progress - NEW SECTION -->
+            <!-- Budget Warning/Progress -->
             @if (SelectedCategory?.BudgetAmount.HasValue == true && Model.Amount > 0)
             {
                 <MudPaper Class="pa-4" Elevation="0" 
@@ -140,7 +148,7 @@
                     else
                     {
                         <MudText Typo="Typo.caption" Class="text-gray-600">
-                            You're within budget. Keep it up! 💪
+                            You're within budget. Keep it up! 
                         </MudText>
                     }
                 </MudPaper>

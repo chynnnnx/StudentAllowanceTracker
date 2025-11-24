@@ -12,21 +12,33 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
         [Inject] protected IExpenseService ExpenseService { get; set; } = default!;
 
         [Inject] protected IDialogService DialogService { get; set; } = default!;
+        [Inject] protected ICategoryService CategoryService { get; set; } = default!;
 
         protected List<ExpenseDTO> expenses = new();
         protected bool isLoading;
         protected string? selectedCategory;
         protected DateRange? dateRange;
+        protected List <CategoryDTO> categories = new();
 
-        protected override async Task OnInitializedAsync() => await LoadExpenses();
 
+        protected override async Task OnInitializedAsync()
+        {
+            await LoadCategories();
+            await LoadExpenses();
+        }
         protected async Task LoadExpenses()
         {
             try
             {
                 isLoading = true;
                 var result = await ExpenseService.GetExpensesByUser();
-                expenses = result?.OrderByDescending(e => e.Date).ToList() ?? new();
+                expenses = result?.OrderByDescending(e => e.Date)
+                                  .ToList() ?? new();
+
+                foreach (var expense in expenses)
+                {
+                    expense.Category = categories.FirstOrDefault(c => c.CategoryID == expense.CategoryID)?.CategoryName ?? "";
+                }
             }
             catch (Exception ex)
             {
@@ -35,6 +47,32 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
             finally
             {
                 isLoading = false;
+            }
+        }
+
+        protected List<ExpenseDTO> GetFilteredExpenses()
+        {
+            var filtered = expenses.AsEnumerable();
+
+            if (!string.IsNullOrEmpty(selectedCategory))
+                filtered = filtered.Where(e => e.Category == selectedCategory);
+
+            if (dateRange?.Start != null && dateRange?.End != null)
+                filtered = filtered.Where(e => e.Date >= dateRange.Start && e.Date <= dateRange.End);
+
+            return filtered.OrderByDescending(e => e.Date).ToList();
+        }
+
+        protected async Task LoadCategories()
+        {
+            try
+            {
+                var result = await CategoryService.GetAllCategories();
+                categories = result ?? new();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Failed to load categories: {ex.Message}", Severity.Error);
             }
         }
 
@@ -80,18 +118,7 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
             }
         }
 
-        protected List<ExpenseDTO> GetFilteredExpenses()
-        {
-            var filtered = expenses.AsEnumerable();
-
-            if (!string.IsNullOrEmpty(selectedCategory))
-                filtered = filtered.Where(e => e.Category == selectedCategory);
-
-            if (dateRange?.Start != null && dateRange?.End != null)
-                filtered = filtered.Where(e => e.Date >= dateRange.Start && e.Date <= dateRange.End);
-
-            return filtered.OrderByDescending(e => e.Date).ToList();
-        }
+       
 
         protected decimal GetThisMonthTotal() =>
             expenses.Where(e => e.Date.Month == DateTime.Now.Month && e.Date.Year == DateTime.Now.Year)
@@ -101,28 +128,35 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
             expenses.Where(e => e.Date.Date == DateTime.Today)
                      .Sum(e => e.Amount);
 
-        protected string GetCategoryColor(string category) => category.ToLower() switch
+        protected string GetCategoryColor(string categoryName)
         {
-            "food" => "hsl(25, 95%, 53%)",
-            "transportation" => "hsl(217, 91%, 60%)",
-            "education" => "hsl(162, 86.6%, 32.2%)",
-            "entertainment" => "hsl(291, 47%, 51%)",
-            "shopping" => "hsl(340, 82%, 52%)",
-            "bills" => "hsl(45, 93%, 47%)",
-            "healthcare" => "hsl(4, 90%, 58%)",
-            _ => "hsl(0, 0%, 52.2%)"
-        };
+            return categoryName.ToLower() switch
+            {
+                "food" => "hsl(25, 95%, 53%)",
+                "transportation" => "hsl(217, 91%, 60%)",
+                "education" => "hsl(162, 86.6%, 32.2%)",
+                "entertainment" => "hsl(291, 47%, 51%)",
+                "shopping" => "hsl(340, 82%, 52%)",
+                "bills" => "hsl(45, 93%, 47%)",
+                "healthcare" => "hsl(4, 90%, 58%)",
+                _ => "hsl(0,0%,52.2%)"
+            };
+        }
 
-        protected string GetCategoryIcon(string category) => category.ToLower() switch
+        protected string GetCategoryIcon(string categoryName)
         {
-            "food" => Icons.Material.Filled.Restaurant,
-            "transportation" => Icons.Material.Filled.DirectionsBus,
-            "education" => Icons.Material.Filled.School,
-            "entertainment" => Icons.Material.Filled.Movie,
-            "shopping" => Icons.Material.Filled.ShoppingBag,
-            "bills" => Icons.Material.Filled.Receipt,
-            "healthcare" => Icons.Material.Filled.LocalHospital,
-            _ => Icons.Material.Filled.Category
-        };
+            return categoryName.ToLower() switch
+            {
+                "food" => Icons.Material.Filled.Restaurant,
+                "transportation" => Icons.Material.Filled.DirectionsBus,
+                "education" => Icons.Material.Filled.School,
+                "entertainment" => Icons.Material.Filled.Movie,
+                "shopping" => Icons.Material.Filled.ShoppingBag,
+                "bills" => Icons.Material.Filled.Receipt,
+                "healthcare" => Icons.Material.Filled.LocalHospital,
+                _ => Icons.Material.Filled.Category
+            };
+        }
+
     }
 }
