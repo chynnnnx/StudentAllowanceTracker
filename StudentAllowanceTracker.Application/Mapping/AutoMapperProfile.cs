@@ -12,6 +12,7 @@ using StudentAllowanceTracker.Application.Commands.Expense;
 using StudentAllowanceTracker.Application.Commands.Goals;
 using StudentAllowanceTracker.Application.Commands.Budget;
 using StudentAllowanceTracker.Application.Commands.Category;
+using StudentAllowanceTracker.Application.Commands.History;
 
 namespace StudentAllowanceTracker.Application.Mapping
 {
@@ -82,6 +83,12 @@ namespace StudentAllowanceTracker.Application.Mapping
 
             CreateMap<BudgetEntity, BudgetDTO>().ReverseMap();
 
+            //History
+            CreateMap<CreateHistoryCommand, HistoryEntity>()
+                .ForMember(dest =>dest.UserID, opt => opt.Ignore())
+                .ForMember(dest => dest.HistoryID, opt => opt.Ignore());
+
+            CreateMap<HistoryEntity, HistoryDTO>().ReverseMap();
 
         }
     }
