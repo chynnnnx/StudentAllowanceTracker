@@ -15,6 +15,7 @@ namespace StudentAllowanceTracker.Domain.Entities
         public ICollection<Allowance> Allowances { get; set; } = new List<Allowance>();
         public ICollection<ExpenseEntity> Expenses { get; set; } = new List<ExpenseEntity>();
         public ICollection<GoalsEntity> Goals { get; set; } = new List<GoalsEntity>();
+        public ICollection<HistoryEntity> Histories { get; set; } = new List<HistoryEntity>();
 
 
     }

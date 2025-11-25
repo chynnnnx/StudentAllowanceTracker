@@ -1,123 +1,48 @@
 ﻿<AuthorizeView Roles="User">
-
-    <div style="background-color: white; border-bottom: 1px solid hsl(162, 41.8%, 89.2%); padding: 1.25rem 1.5rem;">
-        <div class="flex items-center" style="gap: 0.75rem;">
-            <div style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); padding: 0.5rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
-                <MudIcon Icon="@Icons.Material.Filled.AccountBalanceWallet" Style="color: white; font-size: 1.5rem;" />
-            </div>
-            <div style="display: flex; flex-direction: column;">
-                <MudText Typo="Typo.h6" Style="color: hsl(0, 0%, 10.6%); font-weight: 600; margin: 0; line-height: 1.2;">Student Allowance</MudText>
-                <MudText Typo="Typo.caption" Style="color: hsl(0, 0%, 52.2%); margin: 0; font-size: 0.75rem;">Track & Manage</MudText>
-            </div>
+    <!-- Top Bar -->
+    <div class="topbar flex items-center gap-3">
+        <div class="wallet-icon flex items-center justify-center">
+            <MudIcon Icon="@Icons.Material.Filled.AccountBalanceWallet" Class="wallet-icon-inner" />
+        </div>
+        <div class="flex flex-col">
+            <MudText Typo="Typo.h6" Class="text-primary font-semibold m-0 leading-tight">
+                Student Allowance
+            </MudText>
+            <MudText Typo="Typo.caption" Class="text-secondary m-0 text-xs">
+                Track & Manage
+            </MudText>
         </div>
     </div>
 
     <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
-    <div class="nav-scrollable" style="background-color: hsl(100, 100%, 98.2%); border-right: 2px solid hsl(162, 41.8%, 89.2%);" onclick="document.querySelector('.navbar-toggler').click()">
-        <nav class="flex flex-col" style="padding: 1rem 0;">
-
-            <!-- Dashboard -->
-            <div style="padding: 0 0.75rem;">
-                <NavLink class="nav-link flex items-center"
-                         href="dashboard" Match="NavLinkMatch.All"
-                         style="padding: 0.75rem 1rem; border-left: 3px solid transparent; background-color: transparent; border-radius: 0.5rem;">
-                    <MudIcon Icon="@Icons.Material.Filled.Home" Style="color: hsl(0, 0%, 27.8%); font-size: 1.25rem; margin-right: 0.875rem;" />
-                    <MudText Typo="Typo.body1" Style="color: hsl(0, 0%, 10.6%); font-weight: 400; margin: 0;">Home</MudText>
-                </NavLink>
-            </div>
-            <!-- Allowances -->
-            <div style="padding: 0 0.75rem;">
-                <NavLink class="nav-link flex items-center"
-                         href="allowances"
-                         style="padding: 0.75rem 1rem; border-left: 3px solid transparent; background-color: transparent; border-radius: 0.5rem;">
-                    <MudIcon Icon="@Icons.Material.Filled.Money" Style="color: hsl(0, 0%, 27.8%); font-size: 1.25rem; margin-right: 0.875rem;" />
-                    <MudText Typo="Typo.body1" Style="color: hsl(0, 0%, 10.6%); font-weight: 400; margin: 0;">Allowances</MudText>
-                </NavLink>
-            </div>
-            <!-- Expenses -->
-            <div style="padding: 0 0.75rem;">
-                <NavLink class="nav-link flex items-center"
-                         href="expenses"
-                         style="padding: 0.75rem 1rem; border-left: 3px solid transparent; background-color: transparent; border-radius: 0.5rem;">
-                    <MudIcon Icon="@Icons.Material.Filled.Receipt" Style="color: hsl(0, 0%, 27.8%); font-size: 1.25rem; margin-right: 0.875rem;" />
-                    <MudText Typo="Typo.body1" Style="color: hsl(0, 0%, 10.6%); font-weight: 400; margin: 0;">Track Expenses</MudText>
-                </NavLink>
-            </div>
-            <!-- Goals -->
-            <div style="padding: 0 0.75rem;">
-                <NavLink class="nav-link flex items-center"
-                         href="goals"
-                         style="padding: 0.75rem 1rem; border-left: 3px solid transparent; background-color: transparent; border-radius: 0.5rem;">
-                    <MudIcon Icon="@Icons.Material.Filled.Category" Style="color: hsl(0, 0%, 27.8%); font-size: 1.25rem; margin-right: 0.875rem;" />
-                    <MudText Typo="Typo.body1" Style="color: hsl(0, 0%, 10.6%); font-weight: 400; margin: 0;">Goals</MudText>
-                </NavLink>
-            </div>
-            <!-- Goals -->
-            <div style="padding: 0 0.75rem;">
-                <NavLink class="nav-link flex items-center"
-                         href="categories"
-                         style="padding: 0.75rem 1rem; border-left: 3px solid transparent; background-color: transparent; border-radius: 0.5rem;">
-                    <MudIcon Icon="@Icons.Material.Filled.Category" Style="color: hsl(0, 0%, 27.8%); font-size: 1.25rem; margin-right: 0.875rem;" />
-                    <MudText Typo="Typo.body1" Style="color: hsl(0, 0%, 10.6%); font-weight: 400; margin: 0;">Categories</MudText>
-                </NavLink>
-            </div>
-            <!-- Budget -->
-            <div style="padding: 0 0.75rem;">
-                <NavLink class="nav-link flex items-center"
-                         href="budget"
-                         style="padding: 0.75rem 1rem; border-left: 3px solid transparent; background-color: transparent; border-radius: 0.5rem;">
-                    <MudIcon Icon="@Icons.Material.Filled.PieChart" Style="color: hsl(0, 0%, 27.8%); font-size: 1.25rem; margin-right: 0.875rem;" />
-                    <MudText Typo="Typo.body1" Style="color: hsl(0, 0%, 10.6%); font-weight: 400; margin: 0;">Budget</MudText>
-                </NavLink>
-            </div>
-
-
-            <!-- History -->
-            <div style="padding: 0 0.75rem;">
-                <NavLink class="nav-link flex items-center"
-                         href="history"
-                         style="padding: 0.75rem 1rem; border-left: 3px solid transparent; background-color: transparent; border-radius: 0.5rem;">
-                    <MudIcon Icon="@Icons.Material.Filled.Assessment" Style="color: hsl(0, 0%, 27.8%); font-size: 1.25rem; margin-right: 0.875rem;" />
-                    <MudText Typo="Typo.body1" Style="color: hsl(0, 0%, 10.6%); font-weight: 400; margin: 0;">History</MudText>
-                </NavLink>
-            </div>
-
-            <!-- Settings -->
-            <div style="padding: 0 0.75rem;">
-                <NavLink class="nav-link flex items-center"
-                         href="settings"
-                         style="padding: 0.75rem 1rem; border-left: 3px solid transparent; background-color: transparent; border-radius: 0.5rem;">
-                    <MudIcon Icon="@Icons.Material.Filled.Settings" Style="color: hsl(0, 0%, 27.8%); font-size: 1.25rem; margin-right: 0.875rem;" />
-                    <MudText Typo="Typo.body1" Style="color: hsl(0, 0%, 10.6%); font-weight: 400; margin: 0;">Settings</MudText>
-                </NavLink>
-            </div>
+    <!-- Sidebar -->
+    <div class="sidebar nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+        <nav class="flex flex-col py-4">
+            @foreach (var item in new[]
+            {
+            new { Href = "dashboard", Icon = Icons.Material.Filled.Home, Label = "Home" },
+            new { Href = "allowances", Icon = Icons.Material.Filled.Money, Label = "Allowances" },
+            new { Href = "expenses", Icon = Icons.Material.Filled.Receipt, Label = "Track Expenses" },
+            new { Href = "goals", Icon = Icons.Material.Filled.Category, Label = "Goals" },
+            new { Href = "categories", Icon = Icons.Material.Filled.Category, Label = "Categories" },
+            new { Href = "budget", Icon = Icons.Material.Filled.PieChart, Label = "Budget" },
+            new { Href = "history", Icon = Icons.Material.Filled.Assessment, Label = "History" },
+            new { Href = "settings", Icon = Icons.Material.Filled.Settings, Label = "Settings" }
+            })
+            {
+                <div class="px-3">
+                    <NavLink class="nav-link flex items-center px-4 py-3 rounded border-l-4 border-transparent"
+                             href="@item.Href" Match="NavLinkMatch.All">
+                        <MudIcon Icon="@item.Icon" Class="sidebar-icon mr-3" />
+                        <MudText Typo="Typo.body1" Class="text-primary font-normal m-0">
+                            @item.Label
+                        </MudText>
+                    </NavLink>
+                </div>
+            }
 
         </nav>
     </div>
-
-    <style>
-        .nav-link {
-            transition: background-color 0.15s ease, border-left-color 0.15s ease;
-        }
-
-            .nav-link:hover {
-                background-color: hsl(103, 93.9%, 93.5%) !important;
-            }
-
-            .nav-link.active {
-                background-color: hsl(103, 96.4%, 89%) !important;
-                border-left-color: hsl(162, 86.6%, 32.2%) !important;
-            }
-
-                .nav-link.active .mud-icon {
-                    color: hsl(162, 86.6%, 32.2%) !important;
-                }
-
-                .nav-link.active .mud-typography {
-                    color: hsl(0, 0%, 10.6%) !important;
-                    font-weight: 500 !important;
-                }
-    </style>
 
 </AuthorizeView>

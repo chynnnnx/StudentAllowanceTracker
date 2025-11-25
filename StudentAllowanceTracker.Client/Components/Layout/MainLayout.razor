@@ -2,91 +2,96 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager Navigation
 @inject ILocalStorageService LocalStorage
-
-<MudThemeProvider Theme="_theme" />
+@using Components.CustomTheme
+<MudThemeProvider Theme="@ThemeColor.Theme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 <MudPopoverProvider />
-    @if (_isLoading)
-    {
-        <Loader Visible="true" />
-    }
-    else
-    {
-<AuthorizeView Roles="User">
-    <Authorized>
-      
-        <MudLayout>
-            <MudAppBar Elevation="0" Style="background-color: white; border-bottom: 1px solid hsl(162, 41.8%, 89.2%);">
-                <MudIconButton Icon="@Icons.Material.Filled.Menu"
-                Style="color: hsl(0, 0%, 27.8%);"
-                Edge="Edge.Start"
-                OnClick="@DrawerToggle" />
 
-                <MudSpacer />
-
-                <!-- Right side actions -->
-                <div class="flex items-center" style="gap: 0.5rem;">
-
-                    <!-- Notifications -->
-                    <MudIconButton Icon="@Icons.Material.Outlined.Notifications"
-                    Style="color: hsl(0, 0%, 27.8%);"
-                    Size="Size.Medium" />
-
-                    <!-- Help -->
-                    <MudIconButton Icon="@Icons.Material.Outlined.HelpOutline"
-                    Style="color: hsl(0, 0%, 27.8%);"
-                    Size="Size.Medium" />
-
-                    <!-- Divider -->
-                    <MudDivider Vertical="true" FlexItem="true" Style="height: 24px; margin: 0 0.5rem;" />
-
-                    <!-- User Menu -->
-                    <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
-                        <ActivatorContent>
-                            <MudButton Variant="Variant.Text"
-                            Style="color: hsl(0, 0%, 27.8%); text-transform: none; padding: 0.5rem 1rem;"
-                            StartIcon="@Icons.Material.Filled.AccountCircle">
-                                <MudHidden Breakpoint="Breakpoint.SmAndDown">
-                                    <span style="margin-left: 0.5rem;">Account</span>
-                                </MudHidden>
-                                <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowDown" Style="margin-left: 0.25rem;" Size="Size.Small" />
-                            </MudButton>
-                        </ActivatorContent>
-                        <ChildContent>
-                            <MudMenuItem Icon="@Icons.Material.Filled.Person">Profile</MudMenuItem>
-                            <MudMenuItem Icon="@Icons.Material.Filled.Settings">Settings</MudMenuItem>
-                            <MudDivider />
-                            <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="Logout">Logout</MudMenuItem>
-                        </ChildContent>
-                    </MudMenu>
-                </div>
-            </MudAppBar>
-
-            <MudDrawer @bind-Open="_drawerOpen"
-            Class="white-drawer"
-            Elevation="0"
-            Style="border-right: 2px solid hsl(162, 41.8%, 89.2%);">
-                <NavMenu />
-            </MudDrawer>
-
-            <MudMainContent Style="background-color: hsl(0, 0%, 98%);">
-                <div style="padding: 1.5rem;">
-                    @Body
-                </div>
-            </MudMainContent>
-        </MudLayout>
-    </Authorized>
-    <NotAuthorized>
-        <div class="flex flex-col items-center justify-center h-screen text-center">
-            <MudText Typo="Typo.h5" Color="Color.Error">You are not authorized to access this page.</MudText>
-            <MudText Typo="Typo.body1">
-                Please <MudLink Href="/">log in</MudLink> to continue.
-            </MudText>
-        </div>
-    </NotAuthorized>
-</AuthorizeView>
+@if (_isLoading)
+{
+    <Loader Visible="true" />
 }
+else
+{
+    <AuthorizeView Roles="User">
+        <Authorized>
+            <MudLayout>
+                <!-- App Bar - Using CSS Variables -->
+                <MudAppBar Elevation="0" Style="background-color: var(--bg-white); border-bottom: 1px solid var(--border-primary);">
+                    <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                                   Style="color: var(--text-icon);"
+                                   Edge="Edge.Start"
+                                   OnClick="@DrawerToggle" />
+
+                    <MudSpacer />
+
+                    <!-- Right side actions -->
+                    <div class="flex items-center" style="gap: 0.5rem;">
+
+                        <!-- Notifications -->
+                        <MudIconButton Icon="@Icons.Material.Outlined.Notifications"
+                                       Style="color: var(--text-icon);"
+                                       Size="Size.Medium" />
+
+                        <!-- Help -->
+                        <MudIconButton Icon="@Icons.Material.Outlined.HelpOutline"
+                                       Style="color: var(--text-icon);"
+                                       Size="Size.Medium" />
+
+                        <!-- Divider -->
+                        <MudDivider Vertical="true" FlexItem="true" Style="height: 24px; margin: 0 0.5rem;" />
+
+                        <!-- User Menu -->
+                        <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+                            <ActivatorContent>
+                                <MudButton Variant="Variant.Text"
+                                           Style="color: var(--text-icon); text-transform: none; padding: 0.5rem 1rem;"
+                                           StartIcon="@Icons.Material.Filled.AccountCircle">
+                                    <MudHidden Breakpoint="Breakpoint.SmAndDown">
+                                        <span style="margin-left: 0.5rem;">Account</span>
+                                    </MudHidden>
+                                    <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowDown" Style="margin-left: 0.25rem;" Size="Size.Small" />
+                                </MudButton>
+                            </ActivatorContent>
+                            <ChildContent>
+                                <MudMenuItem Icon="@Icons.Material.Filled.Person">Profile</MudMenuItem>
+                                <MudMenuItem Icon="@Icons.Material.Filled.Settings">Settings</MudMenuItem>
+                                <MudDivider />
+                                <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="Logout">Logout</MudMenuItem>
+                            </ChildContent>
+                        </MudMenu>
+                    </div>
+                </MudAppBar>
+
+                <!-- Drawer - Using CSS Variables -->
+                <MudDrawer @bind-Open="_drawerOpen"
+                           Class="white-drawer"
+                           Elevation="0"
+                           Style="border-right: 2px solid var(--border-primary);">
+                    <NavMenu />
+                </MudDrawer>
+
+                <!-- Main Content - Using CSS Variables -->
+                <MudMainContent Style="background-color: var(--bg-page);">
+                    <div style="padding: 1.5rem;">
+                        @Body
+                    </div>
+                </MudMainContent>
+            </MudLayout>
+        </Authorized>
+        <NotAuthorized>
+            <div class="flex flex-col items-center justify-center h-screen text-center">
+                <!-- Using MudBlazor Theme Color -->
+                <MudText Typo="Typo.h5" Color="Color.Error">You are not authorized to access this page.</MudText>
+                <MudText Typo="Typo.body1">
+                    Please <MudLink Href="/">log in</MudLink> to continue.
+                </MudText>
+            </div>
+        </NotAuthorized>
+    </AuthorizeView>
+}
+
 @code {
     private bool _drawerOpen = true;
     private bool _isLoading = true;
@@ -96,6 +101,7 @@
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         _isLoading = false;
     }
+
     void DrawerToggle() => _drawerOpen = !_drawerOpen;
 
     private async Task Logout()
@@ -107,18 +113,6 @@
         Navigation.NavigateTo("/", forceLoad: true);
     }
 
-    private MudTheme _theme = new()
-        {
-            PaletteLight = new PaletteLight()
-            {
-                Primary = "#10b981",
-                Secondary = "#d1fae5",
-                Success = "#10b981",
-                Error = "#dc2626",
-                Background = "#ffffff",
-                Surface = "#ffffff",
-                TextPrimary = "#000000",
-                TextSecondary = "#6b7280",
-            }
-        };
+    
+
 }

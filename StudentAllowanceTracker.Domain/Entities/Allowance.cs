@@ -20,11 +20,6 @@ namespace StudentAllowanceTracker.Domain.Entities
         public AppIdentityUser User { get; set; } = default!;
 
         public ICollection<ExpenseEntity> Expenses { get; set; } = new List <ExpenseEntity>();
-        public void Deduct(decimal expenseAmount)
-        {
-            if (expenseAmount > Amount)
-                throw new InvalidOperationException("Not enough allowance.");
-            Amount -= expenseAmount;
-        }
+     
     }
 }
