@@ -29,7 +29,7 @@ namespace StudentAllowanceTracker.Application.Commands.Expense
             _allowanceRepo = allowanceRepo;
         }
 
-        public async Task <Result<ExpenseDTO>> Handle (CreateExpenseCommand command, CancellationToken cancellationToken)
+        public async Task<Result<ExpenseDTO>> Handle(CreateExpenseCommand command, CancellationToken cancellationToken)
         {
             var userId = _currentUser.UserId;
             if (string.IsNullOrEmpty(userId))
@@ -39,25 +39,14 @@ namespace StudentAllowanceTracker.Application.Commands.Expense
             if (allowance == null)
                 return Result<ExpenseDTO>.Fail(ResultStatus.NotFound, "Allowance not found.");
 
-            try
-            {
-                allowance.Deduct(command.Amount);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Result<ExpenseDTO>.Fail(ResultStatus.ValidationError, ex.Message);
-            }
-            await _allowanceRepo.UpdateAsync(allowance);
-
 
             var expenses = _mapper.Map<ExpenseEntity>(command);
             expenses.ExpenseID = Guid.NewGuid();
             expenses.UserID = userId;
-
             await _expenseRepo.AddAsync(expenses);
+
             var dto = _mapper.Map<ExpenseDTO>(expenses);
             return Result<ExpenseDTO>.Ok(dto);
-
         }
     }
 }

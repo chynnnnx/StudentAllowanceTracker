@@ -58,14 +58,17 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
             if (allowance == null) return 0;
 
             var spent = GetAllowanceSpent(allowanceId);
-            var remaining = allowance.Amount - spent;
-            return remaining < 0 ? 0 : remaining; // Return 0 instead of negative
+            return allowance.Amount - spent; // Return actual remaining (can be negative)
         }
 
         protected decimal GetTotalRemaining()
         {
-            var total = allowances.Sum(a => GetAllowanceRemaining(a.AllowanceID));
-            return total < 0 ? 0 : total; // Return 0 instead of negative
+            return allowances
+                .Where(IsActive)
+                .Sum(a => {
+                    var remaining = GetAllowanceRemaining(a.AllowanceID);
+                    return remaining > 0 ? remaining : 0; // Only sum positive balances
+                });
         }
 
         protected int GetPercentageUsed(Guid allowanceId)
@@ -257,9 +260,9 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
 
         protected string GetBalanceTextColor(decimal remaining, decimal spent, decimal total)
         {
-            if (spent > total) return "hsl(0, 84.2%, 60.2%)"; 
-            if (remaining < 100) return "hsl(38, 92%, 50%)";  
-            return "hsl(162, 86.6%, 32.2%)";                  
+            if (spent > total) return "hsl(0, 84.2%, 60.2%)";
+            if (remaining < 100) return "hsl(38, 92%, 50%)";
+            return "hsl(162, 86.6%, 32.2%)";
         }
 
     }

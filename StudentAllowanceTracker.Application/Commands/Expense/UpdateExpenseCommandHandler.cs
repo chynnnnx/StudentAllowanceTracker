@@ -43,26 +43,6 @@ namespace StudentAllowanceTracker.Application.Commands.Expense
             if (expense == null || expense.UserID != userId)
                 return Result<ExpenseDTO>.Fail(ResultStatus.NotFound, "Expense not found or access denied.");
 
-            var allowance = await _allowanceRepo.GetByIdAsync(expense.AllowanceID);
-            if (allowance == null)
-                return Result<ExpenseDTO>.Fail(ResultStatus.NotFound, "Allowance not found.");
-
-            var difference = command.Amount - expense.Amount;
-
-            if (difference > 0)
-            {
-                if (difference > allowance.Amount)
-                    return Result<ExpenseDTO>.Fail(ResultStatus.ValidationError, "Not enough allowance to cover the increased expense.");
-
-                allowance.Deduct(difference);
-            }
-            else if (difference < 0)
-            {
-                allowance.Amount += Math.Abs(difference);
-            }
-
-            await _allowanceRepo.UpdateAsync(allowance);
-
             _mapper.Map(command, expense);
             await _expenseRepo.UpdateAsync(expense);
 
