@@ -11,14 +11,21 @@ namespace StudentAllowanceTracker.Client.Components.Dialogs.User
         [CascadingParameter] protected IMudDialogInstance MudDialog { get; set; } = default!;
         [Inject] protected ICategoryService CategoryService { get; set; } = default!;
         [Inject] protected ISnackbar Snackbar { get; set; } = default!;
+        [Inject] protected IBudgetService BudgetService { get; set; } = default!;
 
         [Parameter] public CategoryDTO? Category { get; set; }
 
         protected CategoryDTO CategoryForm { get; set; } = new();
         protected bool IsEditing => Category != null;
         protected bool isSaving = false;
+        protected decimal remainingBudget = 0;
+        protected BudgetDTO? currentBudget = null;
+        protected decimal needsPercentage => currentBudget?.NeedsPercentage ?? 50;
+        protected decimal wantsPercentage => currentBudget?.WantsPercentage ?? 30;
+        protected decimal savingsPercentage => currentBudget?.SavingsPercentage ?? 20;
 
-        protected override void OnInitialized()
+
+        protected override async Task OnInitializedAsync()
         {
             if (IsEditing && Category != null)
             {
@@ -38,13 +45,66 @@ namespace StudentAllowanceTracker.Client.Components.Dialogs.User
                     Type = CategoryType.Needs
                 };
             }
+
+            await CalculateRemainingBudget();
         }
+
+        protected async Task CalculateRemainingBudget()
+        {
+            var budgets = await BudgetService.GetBudgetsByUser();
+            var budget = budgets.FirstOrDefault();
+            currentBudget = budget;
+
+            if (budget == null)
+            {
+                Snackbar.Add("No budget found for user", Severity.Warning);
+                remainingBudget = 0;
+                return;
+            }
+
+            var allCategories = await CategoryService.GetAllCategories();
+
+            var existingCategories = allCategories
+                .Where(c => c.Type == CategoryForm.Type &&
+                           c.UserID == budget.UserID &&
+                           (IsEditing ? c.CategoryID != CategoryForm.CategoryID : true))
+                .ToList();
+
+            var usedBudget = existingCategories.Sum(c => c.BudgetAmount ?? 0);
+
+            var totalBudgetForType = CategoryForm.Type switch
+            {
+                CategoryType.Needs => budget.NeedsBudget,
+                CategoryType.Wants => budget.WantsBudget,
+                CategoryType.Savings => budget.SavingsBudget,
+                _ => 0
+            };
+
+            if (IsEditing && Category?.BudgetAmount.HasValue == true)
+            {
+                remainingBudget = totalBudgetForType - usedBudget;
+            }
+            else
+            {
+                remainingBudget = totalBudgetForType - usedBudget;
+            }
+
+            remainingBudget = Math.Max(0, remainingBudget);
+        }
+
+        protected decimal GetRemainingBudgetForType() => remainingBudget;
 
         protected async Task Submit()
         {
             if (!IsFormValid())
             {
                 Snackbar.Add("Please enter a category name", Severity.Error);
+                return;
+            }
+
+            if (CategoryForm.BudgetAmount.HasValue && CategoryForm.BudgetAmount.Value > remainingBudget)
+            {
+                Snackbar.Add($"Budget amount exceeds remaining budget of ₱{remainingBudget:N2}", Severity.Error);
                 return;
             }
 
@@ -69,7 +129,7 @@ namespace StudentAllowanceTracker.Client.Components.Dialogs.User
                 }
                 else
                 {
-                    Snackbar.Add("Failed to save category", Severity.Error);
+                    Snackbar.Add("Failed to save category. Please check if you exceeded the budget limit.", Severity.Error);
                 }
             }
             catch (Exception ex)
@@ -122,4 +182,4 @@ namespace StudentAllowanceTracker.Client.Components.Dialogs.User
             };
         }
     }
-}
+}   

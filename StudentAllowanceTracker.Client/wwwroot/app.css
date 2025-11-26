@@ -10,13 +10,13 @@
     --color-needs-bg: hsl(162, 41.8%, 95%);
     --color-needs-light: hsl(162, 41.8%, 97%);
     /* Category Type Colors - Wants */
-    --color-wants: hsl(280, 86.6%, 60%);
-    --color-wants-bg: hsl(280, 41.8%, 95%);
-    --color-wants-light: hsl(280, 41.8%, 97%);
+    --color-wants: hsl(24, 95%, 53%);
+    --color-wants-bg: hsl(24, 95%, 95%);
+    --color-wants-light: hsl(24, 95%, 97%);
     /* Category Type Colors - Savings */
-    --color-savings: hsl(210, 86.6%, 50%);
-    --color-savings-bg: hsl(210, 41.8%, 95%);
-    --color-savings-light: hsl(210, 41.8%, 97%);
+    --color-savings: hsl(189, 85%, 43%);
+    --color-savings-bg: hsl(189, 85%, 95%);
+    --color-savings-light: hsl(189, 85%, 97%);
     /* Page Background */
     --bg-page-gradient: linear-gradient(135deg, hsl(162, 41.8%, 97%) 0%, hsl(162, 30%, 95%) 100%);
     --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);

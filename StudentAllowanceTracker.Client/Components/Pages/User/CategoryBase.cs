@@ -12,8 +12,10 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
         [Inject] protected ICategoryService CategoryService { get; set; } = default!;
         [Inject] protected IDialogService DialogService { get; set; } = default!;
         [Inject] protected ISnackbar Snackbar { get; set; } = default!;
+        [Inject] protected IBudgetService BudgetService { get; set; } = default!;
 
         protected List<CategoryDTO> categories = new();
+        protected BudgetDTO? currentBudget = null;
         protected List<CategoryDTO> needsCategories => categories.Where(c => c.Type == CategoryType.Needs).ToList();
         protected List<CategoryDTO> wantsCategories => categories.Where(c => c.Type == CategoryType.Wants).ToList();
         protected List<CategoryDTO> savingsCategories => categories.Where(c => c.Type == CategoryType.Savings).ToList();
@@ -22,7 +24,10 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
         protected decimal wantsTotal => wantsCategories.Sum(c => c.BudgetAmount ?? 0);
         protected decimal savingsTotal => savingsCategories.Sum(c => c.BudgetAmount ?? 0);
 
-        // Pagination
+        protected decimal needsPercentage => currentBudget?.NeedsPercentage ?? 50;
+        protected decimal wantsPercentage => currentBudget?.WantsPercentage ?? 30;
+        protected decimal savingsPercentage => currentBudget?.SavingsPercentage ?? 20;
+
         protected Dictionary<CategoryType, int> currentPages = new()
         {
             { CategoryType.Needs, 0 },
@@ -33,7 +38,21 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
 
         protected override async Task OnInitializedAsync()
         {
+            await LoadBudget();
             await LoadCategories();
+        }
+
+        protected async Task LoadBudget()
+        {
+            try
+            {
+                var budgets = await BudgetService.GetBudgetsByUser();
+                currentBudget = budgets.FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error loading budget: {ex.Message}", Severity.Error);
+            }
         }
 
         protected async Task LoadCategories()

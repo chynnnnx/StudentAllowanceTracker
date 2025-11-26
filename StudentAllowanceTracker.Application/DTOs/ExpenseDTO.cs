@@ -14,7 +14,8 @@ namespace StudentAllowanceTracker.Application.DTOs
         public Guid CategoryID { get; set; }
 
         public string? Description { get; set; }
-
+        public string CategoryName { get; set; } = string.Empty;
+        public string CategoryType { get; set; } = string.Empty;
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
     }

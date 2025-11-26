@@ -1,0 +1,221 @@
+﻿@page "/history"
+@inherits HistoryBase
+
+<div style="max-width: 1200px; margin: 0 auto;">
+    <div class="max-w-7xl mx-auto">
+
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <MudText Typo="Typo.h4" Class="font-bold text-gray-900 mb-2">Transaction History</MudText>
+                <MudText Typo="Typo.body1" Class="text-gray-600">Track all your financial activities</MudText>
+            </div>
+        </div>
+
+        @if (isLoading)
+        {
+            <div class="flex flex-col items-center justify-center py-16">
+                <MudProgressCircular Color="Color.Success" Indeterminate="true" />
+                <MudText Typo="Typo.body2" Class="text-gray-500 mt-4">Loading history...</MudText>
+            </div>
+        }
+        else
+        {
+  
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <MudPaper Class="p-6 border-2 transition-all hover:shadow-lg needs-border needs-bg-gradient"
+                          Style="border-radius: 1rem;"
+                          Elevation="0">
+                    <div class="flex items-center gap-3 mb-2">
+                        <MudIcon Icon="@Icons.Material.Filled.AccountBalanceWallet" Class="needs-color" Style="font-size: 1.5rem;" />
+                        <MudText Typo="Typo.body2" Class="text-gray-600">Allowances</MudText>
+                    </div>
+                    <MudText Typo="Typo.h5" Class="font-bold needs-color">@GetRecordCount("Allowance")</MudText>
+                </MudPaper>
+
+                <MudPaper Class="p-6 border-2 transition-all hover:shadow-lg wants-border wants-bg-gradient"
+                          Style="border-radius: 1rem;"
+                          Elevation="0">
+                    <div class="flex items-center gap-3 mb-2">
+                        <MudIcon Icon="@Icons.Material.Filled.ShoppingCart" Class="wants-color" Style="font-size: 1.5rem;" />
+                        <MudText Typo="Typo.body2" Class="text-gray-600">Expenses</MudText>
+                    </div>
+                    <MudText Typo="Typo.h5" Class="font-bold wants-color">@GetRecordCount("Expense")</MudText>
+                </MudPaper>
+
+                <MudPaper Class="p-6 border-2 transition-all hover:shadow-lg savings-border savings-bg-gradient"
+                          Style="border-radius: 1rem;"
+                          Elevation="0">
+                    <div class="flex items-center gap-3 mb-2">
+                        <MudIcon Icon="@Icons.Material.Filled.TrackChanges" Class="savings-color" Style="font-size: 1.5rem;" />
+                        <MudText Typo="Typo.body2" Class="text-gray-600">Goals</MudText>
+                    </div>
+                    <MudText Typo="Typo.h5" Class="font-bold savings-color">@GetRecordCount("Goal")</MudText>
+                </MudPaper>
+
+                <MudPaper Class="gradient-primary p-6"
+                          Style="border-radius: 1rem;"
+                          Elevation="0">
+                    <MudText Typo="Typo.body2" Class="summary-primary-label">Total Records</MudText>
+                    <MudText Typo="Typo.h5" Class="font-bold" Style="color: white;">@histories.Count</MudText>
+                </MudPaper>
+            </div>
+
+         
+            <MudPaper Class="p-6 mb-6 shadow-sm"
+                      Style="border-radius: 1rem; background: white;"
+                      Elevation="0">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <MudSelect T="string"
+                               Label="Filter by Type"
+                               Value="@selectedType"
+                               ValueChanged="@((string? value) => OnTypeFilterChanged(value))"
+                               Variant="Variant.Outlined"
+                               Clearable="true">
+                        <MudSelectItem Value="@((string?)null)">All Types</MudSelectItem>
+                        @foreach (var type in historyTypes)
+                        {
+                            <MudSelectItem Value="@type">@type</MudSelectItem>
+                        }
+                    </MudSelect>
+
+                    <MudDateRangePicker Label="Filter by Date Range"
+                                        DateRange="@dateRange"
+                                        DateRangeChanged="@((DateRange? range) => OnDateRangeChanged(range))"
+                                        Variant="Variant.Outlined"
+                                        Clearable="true" />
+
+                    <MudTextField Value="@searchString"
+                                  ValueChanged="@((string value) => OnSearchChanged(value))"
+                                  Label="Search"
+                                  Variant="Variant.Outlined"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Search"
+                                  DebounceInterval="300"
+                                  Immediate="false"
+                                  Clearable="true" />
+                </div>
+
+                <div class="flex justify-end mt-4">
+                    <MudButton Variant="Variant.Text"
+                               StartIcon="@Icons.Material.Filled.FilterAltOff"
+                               OnClick="ClearFilters"
+                               Class="text-secondary"
+                               Style="text-transform: none;">
+                        Clear All Filters
+                    </MudButton>
+                </div>
+            </MudPaper>
+
+    
+            @if (filteredHistories.Any())
+            {
+                <MudPaper Class="p-6 shadow-sm"
+                          Style="border-radius: 1rem; background: white;"
+                          Elevation="0">
+                    <MudDataGrid T="HistoryDTO"
+                                 Items="@filteredHistories"
+                                 Filterable="false"
+                                 SortMode="SortMode.Multiple"
+                                 Hover="true"
+                                 Dense="true"
+                                 RowsPerPage="10">
+                        <Columns>
+                            <PropertyColumn Property="x => x.Type" Title="Type">
+                                <CellTemplate>
+                                    <div class="flex items-center gap-2">
+                                        <MudIcon Icon="@GetTypeIcon(context.Item.Type)"
+                                                 Class="@GetTypeColor(context.Item.Type)"
+                                                 Size="Size.Small" />
+                                        <MudChip T="string"
+                                                 Size="Size.Small"
+                                                 Class="@($"{GetTypeColor(context.Item.Type)}")"
+                                                 Style="font-weight: 500;">
+                                            @context.Item.Type
+                                        </MudChip>
+                                    </div>
+                                </CellTemplate>
+                            </PropertyColumn>
+
+                            <PropertyColumn Property="x => x.Description" Title="Description">
+                                <CellTemplate>
+                                    <MudText Typo="Typo.body2" Class="text-gray-900">
+                                        @context.Item.Description
+                                    </MudText>
+                                </CellTemplate>
+                            </PropertyColumn>
+
+                            <PropertyColumn Property="x => x.Amount" Title="Amount">
+                                <CellTemplate>
+                                    @if (context.Item.Amount.HasValue)
+                                    {
+                                        <MudText Typo="Typo.body2" Class="font-semibold text-gray-900">
+                                            ₱@context.Item.Amount.Value.ToString("N2")
+                                        </MudText>
+                                    }
+                                    else
+                                    {
+                                        <MudText Typo="Typo.body2" Class="text-gray-400">-</MudText>
+                                    }
+                                </CellTemplate>
+                            </PropertyColumn>
+
+                            <PropertyColumn Property="x => x.Date" Title="Date & Time" Format="MMM dd, yyyy hh:mm tt">
+                                <CellTemplate>
+                                    <div>
+                                        <MudText Typo="Typo.body2" Class="text-gray-900">
+                                            @context.Item.Date.ToString("MMM dd, yyyy")
+                                        </MudText>
+                                        <MudText Typo="Typo.caption" Class="text-gray-500">
+                                            @context.Item.Date.ToString("hh:mm tt")
+                                        </MudText>
+                                    </div>
+                                </CellTemplate>
+                            </PropertyColumn>
+
+                            <TemplateColumn Title="Actions" Sortable="false">
+                                <CellTemplate>
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                   Size="Size.Small"
+                                                   Class="text-error"
+                                                   OnClick="@(() => DeleteHistory(context.Item.HistoryID))" />
+                                </CellTemplate>
+                            </TemplateColumn>
+                        </Columns>
+
+                        <PagerContent>
+                            <MudDataGridPager T="HistoryDTO" />
+                        </PagerContent>
+                    </MudDataGrid>
+                </MudPaper>
+            }
+            else
+            {
+                <MudPaper Class="p-12 border-2 text-center border-primary"
+                          Style="border-radius: 1rem;"
+                          Elevation="0">
+                    <MudIcon Icon="@Icons.Material.Outlined.History"
+                             Class="text-gray-300 mb-4"
+                             Style="font-size: 5rem;" />
+                    <MudText Typo="Typo.h5" Class="font-semibold text-gray-500 mb-2">
+                        No history records found
+                    </MudText>
+                    <MudText Typo="Typo.body2" Class="text-gray-400 mb-6">
+                        @(selectedType != null || dateRange != null || !string.IsNullOrWhiteSpace(searchString)
+                            ? "Try adjusting your filters"
+                            : "Start using the app to see your activity history")
+                    </MudText>
+                    @if (selectedType != null || dateRange != null || !string.IsNullOrWhiteSpace(searchString))
+                    {
+                        <MudButton Variant="Variant.Filled"
+                                   StartIcon="@Icons.Material.Filled.FilterAltOff"
+                                   OnClick="ClearFilters"
+                                   Class="gradient-primary px-8 py-3 rounded-lg font-medium"
+                                   Style="color: white; text-transform: none;">
+                            Clear Filters
+                        </MudButton>
+                    }
+                </MudPaper>
+            }
+        }
+    </div>
+</div>

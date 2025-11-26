@@ -17,12 +17,18 @@ namespace StudentAllowanceTracker.Application.Commands.Budget
     public class CreateBudgetCommandHandler : IRequestHandler<CreateBudgetCommand, Result<BudgetDTO>>
     {
         private readonly IBaseRepository<BudgetEntity> _budgetRepo;
+        private readonly IBaseRepository<Allowance> _allowanceRepo;
         private readonly IMapper _mapper;
         private readonly ICurrentUserService _currentUser;
 
-        public CreateBudgetCommandHandler(IBaseRepository<BudgetEntity> budgetRepo, IMapper mapper, ICurrentUserService currentUser)
+        public CreateBudgetCommandHandler(
+            IBaseRepository<BudgetEntity> budgetRepo,
+            IBaseRepository<Allowance> allowanceRepo,
+            IMapper mapper,
+            ICurrentUserService currentUser)
         {
             _budgetRepo = budgetRepo;
+            _allowanceRepo = allowanceRepo;
             _mapper = mapper;
             _currentUser = currentUser;
         }
@@ -33,14 +39,20 @@ namespace StudentAllowanceTracker.Application.Commands.Budget
             if (string.IsNullOrEmpty(userId))
                 return Result<BudgetDTO>.Fail(ResultStatus.Unauthorized, "User not logged in.");
 
+            var allowances = await _allowanceRepo.FindAsync(a => a.UserId == userId);
+
+            var totalAllowance = allowances.Sum(a => a.Amount);
+
             var budget = _mapper.Map<BudgetEntity>(command);
             budget.BudgetID = Guid.NewGuid();
             budget.UserID = userId;
+            budget.TotalAllowance = totalAllowance; 
 
             await _budgetRepo.AddAsync(budget);
 
             return Result<BudgetDTO>.Ok(_mapper.Map<BudgetDTO>(budget));
         }
     }
+
 
 }

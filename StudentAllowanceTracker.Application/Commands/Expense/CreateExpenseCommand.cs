@@ -18,5 +18,6 @@ namespace StudentAllowanceTracker.Application.Commands.Expense
 
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
+                                               
     }
 }

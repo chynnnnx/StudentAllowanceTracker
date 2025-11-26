@@ -3,7 +3,6 @@
 
 <div style="max-width: 1200px; margin: 0 auto;">
 
-    <!-- Header Section -->
     <div class="flex items-center justify-between" style="margin-bottom: 2rem;">
         <div>
             <MudText Typo="Typo.h4" Class="header-title">Allowances</MudText>
@@ -26,10 +25,9 @@
     }
     else
     {
-        <!-- Summary Cards -->
         <div class="grid gap-4 mb-6" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
 
-            <!-- Total Remaining -->
+           
             <MudCard Class="summary-card-primary">
                 <MudCardContent Class="summary-card-content">
                     <MudText Typo="Typo.body2" Class="summary-primary-label">Total Remaining</MudText>
@@ -40,15 +38,16 @@
                 </MudCardContent>
             </MudCard>
 
-            <!-- This Month -->
             <MudCard Class="summary-card-white">
                 <MudCardContent Class="summary-card-content">
                     <MudText Typo="Typo.body2" Class="text-secondary summary-label">This Month</MudText>
                     <MudText Typo="Typo.h4" Class="summary-white-value">₱@GetThisMonthTotal().ToString("N2")</MudText>
+                    <MudText Typo="Typo.caption">Total from all sources</MudText>
+
                 </MudCardContent>
             </MudCard>
 
-            <!-- Active Count -->
+            
             <MudCard Class="summary-card-white">
                 <MudCardContent Class="summary-card-content">
                     <MudText Typo="Typo.body2" Class="text-secondary summary-label">Active Allowances</MudText>
@@ -58,7 +57,7 @@
 
         </div>
 
-        <!-- Allowance List -->
+      
         <MudCard Class="allowance-list-card">
 
             <div class="flex items-center justify-between" style="margin-bottom: 1.5rem;">
@@ -131,7 +130,7 @@
                                 </div>
                             </div>
 
-                            <!-- Balance Section -->
+                          
                             <div style="background-color: white; border-radius: 0.5rem; padding: 1rem;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
                                     <div>
@@ -173,10 +172,10 @@
                                         This allowance has been fully spent!
                                     </MudAlert>
                                 }
-                                else if (remaining < 100)
+                                else if (percentage >= 80)  
                                 {
                                     <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-2" NoIcon="false">
-                                        Running low! Less than ₱100 remaining.
+                                        Running low! Only @percentage% remaining.
                                     </MudAlert>
                                 }
                             </div>
@@ -186,7 +185,6 @@
             }
             else
             {
-                <!-- Empty State -->
                 <div style="text-align: center; padding: 3rem 1rem;">
                     <MudIcon Icon="@Icons.Material.Outlined.AccountBalanceWallet"
                              Class="empty-state-icon" />

@@ -30,44 +30,51 @@
                     <MudPaper Class="@GetTypeCardClass(CategoryType.Needs)"
                               Style="border-radius: 0.75rem;"
                               Elevation="0"
-                              @onclick="() => CategoryForm.Type = CategoryType.Needs">
+                              @onclick="async () => { CategoryForm.Type = CategoryType.Needs; await CalculateRemainingBudget(); }">
                         <div class="text-center">
                             <MudIcon Icon="@Icons.Material.Filled.Home"
                                      Class="@GetTypeIconClass(CategoryType.Needs)"
                                      Style="font-size: 2rem;" />
                             <MudText Typo="Typo.body2" Class="font-semibold text-gray-900">Needs</MudText>
-                            <MudText Typo="Typo.caption" Class="text-gray-500">50%</MudText>
+                            <MudText Typo="Typo.caption" Class="text-gray-500">@needsPercentage.ToString("F0")%</MudText>
                         </div>
                     </MudPaper>
 
                     <MudPaper Class="@GetTypeCardClass(CategoryType.Wants)"
                               Style="border-radius: 0.75rem;"
                               Elevation="0"
-                              @onclick="() => CategoryForm.Type = CategoryType.Wants">
+                              @onclick="async () => { CategoryForm.Type = CategoryType.Wants; await CalculateRemainingBudget(); }">
                         <div class="text-center">
                             <MudIcon Icon="@Icons.Material.Filled.Favorite"
                                      Class="@GetTypeIconClass(CategoryType.Wants)"
                                      Style="font-size: 2rem;" />
                             <MudText Typo="Typo.body2" Class="font-semibold text-gray-900">Wants</MudText>
-                            <MudText Typo="Typo.caption" Class="text-gray-500">30%</MudText>
+                            <MudText Typo="Typo.caption" Class="text-gray-500">@wantsPercentage.ToString("F0")%</MudText>
                         </div>
                     </MudPaper>
 
                     <MudPaper Class="@GetTypeCardClass(CategoryType.Savings)"
                               Style="border-radius: 0.75rem;"
                               Elevation="0"
-                              @onclick="() => CategoryForm.Type = CategoryType.Savings">
+                              @onclick="async () => { CategoryForm.Type = CategoryType.Savings; await CalculateRemainingBudget(); }">
                         <div class="text-center">
                             <MudIcon Icon="@Icons.Material.Filled.Savings"
                                      Class="@GetTypeIconClass(CategoryType.Savings)"
                                      Style="font-size: 2rem;" />
                             <MudText Typo="Typo.body2" Class="font-semibold text-gray-900">Savings</MudText>
-                            <MudText Typo="Typo.caption" Class="text-gray-500">20%</MudText>
+                            <MudText Typo="Typo.caption" Class="text-gray-500">@savingsPercentage.ToString("F0")%</MudText>
                         </div>
                     </MudPaper>
                 </div>
                 <MudText Typo="Typo.caption" Class="text-gray-500 mt-2">
-                    Choose based on the 50/30/20 budgeting rule
+                    @if (currentBudget != null)
+                    {
+                        <text>Choose based on your @needsPercentage.ToString("F0")/@wantsPercentage.ToString("F0")/@savingsPercentage.ToString("F0") budget plan</text>
+                    }
+                    else
+                    {
+                        <text>Choose based on the 50/30/20 budgeting rule</text>
+                    }
                 </MudText>
             </div>
 

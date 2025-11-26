@@ -58,7 +58,7 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
             if (allowance == null) return 0;
 
             var spent = GetAllowanceSpent(allowanceId);
-            return allowance.Amount - spent; // Return actual remaining (can be negative)
+            return allowance.Amount - spent;
         }
 
         protected decimal GetTotalRemaining()
@@ -67,7 +67,7 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
                 .Where(IsActive)
                 .Sum(a => {
                     var remaining = GetAllowanceRemaining(a.AllowanceID);
-                    return remaining > 0 ? remaining : 0; // Only sum positive balances
+                    return remaining > 0 ? remaining : 0;
                 });
         }
 
@@ -183,10 +183,10 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
                         break;
 
                     case AllowanceType.Monthly:
-                        if (effectiveStart.Month == periodStart.Month && effectiveStart.Year == periodStart.Year)
-                            total += allowance.Amount;
+                        var daysInMonth = DateTime.DaysInMonth(periodStart.Year, periodStart.Month);
+                        var daysInPeriod = (effectiveEnd - effectiveStart).Days + 1;
+                        total += (allowance.Amount / daysInMonth) * daysInPeriod;
                         break;
-
                     case AllowanceType.Yearly:
                         var yearDays = DateTime.IsLeapYear(periodStart.Year) ? 366 : 365;
                         var daysPassed = (effectiveEnd - effectiveStart).Days + 1;
