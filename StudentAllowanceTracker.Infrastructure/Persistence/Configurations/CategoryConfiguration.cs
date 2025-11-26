@@ -33,7 +33,7 @@ namespace StudentAllowanceTracker.Infrastructure.Persistence.Configurations
             builder.HasMany(c => c.Expenses)
                    .WithOne(e => e.Category)
                    .HasForeignKey(e => e.CategoryID)
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.ToTable("Categories");
         }

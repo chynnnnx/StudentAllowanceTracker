@@ -113,6 +113,12 @@ namespace StudentAllowanceTracker.Application.Mapping
                 .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.CurrentAmount))
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.UtcNow));
 
+            // Category to CreateHistoryCommand
+            CreateMap<CategoryEntity, CreateHistoryCommand>()
+                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => "Category"))
+                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.CategoryName))
+                 .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.BudgetAmount))
+                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.UtcNow));
 
         }
     }
