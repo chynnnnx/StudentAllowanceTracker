@@ -90,6 +90,29 @@ namespace StudentAllowanceTracker.Application.Mapping
 
             CreateMap<HistoryEntity, HistoryDTO>().ReverseMap();
 
+            // Allowance to CreateHistoryCommand
+            CreateMap<Allowance, CreateHistoryCommand>()
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => "Allowance"))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description ?? "Allowance added/updated"))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+            // Expense to CreateHistoryCommand
+            CreateMap<ExpenseEntity, CreateHistoryCommand>()
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => "Expense"))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description ?? "Expense added/updated"))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+            // Goals to CreateHistoryCommand
+            CreateMap<GoalsEntity, CreateHistoryCommand>()
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => "Goal"))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description ?? "Goal added/updated"))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.CurrentAmount))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+
         }
     }
 }

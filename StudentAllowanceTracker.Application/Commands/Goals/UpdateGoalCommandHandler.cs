@@ -1,5 +1,4 @@
 ﻿using MediatR;
-
 using StudentAllowanceTracker.Application.DTOs;
 using StudentAllowanceTracker.Shared.Responses;
 using StudentAllowanceTracker.Domain.Entities;
@@ -14,12 +13,14 @@ namespace StudentAllowanceTracker.Application.Commands.Goals
     {
         private readonly IBaseRepository<GoalsEntity> _goalsRepo;
         private readonly ICurrentUserService _currentUserService;
-        public readonly IMapper _mapper;
-        public UpdateGoalCommandHandler(IBaseRepository<GoalsEntity> goalsRepo, ICurrentUserService currentUserService, IMapper mapper)
+        private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
+        public UpdateGoalCommandHandler(IBaseRepository<GoalsEntity> goalsRepo, ICurrentUserService currentUserService, IMapper mapper, IMediator mediator)
         {
             _goalsRepo = goalsRepo;
             _currentUserService = currentUserService;
             _mapper = mapper;
+            _mediator = mediator;
         }
 
         public async Task<Result<GoalsDTO>> Handle(UpdateGoalCommand command, CancellationToken cancellationToken)
@@ -36,6 +37,8 @@ namespace StudentAllowanceTracker.Application.Commands.Goals
             goal.IsCompleted = decimal.Round(goal.CurrentAmount, 2) >= decimal.Round(goal.TargetAmount, 2);
 
             await _goalsRepo.UpdateAsync(goal);
+
+            await HistoryHelper.LogAsync(goal, "Goal", _mapper, _mediator);
 
             var dto = _mapper.Map<GoalsDTO>(goal);
             return Result<GoalsDTO>.Ok(dto);

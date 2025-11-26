@@ -6,6 +6,7 @@ using StudentAllowanceTracker.Domain.Entities;
 using StudentAllowanceTracker.Application.Interfaces.Repositories;
 using StudentAllowanceTracker.Shared.Responses;
 using StudentAllowanceTracker.Shared.Enums;
+using StudentAllowanceTracker.Application.Commands.History;
 
 namespace StudentAllowanceTracker.Application.Commands.Allowances
 {
@@ -14,15 +15,14 @@ namespace StudentAllowanceTracker.Application.Commands.Allowances
         private readonly IBaseRepository<Allowance> _repository;
         private readonly IMapper _mapper;
         private readonly ICurrentUserService _currentUser;
+        private readonly IMediator _mediator;
 
-        public UpdateAllowanceCommandHandler(
-            IBaseRepository<Allowance> repository,
-            IMapper mapper,
-            ICurrentUserService currentUser)
+        public UpdateAllowanceCommandHandler(IBaseRepository<Allowance> repository,IMapper mapper, ICurrentUserService currentUser, IMediator mediator)  
         {
             _repository = repository;
             _mapper = mapper;
             _currentUser = currentUser;
+            _mediator = mediator;
         }
 
         public async Task<Result<AllowanceDTO>> Handle(UpdateAllowanceCommand command, CancellationToken cancellationToken)
@@ -38,7 +38,7 @@ namespace StudentAllowanceTracker.Application.Commands.Allowances
 
 
             await _repository.UpdateAsync(allowance);
-
+            await HistoryHelper.LogAsync(allowance, "Allowance", _mapper, _mediator);
             var dto = _mapper.Map<AllowanceDTO>(allowance);
             return Result<AllowanceDTO>.Ok(dto);
         }
