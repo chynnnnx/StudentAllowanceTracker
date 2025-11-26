@@ -22,7 +22,6 @@ namespace StudentAllowanceTracker.Client.Components.Dialogs.User
         {
             if (IsEditing && Category != null)
             {
-                // Copy values from the passed category
                 CategoryForm = new CategoryDTO
                 {
                     CategoryID = Category.CategoryID,
@@ -34,7 +33,6 @@ namespace StudentAllowanceTracker.Client.Components.Dialogs.User
             }
             else
             {
-                // New category
                 CategoryForm = new CategoryDTO
                 {
                     Type = CategoryType.Needs
@@ -94,33 +92,33 @@ namespace StudentAllowanceTracker.Client.Components.Dialogs.User
             return !string.IsNullOrWhiteSpace(CategoryForm.CategoryName);
         }
 
-        protected string GetTypeCardStyle(CategoryType type)
+        protected string GetTypeCardClass(CategoryType type)
         {
             var isSelected = CategoryForm.Type == type;
-            var (color, _, bgColor) = GetTypeStyle(type);
+            var cssClass = GetTypeCssClass(type);
 
             if (isSelected)
             {
-                return $"border-color: {color}; background-color: {bgColor}; border-radius: 0.75rem;";
+                return $"p-4 cursor-pointer transition-all border-2 {cssClass}-border {cssClass}-bg";
             }
-            return $"border-color: hsl(0, 0%, 85%); background-color: white; border-radius: 0.75rem;";
+            return "p-4 cursor-pointer transition-all border-2 border-gray-300 bg-white";
         }
 
-        protected string GetTypeIconStyle(CategoryType type)
+        protected string GetTypeIconClass(CategoryType type)
         {
             var isSelected = CategoryForm.Type == type;
-            var (color, _, _) = GetTypeStyle(type);
-            return $"color: {color}; font-size: 2rem; opacity: {(isSelected ? "1" : "0.4")};";
+            var cssClass = GetTypeCssClass(type);
+            return $"{cssClass}-color mb-2" + (isSelected ? "" : " opacity-40");
         }
 
-        protected (string color, string icon, string bgColor) GetTypeStyle(CategoryType type)
+        protected string GetTypeCssClass(CategoryType type)
         {
             return type switch
             {
-                CategoryType.Needs => ("hsl(162, 86.6%, 32.2%)", Icons.Material.Filled.Home, "hsl(162, 41.8%, 95%)"),
-                CategoryType.Wants => ("hsl(280, 86.6%, 60%)", Icons.Material.Filled.Favorite, "hsl(280, 41.8%, 95%)"),
-                CategoryType.Savings => ("hsl(210, 86.6%, 50%)", Icons.Material.Filled.Savings, "hsl(210, 41.8%, 95%)"),
-                _ => ("hsl(162, 86.6%, 32.2%)", Icons.Material.Filled.Category, "hsl(162, 41.8%, 95%)")
+                CategoryType.Needs => "needs",
+                CategoryType.Wants => "wants",
+                CategoryType.Savings => "savings",
+                _ => "needs"
             };
         }
     }

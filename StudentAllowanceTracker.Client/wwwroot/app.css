@@ -4,7 +4,21 @@
     --color-primary-light: hsl(162, 41.8%, 89.2%); /* #D5F3E8 - Light border green */
     --color-primary-lightest: hsl(103, 96.4%, 89%); /* #E8F8E8 - Lightest green bg */
     --color-primary-hover: hsl(103, 93.9%, 93.5%); /* #EFF9EE - Hover state */
-
+    --color-primary-bg: hsl(162, 41.8%, 95%);
+    /* Category Type Colors - Needs */
+    --color-needs: hsl(162, 86.6%, 32.2%);
+    --color-needs-bg: hsl(162, 41.8%, 95%);
+    --color-needs-light: hsl(162, 41.8%, 97%);
+    /* Category Type Colors - Wants */
+    --color-wants: hsl(280, 86.6%, 60%);
+    --color-wants-bg: hsl(280, 41.8%, 95%);
+    --color-wants-light: hsl(280, 41.8%, 97%);
+    /* Category Type Colors - Savings */
+    --color-savings: hsl(210, 86.6%, 50%);
+    --color-savings-bg: hsl(210, 41.8%, 95%);
+    --color-savings-light: hsl(210, 41.8%, 97%);
+    /* Page Background */
+    --bg-page-gradient: linear-gradient(135deg, hsl(162, 41.8%, 97%) 0%, hsl(162, 30%, 95%) 100%);
     --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
     --text-primary: hsl(0, 0%, 10.6%); /* #1B1B1B - Dark text */
     --text-secondary: hsl(0, 0%, 52.2%); /* #858585 - Gray text */
@@ -14,7 +28,8 @@
 
     --border-primary: hsl(162, 41.8%, 89.2%); /* #D5F3E8 - Main border */
     --border-light: hsl(0, 0%, 81.2%); /* #CFCFCF - Light border */
-
+    --border-divider: hsl(0, 0%, 95%);
+    --border-gray: hsl(0, 0%, 92%);
     --bg-page: hsl(0, 0%, 98%); /* #FAFAFA - Page background */
     --bg-light: hsl(100, 100%, 98.2%); /* #F9FFF8 - Light green bg */
     --bg-white: #FFFFFF; /* White */
@@ -28,6 +43,59 @@
     --color-info-bg: hsl(162, 41.8%, 95%); /* #EEF9F5 - Info bg */
 }
 
+/* Page Background */
+.page-gradient-bg {
+    background: var(--bg-page-gradient);
+}
+
+/* Category Type Utilities */
+.needs-border {
+    border-color: var(--color-needs) !important;
+}
+
+.needs-bg {
+    background-color: var(--color-needs-bg) !important;
+}
+
+.needs-bg-gradient {
+    background: linear-gradient(135deg, var(--color-needs-light) 0%, white 100%);
+}
+
+.needs-color {
+    color: var(--color-needs) !important;
+}
+
+.wants-border {
+    border-color: var(--color-wants);
+}
+
+.wants-bg {
+    background-color: var(--color-wants-bg);
+}
+
+.wants-bg-gradient {
+    background: linear-gradient(135deg, var(--color-wants-light) 0%, white 100%);
+}
+
+.wants-color {
+    color: var(--color-wants);
+}
+
+.savings-border {
+    border-color: var(--color-savings);
+}
+
+.savings-bg {
+    background-color: var(--color-savings-bg);
+}
+
+.savings-bg-gradient {
+    background: linear-gradient(135deg, var(--color-savings-light) 0%, white 100%);
+}
+
+.savings-color {
+    color: var(--color-savings);
+}
 
 .mud-typography-h4 {
     font-size: 2rem !important;
@@ -93,6 +161,18 @@
 /* Borders */
 .border-primary {
     border-color: var(--border-primary) !important;
+}
+
+.border-gray-300 {
+    border-color: hsl(0, 0%, 85%) !important;
+}
+
+.bg-white {
+    background-color: white !important;
+}
+
+.opacity-40 {
+    opacity: 0.4 !important;
 }
 
 .nav-link {
@@ -252,6 +332,26 @@
 .summary-white-value {
     color: var(--text-primary);
     font-weight: 700;
+}
+
+.summary-primary-value {
+    color: white;
+    font-size: 1.875rem;
+    font-weight: 700;
+    word-break: break-word;
+    line-height: 1;
+}
+
+.summary-primary-label {
+    color: rgba(255,255,255,0.9);
+    font-size: 0.875rem;
+    margin-bottom: 0.125rem;
+}
+
+.summary-label {
+    color: rgb(107, 114, 128);
+    font-size: 0.875rem;
+    margin-bottom: 0.125rem;
 }
 
 /* Allowance List Card */

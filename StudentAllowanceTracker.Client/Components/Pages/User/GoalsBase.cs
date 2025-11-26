@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using StudentAllowanceTracker.Client.Components.Dialogs.User ;
+using StudentAllowanceTracker.Client.Components.Dialogs.User;
 using StudentAllowanceTracker.Client.DTOs;
 using StudentAllowanceTracker.Client.Services.Interfaces;
 
 namespace StudentAllowanceTracker.Client.Components.Pages.User
 {
-    public class GoalsBase: LayoutComponentBase
+    public class GoalsBase : LayoutComponentBase
     {
         [Inject] protected ISnackbar Snackbar { get; set; } = default!;
         [Inject] protected IGoalService GoalService { get; set; } = default!;
@@ -135,19 +135,25 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
             return goals.Where(g => !g.IsCompleted).Sum(g => g.TargetAmount);
         }
 
+        protected string GetFilterClass(bool isActive)
+        {
+            return isActive ? "px-4 py-2" : "px-4 py-2";
+        }
+
         protected string GetFilterStyle(bool isActive)
         {
             return isActive
-                ? "text-transform: none; color: white; background-color: hsl(162, 86.6%, 32.2%); border-color: hsl(162, 86.6%, 32.2%);"
-                : "text-transform: none; color: hsl(0, 0%, 52.2%); border-color: hsl(0, 0%, 81.2%);";
+                ? "text-transform: none; color: white; background-color: var(--color-primary); border-color: var(--color-primary);"
+                : "text-transform: none; color: var(--text-secondary); border-color: var(--border-light);";
         }
+
         protected (decimal perWeek, decimal perMonth) GetSuggestedSavings(GoalDTO goal)
         {
             var remaining = goal.TargetAmount - goal.CurrentAmount;
             if (remaining <= 0) return (0, 0);
 
             var daysLeft = (goal.TargetDate - DateTime.Today).Days;
-            if (daysLeft <= 0) return (remaining, remaining); 
+            if (daysLeft <= 0) return (remaining, remaining);
 
             var weeks = Math.Max(1, Math.Ceiling(daysLeft / 7.0));
             var perWeek = remaining / (decimal)weeks;
@@ -160,7 +166,5 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
 
             return (perWeek, perMonth);
         }
-
-
     }
 }

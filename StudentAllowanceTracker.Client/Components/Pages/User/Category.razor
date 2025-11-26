@@ -1,7 +1,7 @@
 ﻿@page "/categories"
 @inherits CategoryBase
 
-<div class="min-h-screen py-8 px-4 sm:px-6 lg:px-8" style="background: linear-gradient(135deg, hsl(162, 41.8%, 97%) 0%, hsl(162, 30%, 95%) 100%);">
+<div class="min-h-screen py-8 px-4 sm:px-6 lg:px-8 page-gradient-bg">
     <div class="max-w-7xl mx-auto">
 
         <!-- Page Header -->
@@ -13,8 +13,8 @@
             <MudButton Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.Add"
                        OnClick="OpenAddDialog"
-                       Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); color: white; text-transform: none;"
-                       Class="px-6 py-3 rounded-lg font-medium">
+                       Class="gradient-primary px-6 py-3 rounded-lg font-medium"
+                       Style="color: white; text-transform: none;">
                 Add Category
             </MudButton>
         </div>
@@ -22,14 +22,15 @@
         <!-- Budget Overview Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             <!-- Needs (50%) -->
-            <MudPaper Class="p-6 border-2 transition-all hover:shadow-lg"
-                      Style="border-color: hsl(162, 86.6%, 32.2%); border-radius: 1rem; background: linear-gradient(135deg, hsl(162, 41.8%, 97%) 0%, white 100%);"
+            <MudPaper Class="p-6 border-2 transition-all hover:shadow-lg needs-border needs-bg-gradient"
+                      Style="border-radius: 1rem;"
                       Elevation="0">
                 <div class="flex items-center justify-between gap-4">
                     <div class="flex items-center gap-4">
-                        <div class="p-3 rounded-xl" style="background-color: hsl(162, 41.8%, 95%);">
+                        <div class="p-3 rounded-xl needs-bg">
                             <MudIcon Icon="@Icons.Material.Filled.Home"
-                                     Style="color: hsl(162, 86.6%, 32.2%); font-size: 2rem;" />
+                                     Class="needs-color"
+                                     Style="font-size: 2rem;" />
                         </div>
                         <div>
                             <MudText Typo="Typo.h6" Class="font-bold text-gray-900 mb-1">Needs</MudText>
@@ -37,7 +38,7 @@
                         </div>
                     </div>
                     <div class="text-right">
-                        <MudText Typo="Typo.h5" Class="font-bold mb-1" Style="color: hsl(162, 86.6%, 32.2%);">
+                        <MudText Typo="Typo.h5" Class="font-bold mb-1 needs-color">
                             @needsCategories.Count
                         </MudText>
                         <MudText Typo="Typo.caption" Class="text-gray-600 font-medium">
@@ -48,14 +49,15 @@
             </MudPaper>
 
             <!-- Wants (30%) -->
-            <MudPaper Class="p-6 border-2 transition-all hover:shadow-lg"
-                      Style="border-color: hsl(280, 86.6%, 60%); border-radius: 1rem; background: linear-gradient(135deg, hsl(280, 41.8%, 97%) 0%, white 100%);"
+            <MudPaper Class="p-6 border-2 transition-all hover:shadow-lg wants-border wants-bg-gradient"
+                      Style="border-radius: 1rem;"
                       Elevation="0">
                 <div class="flex items-center justify-between gap-4">
                     <div class="flex items-center gap-4">
-                        <div class="p-3 rounded-xl" style="background-color: hsl(280, 41.8%, 95%);">
+                        <div class="p-3 rounded-xl wants-bg">
                             <MudIcon Icon="@Icons.Material.Filled.Favorite"
-                                     Style="color: hsl(280, 86.6%, 60%); font-size: 2rem;" />
+                                     Class="wants-color"
+                                     Style="font-size: 2rem;" />
                         </div>
                         <div>
                             <MudText Typo="Typo.h6" Class="font-bold text-gray-900 mb-1">Wants</MudText>
@@ -63,7 +65,7 @@
                         </div>
                     </div>
                     <div class="text-right">
-                        <MudText Typo="Typo.h5" Class="font-bold mb-1" Style="color: hsl(280, 86.6%, 60%);">
+                        <MudText Typo="Typo.h5" Class="font-bold mb-1 wants-color">
                             @wantsCategories.Count
                         </MudText>
                         <MudText Typo="Typo.caption" Class="text-gray-600 font-medium">
@@ -74,14 +76,15 @@
             </MudPaper>
 
             <!-- Savings (20%) -->
-            <MudPaper Class="p-6 border-2 transition-all hover:shadow-lg"
-                      Style="border-color: hsl(210, 86.6%, 50%); border-radius: 1rem; background: linear-gradient(135deg, hsl(210, 41.8%, 97%) 0%, white 100%);"
+            <MudPaper Class="p-6 border-2 transition-all hover:shadow-lg savings-border savings-bg-gradient"
+                      Style="border-radius: 1rem;"
                       Elevation="0">
                 <div class="flex items-center justify-between gap-4">
                     <div class="flex items-center gap-4">
-                        <div class="p-3 rounded-xl" style="background-color: hsl(210, 41.8%, 95%);">
+                        <div class="p-3 rounded-xl savings-bg">
                             <MudIcon Icon="@Icons.Material.Filled.Savings"
-                                     Style="color: hsl(210, 86.6%, 50%); font-size: 2rem;" />
+                                     Class="savings-color"
+                                     Style="font-size: 2rem;" />
                         </div>
                         <div>
                             <MudText Typo="Typo.h6" Class="font-bold text-gray-900 mb-1">Savings</MudText>
@@ -89,7 +92,7 @@
                         </div>
                     </div>
                     <div class="text-right">
-                        <MudText Typo="Typo.h5" Class="font-bold mb-1" Style="color: hsl(210, 86.6%, 50%);">
+                        <MudText Typo="Typo.h5" Class="font-bold mb-1 savings-color">
                             @savingsCategories.Count
                         </MudText>
                         <MudText Typo="Typo.caption" Class="text-gray-600 font-medium">
@@ -104,17 +107,17 @@
         @foreach (var type in Enum.GetValues<CategoryType>())
         {
             var typeCategories = GetPagedCategories(type);
-            var (color, icon, bgColor) = GetTypeStyle(type);
+            var (icon, cssClass) = GetTypeStyle(type);
 
             <MudPaper Class="p-6 mb-6 shadow-sm"
                       Style="border-radius: 1rem; background: white;"
                       Elevation="0">
                 <div class="flex items-center gap-3 mb-6 pb-4" style="border-bottom: 2px solid hsl(0, 0%, 95%);">
-                    <div class="p-2 rounded-lg" style="@($"background-color: {bgColor};")">
-                        <MudIcon Icon="@icon" Style="@($"color: {color}; font-size: 1.5rem;")" />
+                    <div class="@($"p-2 rounded-lg {cssClass}-bg")">
+                        <MudIcon Icon="@icon" Class="@($"{cssClass}-color")" Style="font-size: 1.5rem;" />
                     </div>
                     <MudText Typo="Typo.h5" Class="font-bold text-gray-900 flex-1">@type.ToString()</MudText>
-                    <MudChip T="string" Size="Size.Medium" Style="@($"background-color: {bgColor}; color: {color}; font-weight: 600;")">
+                    <MudChip T="string" Size="Size.Medium" Class="@($"{cssClass}-bg {cssClass}-color")" Style="font-weight: 600;">
                         @GetCategoriesByType(type).Count @(GetCategoriesByType(type).Count == 1 ? "category" : "categories")
                     </MudChip>
                 </div>
@@ -124,8 +127,8 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                         @foreach (var category in typeCategories)
                         {
-                            <MudPaper Class="p-5 border-2 transition-all hover:shadow-lg hover:-translate-y-1"
-                                      Style="@($"border-color: {color}; border-radius: 0.75rem; background: white;")"
+                            <MudPaper Class="@($"p-5 border-2 transition-all hover:shadow-lg hover:-translate-y-1 {cssClass}-border")"
+                                      Style="border-radius: 0.75rem; background: white;"
                                       Elevation="0">
                                 <div class="flex items-start justify-between mb-4 gap-3">
                                     <div class="flex-1 min-w-0">
@@ -136,7 +139,7 @@
                                         {
                                             <div class="flex items-baseline gap-2">
                                                 <MudText Typo="Typo.caption" Class="text-gray-500">Budget:</MudText>
-                                                <MudText Typo="Typo.body2" Class="font-bold" style="@($"color: {color};")">
+                                                <MudText Typo="Typo.body2" Class="@($"font-bold {cssClass}-color")">
                                                     ₱@category.BudgetAmount.Value.ToString("N2")
                                                 </MudText>
                                             </div>
@@ -149,8 +152,8 @@
                                         }
                                     </div>
                                     <MudChip T="string" Size="Size.Small"
-                                             Style="@($"background-color: {bgColor}; color: {color}; font-weight: 500; flex-shrink: 0;")"
-                                             Class="px-3">
+                                             Class="@($"{cssClass}-bg {cssClass}-color px-3")"
+                                             Style="font-weight: 500; flex-shrink: 0;">
                                         @type.ToString()
                                     </MudChip>
                                 </div>
@@ -158,13 +161,11 @@
                                 <div class="flex items-center gap-2 pt-4 mt-2" style="border-top: 1px solid hsl(0, 0%, 92%);">
                                     <MudIconButton Icon="@Icons.Material.Filled.Edit"
                                                    Size="Size.Medium"
-                                                   Style="@($"color: {color};")"
-                                                   Class="hover:bg-opacity-10"
+                                                   Class="@($"{cssClass}-color hover:bg-opacity-10")"
                                                    OnClick="@(() => EditCategory(category))" />
                                     <MudIconButton Icon="@Icons.Material.Filled.Delete"
                                                    Size="Size.Medium"
-                                                   Style="color: hsl(0, 84.2%, 60.2%);"
-                                                   Class="hover:bg-opacity-10"
+                                                   Class="text-error hover:bg-opacity-10"
                                                    OnClick="@(() => DeleteCategory(category))" />
                                 </div>
                             </MudPaper>
@@ -177,8 +178,8 @@
                             <MudButton Variant="Variant.Outlined"
                                        Disabled="@(currentPages[type] == 0)"
                                        OnClick="@(() => ChangePage(type, currentPages[type] - 1))"
-                                       Style="@($"border-color: {color}; color: {color}; text-transform: none;")"
-                                       Class="px-6">
+                                       Class="@($"{cssClass}-border {cssClass}-color px-6")"
+                                       Style="text-transform: none;">
                                 Previous
                             </MudButton>
 
@@ -189,8 +190,8 @@
                             <MudButton Variant="Variant.Outlined"
                                        Disabled="@(currentPages[type] + 1 >= GetTotalPages(type))"
                                        OnClick="@(() => ChangePage(type, currentPages[type] + 1))"
-                                       Style="@($"border-color: {color}; color: {color}; text-transform: none;")"
-                                       Class="px-6">
+                                       Class="@($"{cssClass}-border {cssClass}-color px-6")"
+                                       Style="text-transform: none;">
                                 Next
                             </MudButton>
                         </div>
@@ -198,11 +199,11 @@
                 }
                 else
                 {
-                    <MudPaper Class="p-10 text-center border-2 border-dashed transition-all hover:border-solid"
-                              Style="@($"border-color: {color}; border-radius: 0.75rem; background-color: {bgColor};")"
+                    <MudPaper Class="@($"p-10 text-center border-2 border-dashed transition-all hover:border-solid {cssClass}-border {cssClass}-bg")"
+                              Style="border-radius: 0.75rem;"
                               Elevation="0">
-                        <div class="p-4 rounded-full inline-block mb-4" style="@($"background-color: white;")">
-                            <MudIcon Icon="@icon" Style="@($"color: {color}; font-size: 3rem; opacity: 0.6;")" />
+                        <div class="p-4 rounded-full inline-block mb-4" style="background-color: white;">
+                            <MudIcon Icon="@icon" Class="@($"{cssClass}-color")" Style="font-size: 3rem; opacity: 0.6;" />
                         </div>
                         <MudText Typo="Typo.h6" Class="text-gray-700 mb-2 font-semibold">
                             No @type.ToString().ToLower() categories yet
@@ -213,8 +214,8 @@
                         <MudButton Variant="Variant.Filled"
                                    StartIcon="@Icons.Material.Filled.Add"
                                    OnClick="OpenAddDialog"
-                                   Style="@($"background-color: {color}; color: white; text-transform: none;")"
-                                   Class="font-medium px-6 py-2 shadow-md">
+                                   Class="font-medium px-6 py-2 shadow-md"
+                                   Style="@($"text-transform: none; background-color: var(--color-{cssClass}); color: white;")">
                             Add @type.ToString() Category
                         </MudButton>
                     </MudPaper>

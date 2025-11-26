@@ -4,7 +4,8 @@
     <TitleContent>
         <div class="flex items-center gap-3">
             <MudIcon Icon="@(IsEditing ? Icons.Material.Filled.Edit : Icons.Material.Filled.Add)"
-                     Style="color: hsl(162, 86.6%, 32.2%); font-size: 1.75rem;" />
+                     Class="text-success"
+                     Style="font-size: 1.75rem;" />
             <MudText Typo="Typo.h6" Class="font-bold text-gray-900">
                 @(IsEditing ? "Edit Category" : "Add New Category")
             </MudText>
@@ -13,7 +14,6 @@
 
     <DialogContent>
         <div class="space-y-5 pt-2">
-            <!-- Category Name -->
             <MudTextField @bind-Value="CategoryForm.CategoryName"
                           Label="Category Name"
                           Variant="Variant.Outlined"
@@ -22,49 +22,45 @@
                           HelperText="Give your category a descriptive name"
                           FullWidth="true" />
 
-            <!-- Category Type -->
             <div>
                 <MudText Typo="Typo.body2" Class="text-gray-700 mb-3 font-medium">
                     Category Type <span class="text-red-500">*</span>
                 </MudText>
                 <div class="grid grid-cols-3 gap-3">
-                    <!-- Needs -->
-                    <MudPaper Class="p-4 cursor-pointer transition-all border-2"
-                              Style="@GetTypeCardStyle(CategoryType.Needs)"
+                    <MudPaper Class="@GetTypeCardClass(CategoryType.Needs)"
+                              Style="border-radius: 0.75rem;"
                               Elevation="0"
                               @onclick="() => CategoryForm.Type = CategoryType.Needs">
                         <div class="text-center">
                             <MudIcon Icon="@Icons.Material.Filled.Home"
-                                     Style="@GetTypeIconStyle(CategoryType.Needs)"
-                                     Class="mb-2" />
+                                     Class="@GetTypeIconClass(CategoryType.Needs)"
+                                     Style="font-size: 2rem;" />
                             <MudText Typo="Typo.body2" Class="font-semibold text-gray-900">Needs</MudText>
                             <MudText Typo="Typo.caption" Class="text-gray-500">50%</MudText>
                         </div>
                     </MudPaper>
 
-                    <!-- Wants -->
-                    <MudPaper Class="p-4 cursor-pointer transition-all border-2"
-                              Style="@GetTypeCardStyle(CategoryType.Wants)"
+                    <MudPaper Class="@GetTypeCardClass(CategoryType.Wants)"
+                              Style="border-radius: 0.75rem;"
                               Elevation="0"
                               @onclick="() => CategoryForm.Type = CategoryType.Wants">
                         <div class="text-center">
                             <MudIcon Icon="@Icons.Material.Filled.Favorite"
-                                     Style="@GetTypeIconStyle(CategoryType.Wants)"
-                                     Class="mb-2" />
+                                     Class="@GetTypeIconClass(CategoryType.Wants)"
+                                     Style="font-size: 2rem;" />
                             <MudText Typo="Typo.body2" Class="font-semibold text-gray-900">Wants</MudText>
                             <MudText Typo="Typo.caption" Class="text-gray-500">30%</MudText>
                         </div>
                     </MudPaper>
 
-                    <!-- Savings -->
-                    <MudPaper Class="p-4 cursor-pointer transition-all border-2"
-                              Style="@GetTypeCardStyle(CategoryType.Savings)"
+                    <MudPaper Class="@GetTypeCardClass(CategoryType.Savings)"
+                              Style="border-radius: 0.75rem;"
                               Elevation="0"
                               @onclick="() => CategoryForm.Type = CategoryType.Savings">
                         <div class="text-center">
                             <MudIcon Icon="@Icons.Material.Filled.Savings"
-                                     Style="@GetTypeIconStyle(CategoryType.Savings)"
-                                     Class="mb-2" />
+                                     Class="@GetTypeIconClass(CategoryType.Savings)"
+                                     Style="font-size: 2rem;" />
                             <MudText Typo="Typo.body2" Class="font-semibold text-gray-900">Savings</MudText>
                             <MudText Typo="Typo.caption" Class="text-gray-500">20%</MudText>
                         </div>
@@ -75,7 +71,6 @@
                 </MudText>
             </div>
 
-            <!-- Budget Amount -->
             <div>
                 <MudNumericField @bind-Value="CategoryForm.BudgetAmount"
                                  Label="Monthly Budget (Optional)"
@@ -101,8 +96,8 @@
         <MudButton OnClick="Submit"
                    Variant="Variant.Filled"
                    Disabled="@(!IsFormValid() || isSaving)"
-                   Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); color: white; text-transform: none;"
-                   Class="px-6 font-medium">
+                   Class="gradient-primary px-6 font-medium"
+                   Style="color: white; text-transform: none;">
             @if (isSaving)
             {
                 <MudProgressCircular Size="Size.Small" Indeterminate="true" Color="Color.Default" />
@@ -114,4 +109,3 @@
         </MudButton>
     </DialogActions>
 </MudDialog>
-

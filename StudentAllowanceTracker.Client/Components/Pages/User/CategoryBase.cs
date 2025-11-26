@@ -75,14 +75,14 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
             }
         }
 
-        protected (string color, string icon, string bgColor) GetTypeStyle(CategoryType type)
+        protected (string icon, string cssClass) GetTypeStyle(CategoryType type)
         {
             return type switch
             {
-                CategoryType.Needs => ("hsl(162, 86.6%, 32.2%)", Icons.Material.Filled.Home, "hsl(162, 41.8%, 95%)"),
-                CategoryType.Wants => ("hsl(280, 86.6%, 60%)", Icons.Material.Filled.Favorite, "hsl(280, 41.8%, 95%)"),
-                CategoryType.Savings => ("hsl(210, 86.6%, 50%)", Icons.Material.Filled.Savings, "hsl(210, 41.8%, 95%)"),
-                _ => ("hsl(162, 86.6%, 32.2%)", Icons.Material.Filled.Category, "hsl(162, 41.8%, 95%)")
+                CategoryType.Needs => (Icons.Material.Filled.Home, "needs"),
+                CategoryType.Wants => (Icons.Material.Filled.Favorite, "wants"),
+                CategoryType.Savings => (Icons.Material.Filled.Savings, "savings"),
+                _ => (Icons.Material.Filled.Category, "needs")
             };
         }
 
@@ -109,7 +109,7 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
         {
             var parameters = new DialogParameters
             {
-                { "Category", category }  // Changed from "CategoryForm" to "Category"
+                { "Category", category }
             };
 
             var options = new DialogOptions

@@ -3,17 +3,16 @@
 
 <div class="max-w-7xl mx-auto px-4 py-6">
 
-    <!-- Header -->
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <div>
-            <h1 class="text-3xl font-semibold text-gray-900 mb-1"> Savings Goals</h1>
+            <h1 class="text-3xl font-semibold text-gray-900 mb-1">Savings Goals</h1>
             <p class="text-sm text-gray-500">Set and track your financial goals</p>
         </div>
         <MudButton Variant="Variant.Filled"
-        StartIcon="@Icons.Material.Filled.Add"
-        OnClick="OpenAddDialog"
-        Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); color: white; text-transform: none;"
-        Class="px-6 py-3 rounded-lg font-medium">
+                   StartIcon="@Icons.Material.Filled.Add"
+                   OnClick="OpenAddDialog"
+                   Class="gradient-primary px-6 py-3 rounded-lg font-medium"
+                   Style="color: white; text-transform: none;">
             Create Goal
         </MudButton>
     </div>
@@ -27,42 +26,40 @@
     }
     else
     {
-        <!-- Summary Stats -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
 
-            <MudPaper Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); border-radius: 1rem; padding: 0.75rem;" Elevation="0">
-                <MudText Style="color: rgba(255,255,255,0.9); font-size: 0.875rem; margin-bottom: 0.125rem;">Total Saved</MudText>
-                <MudText Style="color: white; font-size: 1.875rem; font-weight: 700; word-break: break-word; line-height: 1;">₱@GetTotalSaved().ToString("N2")</MudText>
+            <MudPaper Class="gradient-primary" Style="border-radius: 1rem; padding: 0.75rem;" Elevation="0">
+                <MudText Class="summary-primary-label">Total Saved</MudText>
+                <MudText Class="summary-primary-value">₱@GetTotalSaved().ToString("N2")</MudText>
             </MudPaper>
 
             <MudPaper Style="background: white; border: 2px solid hsl(162, 41.8%, 89.2%); border-radius: 1rem; padding: 0.75rem;" Elevation="0">
-                <MudText Style="color: rgb(107, 114, 128); font-size: 0.875rem; margin-bottom: 0.125rem;">Total Target</MudText>
+                <MudText Class="summary-label">Total Target</MudText>
                 <MudText Style="color: rgb(17, 24, 39); font-size: 1.875rem; font-weight: 700; word-break: break-word; line-height: 1;">₱@GetTotalTarget().ToString("N2")</MudText>
             </MudPaper>
 
             <MudPaper Style="background: white; border: 2px solid hsl(162, 41.8%, 89.2%); border-radius: 1rem; padding: 0.75rem;" Elevation="0">
-                <MudText Style="color: rgb(107, 114, 128); font-size: 0.875rem; margin-bottom: 0.125rem;">Active Goals</MudText>
+                <MudText Class="summary-label">Active Goals</MudText>
                 <MudText Style="color: rgb(17, 24, 39); font-size: 1.875rem; font-weight: 700; line-height: 1;">@goals.Count(g => !g.IsCompleted)</MudText>
             </MudPaper>
 
             <MudPaper Style="background: white; border: 2px solid hsl(162, 41.8%, 89.2%); border-radius: 1rem; padding: 0.75rem;" Elevation="0">
-                <MudText Style="color: rgb(107, 114, 128); font-size: 0.875rem; margin-bottom: 0.125rem;">Completed</MudText>
+                <MudText Class="summary-label">Completed</MudText>
                 <MudText Style="color: rgb(17, 24, 39); font-size: 1.875rem; font-weight: 700; line-height: 1;">@goals.Count(g => g.IsCompleted)</MudText>
             </MudPaper>
 
         </div>
 
-        <!-- Filter Tabs -->
         <div class="mb-6">
             <MudButtonGroup Variant="Variant.Outlined" Size="Size.Small">
                 <MudButton OnClick="@(() => showCompleted = false)"
-                Style="@GetFilterStyle(!showCompleted)"
-                Class="px-4 py-2">
+                           Style="@GetFilterStyle(!showCompleted)"
+                           Class="@GetFilterClass(!showCompleted)">
                     Active
                 </MudButton>
                 <MudButton OnClick="@(() => showCompleted = true)"
-                Style="@GetFilterStyle(showCompleted)"
-                Class="px-4 py-2">
+                           Style="@GetFilterStyle(showCompleted)"
+                           Class="@GetFilterClass(showCompleted)">
                     Completed
                 </MudButton>
             </MudButtonGroup>
@@ -76,11 +73,10 @@
                     var progress = goal.TargetAmount > 0 ? (double)(goal.CurrentAmount / goal.TargetAmount * 100) : 0;
                     var isCompleted = goal.IsCompleted;
 
-                    <MudPaper Class="p-6 border-2 transition-all hover:shadow-lg"
-                              Style="@($"border-color: {(isCompleted ? "hsl(162, 86.6%, 32.2%)" : "hsl(162, 41.8%, 89.2%)")}; cursor: pointer; border-radius: 1rem;")"
+                    <MudPaper Class="@($"p-6 border-2 transition-all hover:shadow-lg {(isCompleted ? "needs-border" : "border-primary")}")"
+                              Style="cursor: pointer; border-radius: 1rem;"
                               Elevation="0">
 
-                        <!-- Goal Header -->
                         <div class="flex items-start justify-between mb-6 gap-3">
                             <div class="flex-1">
                                 <MudText Typo="Typo.subtitle1" Class="text-gray-900 mb-1 font-semibold">@goal.GoalName</MudText>
@@ -90,15 +86,14 @@
                             {
                                 <MudIcon Icon="@Icons.Material.Filled.CheckCircle"
                                          Size="Size.Medium"
-                                         Style="color: hsl(162, 86.6%, 32.2%);" />
+                                         Class="text-success" />
                             }
                         </div>
 
-                        <!-- Progress Bar -->
                         <div class="mb-5">
                             <div class="flex items-center justify-between mb-3">
                                 <MudText Typo="Typo.body2" Class="font-medium text-gray-700">Progress</MudText>
-                                <MudText Typo="Typo.body2" Class="font-semibold" Style="color: hsl(162, 86.6%, 32.2%);">
+                                <MudText Typo="Typo.body2" Class="font-semibold text-success">
                                     @progress.ToString("F1")%
                                 </MudText>
                             </div>
@@ -108,7 +103,6 @@
                                                Class="rounded-full" />
                         </div>
 
-                        <!-- Amount Info -->
                         <div class="flex items-center justify-between mb-5 px-2">
                             <div>
                                 <MudText Typo="Typo.caption" Class="text-gray-500 mb-2">Current</MudText>
@@ -120,7 +114,6 @@
                             </div>
                         </div>
 
-                        <!-- Suggested Savings  -->
                         <div class="mb-5 px-2" style="min-height: 56px;">
                             @if (!isCompleted)
                             {
@@ -131,24 +124,22 @@
 
                                 <MudText Typo="Typo.body2" Class="text-gray-700">
                                     Suggested savings:
-                                    <span class="font-semibold" style="color: hsl(162, 86.6%, 32.2%);">
+                                    <span class="font-semibold text-success">
                                         ₱@suggestedPerWeek / week
                                     </span>
                                     or
-                                    <span class="font-semibold" style="color: hsl(162, 86.6%, 32.2%);">
+                                    <span class="font-semibold text-success">
                                         ₱@suggestedPerMonth / month
                                     </span>
                                 </MudText>
                             }
                         </div>
 
-                        <!-- Deadline -->
-                        <MudPaper Class="flex items-center gap-2 mb-5 p-3 rounded-lg"
-                                  Style="background-color: hsl(162, 41.8%, 95%);"
+                        <MudPaper Class="flex items-center gap-2 mb-5 p-3 rounded-lg needs-bg"
                                   Elevation="0">
                             <MudIcon Icon="@Icons.Material.Filled.CalendarToday"
                                      Size="Size.Small"
-                                     Style="color: hsl(162, 86.6%, 32.2%);" />
+                                     Class="text-success" />
                             <MudText Typo="Typo.body2" Class="text-gray-700">
                                 @{
                                     var daysLeft = (goal.TargetDate - DateTime.Today).Days;
@@ -172,23 +163,21 @@
                             </MudText>
                         </MudPaper>
 
-                        <!-- Actions -->
                         <div class="flex items-center gap-2">
                             @if (!isCompleted)
                             {
                                 <MudButton Variant="Variant.Filled"
                                            StartIcon="@Icons.Material.Filled.Add"
                                            OnClick="@(() => AddContribution(goal))"
-                                           Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); color: white; text-transform: none;"
-                                           Class="flex-1 py-2 rounded-lg font-medium"
+                                           Class="gradient-primary flex-1 py-2 rounded-lg font-medium"
+                                           Style="color: white; text-transform: none;"
                                            Size="Size.Small">
                                     Add Money
                                 </MudButton>
                             }
                             else
                             {
-                                <MudPaper Class="flex-1 text-center py-2 px-4 rounded-lg font-medium"
-                                          Style="background-color: hsl(162, 86.6%, 95%); color: hsl(162, 86.6%, 32.2%);"
+                                <MudPaper Class="flex-1 text-center py-2 px-4 rounded-lg font-medium needs-bg text-success"
                                           Elevation="0">
                                     <MudText Typo="Typo.body2">Goal Achieved!</MudText>
                                 </MudPaper>
@@ -196,11 +185,11 @@
 
                             <MudIconButton Icon="@Icons.Material.Filled.Edit"
                                            Size="Size.Small"
-                                           Style="color: hsl(162, 86.6%, 32.2%);"
+                                           Class="text-success"
                                            OnClick="@(() => EditGoal(goal))" />
                             <MudIconButton Icon="@Icons.Material.Filled.Delete"
                                            Size="Size.Small"
-                                           Style="color: hsl(0, 84.2%, 60.2%);"
+                                           Class="text-error"
                                            OnClick="@(() => DeleteGoal(goal))" />
                         </div>
 
@@ -210,8 +199,8 @@
         }
         else
         {
-            <MudPaper Class="p-12 border-2 text-center"
-                      Style="border-color: hsl(162, 41.8%, 89.2%); border-radius: 1rem;"
+            <MudPaper Class="p-12 border-2 text-center border-primary"
+                      Style="border-radius: 1rem;"
                       Elevation="0">
                 <MudIcon Icon="@Icons.Material.Outlined.TrackChanges"
                          Class="text-gray-300 mb-4"
@@ -227,8 +216,8 @@
                     <MudButton Variant="Variant.Filled"
                                StartIcon="@Icons.Material.Filled.Add"
                                OnClick="OpenAddDialog"
-                               Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); color: white; text-transform: none;"
-                               Class="px-8 py-3 rounded-lg font-medium">
+                               Class="gradient-primary px-8 py-3 rounded-lg font-medium"
+                               Style="color: white; text-transform: none;">
                         Create Your First Goal
                     </MudButton>
                 }

@@ -1,17 +1,14 @@
 ﻿@inherits GoalsDialogBase
-
 <MudDialog>
     <DialogContent>
         <MudForm @ref="form" @bind-IsValid="@isValid">
             <div class="space-y-4">
-
                 <MudTextField @bind-Value="model.GoalName"
                               Label="Goal Name"
                               Required="true"
                               RequiredError="Goal name is required"
                               Variant="Variant.Outlined"
                               HelperText="What are you saving for?" />
-
                 <MudTextField @bind-Value="model.Description"
                               Label="Description"
                               Lines="3"
@@ -31,8 +28,6 @@
                 {
                     <MudText Color="Color.Success" Class="mt-2">Goal Completed!</MudText>
                 }
-
-
                 <MudNumericField @bind-Value="model.TargetAmount"
                                  Label="Target Amount"
                                  Required="true"
@@ -44,9 +39,6 @@
                                  HelperText="How much do you need to save?"
                                  Immediate="true"
                                  @oninput="@(e => UpdateCompletionStatus())" />
-
-
-
                 <MudDatePicker @bind-Date="targetDate"
                                Label="Target Date"
                                Required="true"
@@ -54,12 +46,9 @@
                                MinDate="DateTime.Today"
                                Variant="Variant.Outlined"
                                HelperText="When do you want to reach this goal?" />
-
-
             </div>
         </MudForm>
     </DialogContent>
-
     <DialogActions>
         <MudButton OnClick="Cancel"
                    Variant="Variant.Text"
@@ -69,7 +58,8 @@
         <MudButton OnClick="Submit"
                    Disabled="@(!isValid || isSaving)"
                    Variant="Variant.Filled"
-                   Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%); color: white; text-transform: none;">
+                   Class="gradient-primary"
+                   Style="color: white; text-transform: none;">
             @if (isSaving)
             {
                 <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
@@ -81,5 +71,4 @@
             }
         </MudButton>
     </DialogActions>
-
 </MudDialog>
