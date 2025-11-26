@@ -162,21 +162,34 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .header-title {
-    color: hsl(0, 0%, 10.6%);
+    color: var(--text-primary);
     font-weight: 600;
     margin-bottom: 0.25rem;
 }
 
 .btn-add-allowance {
-    background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%) !important;
+    background: var(--gradient-primary) !important;
     color: white !important;
     text-transform: none;
     padding: 0.75rem 1.5rem;
     border-radius: 0.5rem;
     font-weight: 500;
+}
+
+@media (max-width: 640px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .btn-add-allowance {
+        width: 100%;
+    }
 }
 
 /* Loading State */
@@ -204,12 +217,12 @@
 }
 
 .summary-card-primary {
-    background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%) !important;
+    background: var(--gradient-primary) !important;
 }
 
 .summary-card-white {
-    background-color: white !important;
-    border: 2px solid hsl(162, 41.8%, 89.2%) !important;
+    background-color: var(--bg-white) !important;
+    border: 2px solid var(--border-primary) !important;
 }
 
 .summary-card-content {
@@ -236,14 +249,14 @@
 }
 
 .summary-white-value {
-    color: hsl(0, 0%, 10.6%);
+    color: var(--text-primary);
     font-weight: 700;
 }
 
 /* Allowance List Card */
 .allowance-list-card {
-    background-color: white !important;
-    border: 2px solid hsl(162, 41.8%, 89.2%) !important;
+    background-color: var(--bg-white) !important;
+    border: 2px solid var(--border-primary) !important;
     border-radius: 1rem !important;
     padding: 2rem !important;
 }
@@ -256,7 +269,7 @@
 }
 
 .allowance-list-title {
-    color: hsl(0, 0%, 10.6%);
+    color: var(--text-primary);
     font-weight: 600;
 }
 
@@ -269,15 +282,15 @@
 
 /* Individual Allowance Item */
 .allowance-item-active {
-    background-color: hsl(103, 96.4%, 89%);
-    border-left: 4px solid hsl(162, 86.6%, 32.2%);
+    background-color: var(--color-primary-lightest);
+    border-left: 4px solid var(--color-primary);
     border-radius: 0.75rem;
     padding: 1.5rem;
 }
 
 .allowance-item-inactive {
-    background-color: hsl(0, 0%, 96%);
-    border-left: 4px solid hsl(0, 0%, 81.2%);
+    background-color: var(--bg-gray);
+    border-left: 4px solid var(--text-disabled);
     border-radius: 0.75rem;
     padding: 1.5rem;
 }
@@ -287,6 +300,19 @@
     align-items: start;
     justify-content: space-between;
     margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .allowance-item-header {
+        flex-direction: column;
+    }
+
+    .allowance-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
 }
 
 .allowance-info {
@@ -296,7 +322,7 @@
 }
 
 .allowance-description {
-    color: hsl(0, 0%, 10.6%);
+    color: var(--text-primary);
     font-weight: 500;
 }
 
@@ -316,16 +342,16 @@
 }
 
 .btn-edit {
-    color: hsl(162, 86.6%, 32.2%);
+    color: var(--color-primary);
 }
 
 .btn-delete {
-    color: hsl(0, 84.2%, 60.2%);
+    color: var(--color-error);
 }
 
 /* Balance Section */
 .allowance-balance {
-    background-color: white;
+    background-color: var(--bg-white);
     border-radius: 0.5rem;
     padding: 1rem;
 }
@@ -335,6 +361,23 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+@media (max-width: 640px) {
+    .balance-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .balance-spent {
+        text-align: left;
+    }
+
+    .balance-chip {
+        align-self: flex-start;
+    }
 }
 
 .balance-label {
@@ -346,7 +389,7 @@
 }
 
 .balance-spent-value {
-    color: hsl(0, 0%, 10.6%);
+    color: var(--text-primary);
     font-weight: 500;
 }
 
@@ -354,17 +397,125 @@
     font-weight: 600;
 }
 
+/* Empty State */
 .empty-state {
     text-align: center;
     padding: 3rem 1rem;
 }
 
 .empty-state-icon {
-    color: hsl(0, 0%, 81.2%);
+    color: var(--text-disabled);
     font-size: 4rem;
     margin-bottom: 1rem;
 }
 
 .empty-state-title {
     margin-bottom: 0.5rem;
+}
+/* ========================================
+   ALLOWANCE DIALOG STYLES
+   ======================================== */
+
+/* Dialog Content */
+.dialog-content {
+    padding: 1rem;
+}
+
+/* Dialog Header */
+.dialog-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.dialog-icon-wrapper {
+    background: var(--gradient-primary);
+    width: 64px;
+    height: 64px;
+    border-radius: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.dialog-icon {
+    color: white;
+    font-size: 2rem;
+}
+
+.dialog-title {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Dialog Form */
+.dialog-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.frequency-label {
+    margin-bottom: 0.5rem;
+}
+
+.frequency-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+}
+
+.frequency-card-content {
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+}
+
+.date-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* Preview Alert */
+.preview-alert {
+    background-color: var(--color-primary-lightest);
+    border-left: 4px solid var(--color-primary);
+    border-radius: 0.5rem;
+}
+
+.preview-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.preview-icon {
+    color: var(--color-primary);
+}
+
+.preview-text {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Dialog Actions */
+.dialog-actions {
+    padding: 0 1rem 1rem 1rem;
+    width: 100%;
+    display: flex;
+    gap: 0.75rem;
+}
+
+.dialog-btn-cancel {
+    flex: 1;
+    border-color: var(--text-disabled);
+    color: var(--text-icon);
+}
+
+.dialog-btn-submit {
+    flex: 2;
+    background: var(--gradient-primary) !important;
+    color: white !important;
+    font-weight: 500;
 }

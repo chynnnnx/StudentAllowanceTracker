@@ -253,11 +253,10 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
 
         protected Color GetBalanceColor(decimal remaining, decimal spent, decimal total)
         {
-            if (spent > total) return Color.Error;
-            if (remaining < 100) return Color.Warning;
-            return Color.Success;
+            if (spent >= total) return Color.Error;  
+            if (remaining < 100) return Color.Warning;  
+            return Color.Success;  
         }
-
         protected string GetBalanceTextColor(decimal remaining, decimal spent, decimal total)
         {
             if (spent > total) return "hsl(0, 84.2%, 60.2%)";
