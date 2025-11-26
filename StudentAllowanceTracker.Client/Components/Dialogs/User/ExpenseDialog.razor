@@ -2,11 +2,9 @@
 
 <MudDialog>
     <DialogContent>
-        <div class="space-y-4" style="padding: 0.5rem 0;">
+        <div class="space-y-4 expense-dialog-content">
 
-            <!-- Total Allowance -->
-            <MudPaper Class="pa-4 mb-4" Elevation="1"
-                      Style="background-color:hsl(162, 97%, 26%); color:white; border-radius:12px;">
+            <MudPaper Class="pa-4 mb-4 expense-total-card" Elevation="1">
                 <div class="flex justify-between items-center">
                     <div>
                         <MudText Typo="Typo.caption" Class="opacity-90 mb-1">Remaining Balance</MudText>
@@ -23,7 +21,7 @@
                 </div>
             </MudPaper>
 
-            <!-- Allowance Selection -->
+          
             <MudSelect T="AllowanceDTO"
                        Label="Select Allowance"
                        @bind-Value="SelectedAllowance"
@@ -43,7 +41,7 @@
                         <div class="flex items-center justify-between w-full">
                             <span>@allowance.StartDate.ToString("MMM dd, yyyy")</span>
                             <div class="text-right">
-                                <div class="font-semibold" style="color: @(remaining > 0 ? "hsl(162, 86.6%, 32.2%)" : "hsl(0, 84.2%, 60.2%)")">
+                                <div class="font-semibold @(remaining > 0 ? "expense-balance-positive" : "expense-balance-negative")">
                                     ₱@remaining.ToString("N2")
                                 </div>
                                 <div class="text-xs text-gray-500">of ₱@allowance.Amount.ToString("N2")</div>
@@ -53,7 +51,6 @@
                 }
             </MudSelect>
 
-            <!-- Description -->
             <MudTextField @bind-Value="Model.Description"
                           Label="Description"
                           Variant="Variant.Outlined"
@@ -61,7 +58,6 @@
                           Counter="200"
                           Placeholder="e.g., Groceries, Coffee, Bus fare" />
 
-            <!-- Amount -->
             <MudNumericField Value="@Model.Amount"
                              ValueChanged="@((decimal val) => { Model.Amount = val; OnAmountChanged(); OnAllowanceChanged(); })"
                              Label="Amount"
@@ -72,7 +68,6 @@
                              Adornment="Adornment.Start"
                              AdornmentText="₱" />
 
-            <!-- Category Type -->
             <MudSelect T="CategoryType"
                        Label="Category Type"
                        @bind-Value="SelectedCategoryType"
@@ -84,7 +79,7 @@
                     <MudSelectItem Value="@type">
                         <div class="flex items-center gap-2">
                             <span>@type.ToString()</span>
-                            <MudChip T =" string" Size="Size.Small" Color="Color.Default">
+                            <MudChip T="string" Size="Size.Small" Color="Color.Default">
                                 @(type == CategoryType.Needs ? "50%" : type == CategoryType.Wants ? "30%" : "20%")
                             </MudChip>
                         </div>
@@ -92,7 +87,6 @@
                 }
             </MudSelect>
 
-            <!-- Category Name -->
             <MudSelect T="CategoryDTO"
                        Label="Category"
                        Value="@SelectedCategory"
@@ -107,7 +101,7 @@
                             <span>@cat.CategoryName</span>
                             @if (cat.BudgetAmount.HasValue)
                             {
-                                <MudChip T = "string" Size="Size.Small" Color="Color.Info">
+                                <MudChip T="string" Size="Size.Small" Color="Color.Info">
                                     Budget: ₱@cat.BudgetAmount.Value.ToString("N0")
                                 </MudChip>
                             }
@@ -116,11 +110,10 @@
                 }
             </MudSelect>
 
-            <!-- Budget Warning/Progress -->
+            <!-- progress -->
             @if (SelectedCategory?.BudgetAmount.HasValue == true && Model.Amount > 0)
             {
-                <MudPaper Class="pa-4" Elevation="0" 
-                          Style="@($"background-color: {(showBudgetWarning ? "hsl(38, 92%, 95%)" : "hsl(162, 41.8%, 95%)")}; border-radius: 8px; border: 2px solid {(showBudgetWarning ? "hsl(38, 92%, 50%)" : "hsl(162, 86.6%, 32.2%)")};")">
+                <MudPaper Class=@($"pa-4 {(showBudgetWarning ? "expense-budget-warning" : "expense-budget-safe")}") Elevation="0">
                     <div class="mb-3">
                         <div class="flex justify-between items-center mb-2">
                             <MudText Typo="Typo.body2" Class="font-semibold">
@@ -154,7 +147,6 @@
                 </MudPaper>
             }
 
-            <!-- Date -->
             <MudDatePicker @bind-Date="TempDate"
                            Label="Date"
                            Variant="Variant.Outlined"
@@ -187,4 +179,4 @@
             }
         </MudButton>
     </DialogActions>
-</MudDialog>
+</MudDialog>y

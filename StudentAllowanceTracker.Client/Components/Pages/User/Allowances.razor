@@ -1,9 +1,10 @@
 ﻿@page "/allowances"
 @inherits AllowancesBase
 
-<div class="page-container">
+<div style="max-width: 1200px; margin: 0 auto;">
 
-    <div class="page-header">
+    <!-- Header Section -->
+    <div class="flex items-center justify-between" style="margin-bottom: 2rem;">
         <div>
             <MudText Typo="Typo.h4" Class="header-title">Allowances</MudText>
             <MudText Typo="Typo.body2" Class="text-secondary">Manage your income sources</MudText>
@@ -18,16 +19,17 @@
 
     @if (isLoading)
     {
-        <div class="loading-container">
+        <div style="text-align: center; padding: 3rem;">
             <MudProgressCircular Color="Color.Success" Indeterminate="true" />
-            <MudText Typo="Typo.body2" Class="text-secondary loading-text">Loading your allowances...</MudText>
+            <MudText Typo="Typo.body2" Class="text-secondary" Style="margin-top: 1rem;">Loading your allowances...</MudText>
         </div>
     }
     else
     {
         <!-- Summary Cards -->
-        <div class="summary-cards">
+        <div class="grid gap-4 mb-6" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
 
+            <!-- Total Remaining -->
             <MudCard Class="summary-card-primary">
                 <MudCardContent Class="summary-card-content">
                     <MudText Typo="Typo.body2" Class="summary-primary-label">Total Remaining</MudText>
@@ -38,6 +40,7 @@
                 </MudCardContent>
             </MudCard>
 
+            <!-- This Month -->
             <MudCard Class="summary-card-white">
                 <MudCardContent Class="summary-card-content">
                     <MudText Typo="Typo.body2" Class="text-secondary summary-label">This Month</MudText>
@@ -45,6 +48,7 @@
                 </MudCardContent>
             </MudCard>
 
+            <!-- Active Count -->
             <MudCard Class="summary-card-white">
                 <MudCardContent Class="summary-card-content">
                     <MudText Typo="Typo.body2" Class="text-secondary summary-label">Active Allowances</MudText>
@@ -54,9 +58,10 @@
 
         </div>
 
+        <!-- Allowance List -->
         <MudCard Class="allowance-list-card">
 
-            <div class="allowance-list-header">
+            <div class="flex items-center justify-between" style="margin-bottom: 1.5rem;">
                 <MudText Typo="Typo.h6" Class="allowance-list-title">Your Allowances</MudText>
                 <MudButtonGroup Variant="Variant.Outlined" Size="Size.Small">
                     <MudButton Style="@GetFilterButtonStyle(showAll)"
@@ -72,7 +77,7 @@
 
             @if (GetFilteredAllowances().Any())
             {
-                <div class="allowances-container">
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
                     @foreach (var allowance in GetFilteredAllowances())
                     {
                         var active = IsActive(allowance);
@@ -81,8 +86,8 @@
                         var percentage = GetPercentageUsed(allowance.AllowanceID);
 
                         <div class="@(active ? "allowance-item-active" : "allowance-item-inactive")">
-                            <div class="allowance-item-header">
-                                <div class="allowance-info">
+                            <div style="display: flex; align-items: start; justify-content: space-between; margin-bottom: 1rem;">
+                                <div class="flex items-center" style="gap: 1rem;">
                                     <MudIcon Icon="@GetFrequencyIcon(allowance.Type)"
                                              Style="@GetIconStyle(active)" />
                                     <div>
@@ -104,14 +109,14 @@
                                         }
                                     </div>
                                 </div>
-                                <div class="allowance-actions">
-                                    <div class="allowance-amount">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="text-align: right;">
                                         <MudText Typo="Typo.h6" Style="@GetAmountStyle(active)">
                                             ₱@allowance.Amount.ToString("N2")
                                         </MudText>
                                         <MudText Typo="Typo.caption" Class="text-secondary">@GetFrequencyUnit(allowance.Type)</MudText>
                                     </div>
-                                    <div class="allowance-buttons">
+                                    <div style="display: flex; gap: 0.5rem;">
                                         <MudIconButton Icon="@Icons.Material.Filled.Edit"
                                                        Size="Size.Small"
                                                        Class="btn-edit"
@@ -126,10 +131,11 @@
                                 </div>
                             </div>
 
-                            <div class="allowance-balance">
-                                <div class="balance-info">
+                            <!-- Balance Section -->
+                            <div style="background-color: white; border-radius: 0.5rem; padding: 1rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
                                     <div>
-                                        <MudText Typo="Typo.body2" Class="text-secondary balance-label">
+                                        <MudText Typo="Typo.body2" Class="text-secondary" Style="margin-bottom: 0.25rem;">
                                             @(spent > allowance.Amount ? "Overspent by" : "Balance")
                                         </MudText>
                                         <MudText Typo="Typo.h6" Style="@($"color: {GetBalanceTextColor(remaining, spent, allowance.Amount)}; font-weight: 600;")">
@@ -143,8 +149,8 @@
                                             }
                                         </MudText>
                                     </div>
-                                    <div class="balance-spent">
-                                        <MudText Typo="Typo.body2" Class="text-secondary balance-label">Spent</MudText>
+                                    <div style="text-align: right;">
+                                        <MudText Typo="Typo.body2" Class="text-secondary" Style="margin-bottom: 0.25rem;">Spent</MudText>
                                         <MudText Typo="Typo.body1" Class="balance-spent-value">
                                             ₱@spent.ToString("N2")
                                         </MudText>
@@ -152,7 +158,7 @@
                                     <MudChip T="string"
                                              Size="Size.Small"
                                              Color="@GetBalanceColor(remaining, spent, allowance.Amount)"
-                                             Class="balance-chip">
+                                             Style="font-weight: 600;">
                                         @percentage%
                                     </MudChip>
                                 </div>
@@ -180,10 +186,11 @@
             }
             else
             {
-                <div class="empty-state">
+                <!-- Empty State -->
+                <div style="text-align: center; padding: 3rem 1rem;">
                     <MudIcon Icon="@Icons.Material.Outlined.AccountBalanceWallet"
                              Class="empty-state-icon" />
-                    <MudText Typo="Typo.h6" Class="text-secondary empty-state-title">
+                    <MudText Typo="Typo.h6" Class="text-secondary" Style="margin-bottom: 0.5rem;">
                         @(showAll ? "No allowances yet" : "No active allowances")
                     </MudText>
                     <MudText Typo="Typo.body2" Class="text-tertiary">

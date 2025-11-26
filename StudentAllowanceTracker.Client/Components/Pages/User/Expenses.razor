@@ -1,86 +1,75 @@
 ﻿@page "/expenses"
 @inherits ExpensesBase
-<div class="max-w-7xl mx-auto">
+<div class="page-container-lg">
 
     <!-- Header -->
-    <div class="flex items-center justify-between mb-8">
+    <div class="page-header">
         <div>
-            <MudText Typo="Typo.h4" Style="color: hsl(0, 0%, 10.6%); font-weight: 600; margin-bottom: 0.25rem;">
+            <MudText Typo="Typo.h4" Class="header-title">
                 Expenses
             </MudText>
-            <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 52.2%);">
+            <MudText Typo="Typo.body2" Class="text-secondary">
                 Track your spending
             </MudText>
         </div>
         <MudButton Variant="Variant.Filled"
                    StartIcon="@Icons.Material.Filled.Add"
                    OnClick="OpenAddDialog"
-                   Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%);
-                          color: white; text-transform: none; padding: 0.75rem 1.5rem;
-                          border-radius: 0.5rem; font-weight: 500;">
+                   Class="btn-add-allowance">
             Add Expense
         </MudButton>
     </div>
 
     @if (isLoading)
     {
-        <div class="text-center py-12">
+        <div class="loading-container">
             <MudProgressCircular Color="Color.Success" Indeterminate="true" />
-            <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 52.2%); margin-top: 1rem;">Loading expenses...</MudText>
+            <MudText Typo="Typo.body2" Class="text-secondary loading-text">Loading expenses...</MudText>
         </div>
     }
     else
     {
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
-            <MudCard Style="background: linear-gradient(135deg, hsl(162, 86.6%, 32.2%) 0%, hsl(162, 97%, 26.1%) 100%);
-                            border-radius: 0.75rem; padding: 1.25rem;">
-                <MudCardContent Class="pa-0">
-                    <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.9); margin-bottom: 0.5rem; font-size: 0.875rem;">This Month</MudText>
-                    <MudText Typo="Typo.h4" Class="text-2xl sm:text-3xl" Style="color: white; font-weight: 700;">₱@GetThisMonthTotal().ToString("N2")</MudText>
+        <div class="expenses-summary-grid">
+            <MudCard Class="summary-card-primary">
+                <MudCardContent Class="summary-card-content">
+                    <MudText Typo="Typo.body2" Class="summary-primary-label expenses-summary-label">This Month</MudText>
+                    <MudText Typo="Typo.h4" Class="summary-primary-value expenses-summary-value">₱@GetThisMonthTotal().ToString("N2")</MudText>
                 </MudCardContent>
             </MudCard>
 
-            <MudCard Style="background-color: white; border: 2px solid hsl(162, 41.8%, 89.2%);
-                            border-radius: 0.75rem; padding: 1.25rem;">
-                <MudCardContent Class="pa-0">
-                    <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 52.2%); margin-bottom: 0.5rem; font-size: 0.875rem;">Today</MudText>
-                    <MudText Typo="Typo.h4" Class="text-2xl sm:text-3xl" Style="color: hsl(0, 0%, 10.6%); font-weight: 700;">₱@GetTodayTotal().ToString("N2")</MudText>
+            <MudCard Class="summary-card-white">
+                <MudCardContent Class="summary-card-content">
+                    <MudText Typo="Typo.body2" Class="text-secondary expenses-summary-label">Today</MudText>
+                    <MudText Typo="Typo.h4" Class="summary-white-value expenses-summary-value">₱@GetTodayTotal().ToString("N2")</MudText>
                 </MudCardContent>
             </MudCard>
 
-            <MudCard Style="background-color: white; border: 2px solid hsl(162, 41.8%, 89.2%);
-                            border-radius: 0.75rem; padding: 1.25rem;"
-                     Class="sm:col-span-2 lg:col-span-1">
-                <MudCardContent Class="pa-0">
-                    <MudText Typo="Typo.body2" Style="color: hsl(0, 0%, 52.2%); margin-bottom: 0.5rem; font-size: 0.875rem;">Total Items</MudText>
-                    <MudText Typo="Typo.h4" Class="text-2xl sm:text-3xl" Style="color: hsl(0, 0%, 10.6%); font-weight: 700;">@expenses.Count</MudText>
+            <MudCard Class="summary-card-white expenses-total-items-card">
+                <MudCardContent Class="summary-card-content">
+                    <MudText Typo="Typo.body2" Class="text-secondary expenses-summary-label">Total Items</MudText>
+                    <MudText Typo="Typo.h4" Class="summary-white-value expenses-summary-value">@expenses.Count</MudText>
                 </MudCardContent>
             </MudCard>
         </div>
 
         <!-- Filters and List -->
-        <MudCard Style="background-color: white; border: 2px solid hsl(162, 41.8%, 89.2%);
-                        border-radius: 1rem; padding: 2rem;">
-            <!-- Filter Bar -->
-            <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
-                <MudText Typo="Typo.h6" Style="color: hsl(0, 0%, 10.6%); font-weight: 600;">Your Expenses</MudText>
+        <MudCard Class="allowance-list-card">
+            <div class="expenses-filter-bar">
+                <MudText Typo="Typo.h6" Class="allowance-list-title">Your Expenses</MudText>
 
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+                <div class="expenses-filter-controls">
                     <MudSelect T="string"
                                @bind-Value="selectedCategory"
                                Label="Category"
                                Variant="Variant.Outlined"
                                Dense="true"
                                Clearable="true"
-                               Class="w-full sm:w-auto"
-                               Style="min-width: 150px;">
+                               Class="expenses-filter-select">
                         @foreach (var category in categories)
                         {
                             <MudSelectItem Value="@category.CategoryName">@category.CategoryName</MudSelectItem>
                         }
                     </MudSelect>
-
-
 
                     <MudDateRangePicker @bind-DateRange="dateRange"
                                         Label="Date Range"
@@ -88,8 +77,7 @@
                                         Dense="true"
                                         Clearable="true"
                                         Color="Color.Success"
-                                        Class="w-full sm:w-auto"
-                                        Style="min-width: 240px;" />
+                                        Class="expenses-filter-daterange" />
                 </div>
             </div>
 
@@ -140,29 +128,25 @@
                         <TemplateColumn T="ExpenseDTO" Title="" Align="Align.Right">
                             <CellTemplate Context="cell">
                                 <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small"
-                                               Style="color:hsl(162,86.6%,32.2%)" OnClick="@(() => OpenEditDialog(cell.Item))" />
+                                               Class="btn-edit" OnClick="@(() => OpenEditDialog(cell.Item))" />
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small"
-                                               Style="color:hsl(0,84.2%,60.2%)" OnClick="@(() => DeleteExpense(cell.Item))" />
+                                               Class="btn-delete" OnClick="@(() => DeleteExpense(cell.Item))" />
                             </CellTemplate>
                         </TemplateColumn>
                     </Columns>
 
-                    <!-- Explicit pager slot -->
                     <PagerContent>
                         <MudDataGridPager T="ExpenseDTO" />
                     </PagerContent>
                 </MudDataGrid>
-    
-
-
             }
             else
             {
-                <div class="text-center py-12 px-4">
+                <div class="empty-state">
                     <MudIcon Icon="@Icons.Material.Outlined.Receipt"
-                             Style="color:hsl(0,0%,81.2%); font-size:4rem; margin-bottom:1rem;" />
-                    <MudText Typo="Typo.h6" Style="color:hsl(0,0%,52.2%); margin-bottom:0.5rem;">No expenses found</MudText>
-                    <MudText Typo="Typo.body2" Style="color:hsl(0,0%,71%);">
+                             Class="empty-state-icon" />
+                    <MudText Typo="Typo.h6" Class="text-secondary empty-state-title">No expenses found</MudText>
+                    <MudText Typo="Typo.body2" Class="text-tertiary">
                         @((!string.IsNullOrEmpty(selectedCategory) || dateRange != null)
                             ? "Try adjusting your filters"
                             : "Click 'Add Expense' to start tracking")
@@ -172,4 +156,3 @@
         </MudCard>
     }
 </div>
- 
