@@ -13,14 +13,23 @@ using StudentAllowanceTracker.Application.Commands.Goals;
 using StudentAllowanceTracker.Application.Commands.Budget;
 using StudentAllowanceTracker.Application.Commands.Category;
 using StudentAllowanceTracker.Application.Commands.History;
+using StudentAllowanceTracker.Application.Commands.User;
 
 namespace StudentAllowanceTracker.Application.Mapping
 {
     public class AutoMapperProfile : Profile
     {
         public AutoMapperProfile()
-        {
+        {   // User
             CreateMap<RegisterCommand, AppIdentityUser>();
+            CreateMap<UpdateUserCommand, AppIdentityUser>()
+              .ForMember(dest => dest.Id, opt => opt.Ignore())
+              .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+              .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email)) 
+              .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
+              .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName));
+
+            CreateMap<AppIdentityUser, AuthUserDTO>().ReverseMap();
 
             //Allowance Mappings
             CreateMap<CreateAllowanceCommand, Allowance>()
