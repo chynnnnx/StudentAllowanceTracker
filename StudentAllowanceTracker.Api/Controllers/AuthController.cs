@@ -27,8 +27,6 @@ namespace StudentAllowanceTracker.Api.Controllers
 
             return Ok(new {  Message = "User registered successfully." } );
         }
-
-      
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody]LoginCommand command)
         {
@@ -36,6 +34,22 @@ namespace StudentAllowanceTracker.Api.Controllers
             if (!result.Success)
                 return BadRequest(result.Errors);
             return Ok(new { Token = result.Data });
+        }
+        [HttpPatch("password/forgot")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordCommand command)
+        {
+            var result = await _mediator.Send(command);
+            if (!result.Success)
+                return BadRequest(result.Errors);
+            return Ok(new { Message = "Password reset code sent." });
+        }
+        [HttpPatch("password/reset")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
+        {
+            var result = await _mediator.Send(command);
+            if (!result.Success)
+                return BadRequest(result.Errors);
+            return NoContent();
         }
     }
 }
