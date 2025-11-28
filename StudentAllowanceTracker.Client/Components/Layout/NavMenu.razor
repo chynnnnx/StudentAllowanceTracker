@@ -1,5 +1,5 @@
 ﻿<AuthorizeView Roles="User">
-    <!-- Top Bar -->
+    <!-- topbar -->
     <div class="topbar flex items-center gap-3">
         <div class="wallet-icon flex items-center justify-center">
             <MudIcon Icon="@Icons.Material.Filled.AccountBalanceWallet" Class="wallet-icon-inner" />
@@ -16,7 +16,7 @@
 
     <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
-    <!-- Sidebar -->
+    <!-- sidebar -->
     <div class="sidebar nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
         <nav class="flex flex-col py-4">
             @foreach (var item in new[]

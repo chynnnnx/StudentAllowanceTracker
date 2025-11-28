@@ -20,9 +20,9 @@ else
                 <!-- App Bar - Using CSS Variables -->
                 <MudAppBar Elevation="0" Style="background-color: var(--bg-white); border-bottom: 1px solid var(--border-primary);">
                     <MudIconButton Icon="@Icons.Material.Filled.Menu"
-                                   Style="color: var(--text-icon);"
-                                   Edge="Edge.Start"
-                                   OnClick="@DrawerToggle" />
+                    Style="color: var(--text-icon);"
+                    Edge="Edge.Start"
+                    OnClick="@DrawerToggle" />
 
                     <MudSpacer />
 
@@ -31,13 +31,13 @@ else
 
                         <!-- Notifications -->
                         <MudIconButton Icon="@Icons.Material.Outlined.Notifications"
-                                       Style="color: var(--text-icon);"
-                                       Size="Size.Medium" />
+                        Style="color: var(--text-icon);"
+                        Size="Size.Medium" />
 
                         <!-- Help -->
                         <MudIconButton Icon="@Icons.Material.Outlined.HelpOutline"
-                                       Style="color: var(--text-icon);"
-                                       Size="Size.Medium" />
+                        Style="color: var(--text-icon);"
+                        Size="Size.Medium" />
 
                         <!-- Divider -->
                         <MudDivider Vertical="true" FlexItem="true" Style="height: 24px; margin: 0 0.5rem;" />
@@ -46,8 +46,8 @@ else
                         <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
                             <ActivatorContent>
                                 <MudButton Variant="Variant.Text"
-                                           Style="color: var(--text-icon); text-transform: none; padding: 0.5rem 1rem;"
-                                           StartIcon="@Icons.Material.Filled.AccountCircle">
+                                Style="color: var(--text-icon); text-transform: none; padding: 0.5rem 1rem;"
+                                StartIcon="@Icons.Material.Filled.AccountCircle">
                                     <MudHidden Breakpoint="Breakpoint.SmAndDown">
                                         <span style="margin-left: 0.5rem;">Account</span>
                                     </MudHidden>
@@ -55,8 +55,7 @@ else
                                 </MudButton>
                             </ActivatorContent>
                             <ChildContent>
-                                <MudMenuItem Icon="@Icons.Material.Filled.Person">Profile</MudMenuItem>
-                                <MudMenuItem Icon="@Icons.Material.Filled.Settings">Settings</MudMenuItem>
+                                <MudMenuItem Icon="@Icons.Material.Filled.Person" OnClick="Profile">Profile</MudMenuItem>
                                 <MudDivider />
                                 <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="Logout">Logout</MudMenuItem>
                             </ChildContent>
@@ -66,9 +65,9 @@ else
 
                 <!-- Drawer - Using CSS Variables -->
                 <MudDrawer @bind-Open="_drawerOpen"
-                           Class="white-drawer"
-                           Elevation="0"
-                           Style="border-right: 2px solid var(--border-primary);">
+                Class="white-drawer"
+                Elevation="0"
+                Style="border-right: 2px solid var(--border-primary);">
                     <NavMenu />
                 </MudDrawer>
 
@@ -106,6 +105,8 @@ else
 
     private async Task Logout()
     {
+        _isLoading = true;
+        StateHasChanged();
         await LocalStorage.RemoveItemAsync("authToken");
         await LocalStorage.RemoveItemAsync("userRole");
         if (AuthStateProvider is CustomAuthStateProvider customAuth)
@@ -113,6 +114,10 @@ else
         Navigation.NavigateTo("/", forceLoad: true);
     }
 
-    
+    private async Task Profile()
+    {
+        Navigation.NavigateTo("/profile");
+    }
+
 
 }

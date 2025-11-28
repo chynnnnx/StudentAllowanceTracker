@@ -1,0 +1,196 @@
+﻿@page "/profile"
+@inherits ProfileBase
+
+<div style="max-width: 1200px; margin: 0 auto;">
+
+    @if (isLoading)
+    {
+        <div class="text-center py-16">
+            <MudProgressCircular Color="Color.Success" Indeterminate="true" Size="Size.Large" />
+            <MudText Typo="Typo.body1" Class="text-gray-500 mt-6">Loading profile...</MudText>
+        </div>
+    }
+    else
+    {
+     
+        <div class="mb-10">
+            <MudText Typo="Typo.h4" Class="font-bold text-gray-900 mb-2">
+                Profile Settings
+            </MudText>
+            <MudText Typo="Typo.body1" Class="text-gray-500">
+                Manage your account information and security
+            </MudText>
+        </div>
+
+     
+        <div class="bg-white rounded-2xl p-8 mb-6 border border-gray-200">
+            <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+                <div>
+                    <MudText Typo="Typo.h6" Class="font-semibold text-gray-900 mb-1">
+                        Personal Information
+                    </MudText>
+                    <MudText Typo="Typo.body2" Class="text-gray-500">
+                        Update your personal details
+                    </MudText>
+                </div>
+                @if (!isEditingProfile)
+                {
+                    <MudButton Variant="Variant.Text"
+                               StartIcon="@Icons.Material.Filled.Edit"
+                               OnClick="@(() => isEditingProfile = true)"
+                               Style="text-transform: none; color: hsl(162, 86.6%, 32.2%);">
+                        Edit
+                    </MudButton>
+                }
+            </div>
+
+            @if (isEditingProfile)
+            {
+                <div class="flex flex-col gap-6">
+                    <MudTextField @bind-Value="userInfo.FirstName"
+                                  Label="First Name"
+                                  Variant="Variant.Outlined"
+                                  Class="w-full"
+                                  Required="true" />
+
+                    <MudTextField @bind-Value="userInfo.LastName"
+                                  Label="Last Name"
+                                  Variant="Variant.Outlined"
+                                  Class="w-full"
+                                  Required="true" />
+
+                    <MudTextField @bind-Value="userInfo.Email"
+                                  Label="Email"
+                                  Variant="Variant.Outlined"
+                                  Class="w-full"
+                                  Required="true"
+                                  InputType="InputType.Email" />
+
+                    <div class="flex gap-4 justify-end flex-wrap">
+                        <MudButton Variant="Variant.Outlined"
+                                   OnClick="CancelEdit"
+                                   Style="text-transform: none;"
+                                   Class="flex-1 sm:flex-none">
+                            Cancel
+                        </MudButton>
+                        <MudButton Variant="Variant.Filled"
+                                   OnClick="UpdateProfile"
+                                   Disabled="@(!IsProfileValid())"
+                                   Style="background-color: hsl(162, 86.6%, 32.2%); color: white; text-transform: none;"
+                                   Class="flex-1 sm:flex-none">
+                            Save Changes
+                        </MudButton>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <MudText Typo="Typo.caption" Class="text-gray-500 mb-1">First Name</MudText>
+                        <MudText Typo="Typo.body1" Class="font-medium text-gray-900">
+                            @userInfo.FirstName
+                        </MudText>
+                    </div>
+                    <div>
+                        <MudText Typo="Typo.caption" Class="text-gray-500 mb-1">Last Name</MudText>
+                        <MudText Typo="Typo.body1" Class="font-medium text-gray-900">
+                            @userInfo.LastName
+                        </MudText>
+                    </div>
+                    <div class="md:col-span-2">
+                        <MudText Typo="Typo.caption" Class="text-gray-500 mb-1">Email</MudText>
+                        <MudText Typo="Typo.body1" Class="font-medium text-gray-900">
+                            @userInfo.Email
+                        </MudText>
+                    </div>
+                </div>
+            }
+        </div>
+
+   
+        <div class="bg-white rounded-2xl p-8 border border-gray-200">
+            <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+                <div>
+                    <MudText Typo="Typo.h6" Class="font-semibold text-gray-900 mb-1">
+                        Security
+                    </MudText>
+                    <MudText Typo="Typo.body2" Class="text-gray-500">
+                        Manage your password
+                    </MudText>
+                </div>
+                @if (!isChangingPassword)
+                {
+                    <MudButton Variant="Variant.Text"
+                               StartIcon="@Icons.Material.Filled.Lock"
+                               OnClick="@(() => isChangingPassword = true)"
+                               Style="text-transform: none; color: hsl(162, 86.6%, 32.2%);">
+                        Change Password
+                    </MudButton>
+                }
+            </div>
+
+            @if (isChangingPassword)
+            {
+                <div class="flex flex-col gap-6">
+                    <MudTextField @bind-Value="passwordChange.CurrentPassword"
+                                  Label="Current Password"
+                                  Variant="Variant.Outlined"
+                                  InputType="@(showPassword ? InputType.Text : InputType.Password)"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@(showPassword ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
+                                  OnAdornmentClick="@(() => showPassword = !showPassword)"
+                                  Class="w-full"
+                                  Required="true" />
+
+                    <MudTextField @bind-Value="passwordChange.NewPassword"
+                                  Label="New Password"
+                                  Variant="Variant.Outlined"
+                                  InputType="@(showNewPassword ? InputType.Text : InputType.Password)"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@(showNewPassword ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
+                                  OnAdornmentClick="@(() => showNewPassword = !showNewPassword)"
+                                  HelperText="Minimum 6 characters"
+                                  Class="w-full"
+                                  Required="true" />
+
+                    <MudTextField @bind-Value="passwordChange.ConfirmPassword"
+                                  Label="Confirm New Password"
+                                  Variant="Variant.Outlined"
+                                  InputType="@(showConfirmPassword ? InputType.Text : InputType.Password)"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@(showConfirmPassword ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
+                                  OnAdornmentClick="@(() => showConfirmPassword = !showConfirmPassword)"
+                                  Class="w-full"
+                                  Required="true" />
+
+                    <div class="flex gap-4 justify-end flex-wrap">
+                        <MudButton Variant="Variant.Outlined"
+                                   OnClick="CancelPasswordChange"
+                                   Style="text-transform: none;"
+                                   Class="flex-1 sm:flex-none">
+                            Cancel
+                        </MudButton>
+                        <MudButton Variant="Variant.Filled"
+                                   OnClick="ChangePassword"
+                                   Disabled="@(!IsPasswordValid())"
+                                   Style="background-color: hsl(162, 86.6%, 32.2%); color: white; text-transform: none;"
+                                   Class="flex-1 sm:flex-none">
+                            Update Password
+                        </MudButton>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <MudText Typo="Typo.body2" Class="text-gray-600 flex items-center gap-2">
+                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Style="font-size: 1rem; color: hsl(162, 86.6%, 32.2%);" />
+                        Your password is secure
+                    </MudText>
+                </div>
+            }
+        </div>
+    }
+
+</div>
