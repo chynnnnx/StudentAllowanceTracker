@@ -3,6 +3,7 @@
 @inject NavigationManager Navigation
 @inject ILocalStorageService LocalStorage
 @using Components.CustomTheme
+@using StudentAllowanceTracker.Client.Components.Dialogs.User
 <MudThemeProvider Theme="@ThemeColor.Theme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
@@ -17,7 +18,6 @@ else
     <AuthorizeView Roles="User">
         <Authorized>
             <MudLayout>
-                <!-- App Bar - Using CSS Variables -->
                 <MudAppBar Elevation="0" Style="background-color: var(--bg-white); border-bottom: 1px solid var(--border-primary);">
                     <MudIconButton Icon="@Icons.Material.Filled.Menu"
                     Style="color: var(--text-icon);"
@@ -26,23 +26,20 @@ else
 
                     <MudSpacer />
 
-                    <!-- Right side actions -->
                     <div class="flex items-center" style="gap: 0.5rem;">
 
-                        <!-- Notifications -->
                         <MudIconButton Icon="@Icons.Material.Outlined.Notifications"
                         Style="color: var(--text-icon);"
-                        Size="Size.Medium" />
+                        Size="Size.Medium"
+                      OnClick="@OpenNotificationDialog" />
+                        
 
-                        <!-- Help -->
                         <MudIconButton Icon="@Icons.Material.Outlined.HelpOutline"
                         Style="color: var(--text-icon);"
                         Size="Size.Medium" />
 
-                        <!-- Divider -->
                         <MudDivider Vertical="true" FlexItem="true" Style="height: 24px; margin: 0 0.5rem;" />
 
-                        <!-- User Menu -->
                         <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
                             <ActivatorContent>
                                 <MudButton Variant="Variant.Text"
@@ -63,7 +60,6 @@ else
                     </div>
                 </MudAppBar>
 
-                <!-- Drawer - Using CSS Variables -->
                 <MudDrawer @bind-Open="_drawerOpen"
                 Class="white-drawer"
                 Elevation="0"
@@ -71,7 +67,6 @@ else
                     <NavMenu />
                 </MudDrawer>
 
-                <!-- Main Content - Using CSS Variables -->
                 <MudMainContent Style="background-color: var(--bg-page);">
                     <div style="padding: 1.5rem;">
                         @Body
@@ -81,7 +76,6 @@ else
         </Authorized>
         <NotAuthorized>
             <div class="flex flex-col items-center justify-center h-screen text-center">
-                <!-- Using MudBlazor Theme Color -->
                 <MudText Typo="Typo.h5" Color="Color.Error">You are not authorized to access this page.</MudText>
                 <MudText Typo="Typo.body1">
                     Please <MudLink Href="/">log in</MudLink> to continue.
@@ -92,6 +86,8 @@ else
 }
 
 @code {
+    [Inject] private IDialogService DialogService { get; set; }
+
     private bool _drawerOpen = true;
     private bool _isLoading = true;
 
@@ -119,5 +115,9 @@ else
         Navigation.NavigateTo("/profile");
     }
 
-
+    private async Task OpenNotificationDialog()
+    {
+        var options = new DialogOptions { CloseButton = false, MaxWidth = MaxWidth.ExtraSmall };
+        await DialogService.Show<NotificationDialog>("Notifications", options).Result;
+    }
 }

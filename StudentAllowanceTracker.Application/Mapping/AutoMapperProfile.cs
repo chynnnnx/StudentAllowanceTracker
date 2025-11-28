@@ -129,6 +129,9 @@ namespace StudentAllowanceTracker.Application.Mapping
                  .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.BudgetAmount))
                  .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.UtcNow));
 
+            //Notification
+            CreateMap<UserSubscription, UserSubscriptionDTO>() .ReverseMap();
+
         }
     }
 }

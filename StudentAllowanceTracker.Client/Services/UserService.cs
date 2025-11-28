@@ -20,6 +20,16 @@ namespace StudentAllowanceTracker.Client.Services
             }
 
         }
+        public async Task<UserDTO?> GetUserInfoAsync()
+        {
+            var client = await CreateAuthorizedClientAsync();
+            var response = await client.GetAsync("api/user");
+
+            return response.IsSuccessStatusCode
+                ? await response.Content.ReadFromJsonAsync<UserDTO>()
+                : null;
+        }
+
 
         public async Task<UserDTO?> UpdateUserInfo(UserDTO userDTO)
         {

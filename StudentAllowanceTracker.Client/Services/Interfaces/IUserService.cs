@@ -6,6 +6,7 @@ namespace StudentAllowanceTracker.Client.Services.Interfaces
     {
         Task<List<UserDTO>?> GetUsersAsync();
         Task<UserDTO?> UpdateUserInfo(UserDTO userDTO);
+        Task<UserDTO?> GetUserInfoAsync();
         Task<string> ChangePasswordAsync(ChangePasswordDTO changePasswordDTO);
     }
 }
