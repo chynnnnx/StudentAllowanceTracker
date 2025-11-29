@@ -1,62 +1,100 @@
-﻿@inject IAuthService AuthService
-@inject ISnackbar Snackbar
-@inject IDialogService DialogService
-
-<MudDialog>
+﻿@inherits SignUpBase
+<MudDialog Class="rounded-xl" >
+    <TitleContent>
+        <div class="flex items-center justify-between">
+            <div>
+                <MudText Typo="Typo.h5" Class="font-bold text-gray-900">Create Your Account</MudText>
+                <MudText Typo="Typo.body2" Class="text-gray-600">
+                Take control of your finances
+                </MudText>
+            </div>
+        </div>
+    </TitleContent>
     <DialogContent>
-        <div class="px-4 py-2">
-            <MudText Typo="Typo.h5" Class="mb-2 font-bold text-gray-900">Create Your Account</MudText>
-            <MudText Typo="Typo.body2" Class="mb-6 text-gray-600">
-                Join thousands of students taking control of their finances.
-            </MudText>
+        <Loader Visible="_isLoading" />
 
+        <div class="py-4">
             <MudForm @ref="form" @bind-IsValid="@success">
-                <MudTextField @bind-Value="firstName"
-                              Label="First Name"
-                              Variant="Variant.Outlined"
-                              Required="true"
-                              RequiredError="First name is required"
-                              Class="mb-4"
-                              Placeholder="John" />
+                <div class="mb-4">
+                    <MudText Typo="Typo.body1" Class="mb-2 font-semibold text-gray-900">First Name</MudText>
+                    <MudTextField @bind-Value="registerDTO.FirstName"
+                                  Variant="Variant.Outlined"
+                                  Required="true"
+                                  RequiredError="First name is required"
+                                  Placeholder="John"
+                                  Style="background-color: #f0fdf4;"
+                                  Class="rounded-lg" />
+                </div>
 
-                <MudTextField @bind-Value="lastName"
-                              Label="Last Name"
-                              Variant="Variant.Outlined"
-                              Required="true"
-                              RequiredError="Last name is required"
-                              Class="mb-4"
-                              Placeholder="Doe" />
+                <div class="mb-4">
+                    <MudText Typo="Typo.body1" Class="mb-2 font-semibold text-gray-900">Last Name</MudText>
+                    <MudTextField @bind-Value="registerDTO.LastName"
+                                  Variant="Variant.Outlined"
+                                  Required="true"
+                                  RequiredError="Last name is required"
+                                  Placeholder="Doe"
+                                  Style="background-color: #f0fdf4;"
+                                  Class="rounded-lg" />
+                </div>
 
-                <MudTextField @bind-Value="email"
-                              Label="Email"
-                              Variant="Variant.Outlined"
-                              Required="true"
-                              RequiredError="Email is required"
-                              Class="mb-4"
-                              Placeholder="you@example.com" />
+                <div class="mb-4">
+                    <MudText Typo="Typo.body1" Class="mb-2 font-semibold text-gray-900">Email</MudText>
+                    <MudTextField @bind-Value="registerDTO.Email"
+                                  Variant="Variant.Outlined"
+                                  Required="true"
+                                  RequiredError="Email is required"
+                                  Validation="@(new Func<string, string>(ValidateEmail))"
+                                  Placeholder="you@example.com"
+                                  Style="background-color: #f0fdf4;"
+                                  Class="rounded-lg" />
+                </div>
 
-                <MudTextField @bind-Value="password"
-                              Label="Password"
-                              Variant="Variant.Outlined"
-                              InputType="InputType.Password"
-                              Required="true"
-                              RequiredError="Password is required"
-                              Class="mb-6"
-                              Placeholder="••••••••" />
+                <div class="mb-4">
+                    <MudText Typo="Typo.body1" Class="mb-2 font-semibold text-gray-900">Password</MudText>
+                    <MudTextField @bind-Value="registerDTO.Password"
+                                  InputType="@PasswordField.InputType"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@PasswordField.Icon"
+                                  OnAdornmentClick="PasswordField.Toggle"
+                                  Variant="Variant.Outlined"
+                                  Required="true"
+                                  RequiredError="Password is required"
+                                  Validation="@(new Func<string, string>(PasswordValidator.ValidatePasswordStrength))"
+                                  Placeholder="••••••••"
+                                  Style="background-color: #f0fdf4;"
+                                  Class="rounded-lg" />
+                </div>
+
+                <div class="mb-6">
+                    <MudText Typo="Typo.body1" Class="mb-2 font-semibold text-gray-900">Confirm Password</MudText>
+                    <MudTextField @bind-Value="confirmPassword"
+                                  InputType="@ConfirmPasswordField.InputType"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@ConfirmPasswordField.Icon"
+                                  OnAdornmentClick="ConfirmPasswordField.Toggle"
+                                  Variant="Variant.Outlined"
+                                  Required="true"
+                                  RequiredError="Please confirm your password"
+                                  Validation="@(new Func<string, string>(ValidateConfirmPassword))"
+                                  Placeholder="••••••••"
+                                  Style="background-color: #f0fdf4;"
+                                  Class="rounded-lg" />
+                </div>
 
                 <MudButton Variant="Variant.Filled"
                            Color="Color.Success"
                            FullWidth="true"
                            Size="Size.Large"
                            OnClick="HandleSignUp"
-                           Class="mb-4"
-                           Style="text-transform: none; font-weight: 600;">
-                    Create Account
+                           Disabled="_isLoading"
+                           Class="mb-4 rounded-lg"
+                           Style="text-transform: none; font-weight: 600; padding: 12px;">
+                    @(_isLoading ? "Creating account..." : "Create Account")
                 </MudButton>
 
                 <MudText Typo="Typo.body2" Align="Align.Center" Class="text-gray-600">
                     Already have an account?
-                    <MudLink OnClick="HandleLoginClick" Color="Color.Success" Class="font-semibold">
+                    <MudLink OnClick="HandleLoginClick" Color="Color.Success" Class="font-semibold" Style="cursor: pointer;">
                         Login
                     </MudLink>
                 </MudText>
@@ -65,54 +103,3 @@
     </DialogContent>
 </MudDialog>
 
-@code {
-    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = default!;
-
-    private MudForm form;
-    private bool success;
-    private string firstName = "";
-    private string lastName = "";
-    private string email = "";
-    private string password = "";
-    private async Task HandleSignUp()
-    {
-        await form.Validate();
-
-        if (!success)
-            return;
-
-        var dto = new RegisterDTO
-            {
-                FirstName = firstName,
-                LastName = lastName,
-                Email = email,
-                Password = password
-            };
-
-        try
-        {
-            var result = await AuthService.RegisterAsync(dto);
-
-            if (result != null && result.Contains("success", StringComparison.OrdinalIgnoreCase))
-            {
-                Snackbar.Add("Account created! Please verify your email before logging in.", Severity.Success);
-
-                MudDialog.Close(DialogResult.Ok(email));
-            }
-            else
-            {
-                Snackbar.Add(result ?? "Registration failed.", Severity.Error);
-            }
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
-        }
-    }
-
-
-    private void HandleLoginClick()
-    {
-        MudDialog.Close();
-    }
-}

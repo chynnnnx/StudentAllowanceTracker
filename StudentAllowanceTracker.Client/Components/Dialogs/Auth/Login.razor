@@ -1,12 +1,6 @@
-﻿@inject IAuthService AuthService
-@inject ISnackbar Snackbar
-@inject IDialogService DialogService
-@inject ILocalStorageService _localStorage
-@inject NavigationManager Navigation
-@inject AuthenticationStateProvider AuthStateProvider
-@using StudentAllowanceTracker.Client.Security
+﻿ @inherits LoginBase
 
-<MudDialog ClassContent="rounded-xl" ClassActions="rounded-b-xl">
+<MudDialog Class="rounded-xl" >
     <TitleContent>
         <div class="flex items-center justify-between">
             <div>
@@ -24,36 +18,48 @@
             <MudForm @ref="form" @bind-IsValid="@success">
                 <div class="mb-4">
                     <MudText Typo="Typo.body1" Class="mb-2 font-semibold text-gray-900">Email</MudText>
-                    <MudTextField @bind-Value="loginDTO.Email" 
-                    Variant="Variant.Outlined"
-                    Required="true"
-                    RequiredError="Email is required"
-                    Placeholder="you@example.com"
-                    Style="background-color: #f0fdf4;"
-                    Class="rounded-lg" />
+                    <MudTextField @bind-Value="loginDTO.Email"
+                                  Variant="Variant.Outlined"
+                                  Required="true"
+                                  RequiredError="Email is required"
+                                  Placeholder="you@example.com"
+                                  Style="background-color: #f0fdf4;"
+                                  Class="rounded-lg" />
                 </div>
 
-                <div class="mb-6">
+                <div class="mb-2">
                     <MudText Typo="Typo.body1" Class="mb-2 font-semibold text-gray-900">Password</MudText>
-                    <MudTextField @bind-Value="loginDTO.Password" 
-                    Variant="Variant.Outlined"
-                    InputType="InputType.Password"
-                    Required="true"
-                    RequiredError="Password is required"
-                    Placeholder="••••••••"
-                    Style="background-color: #f0fdf4;"
-                    Class="rounded-lg" />
+                    <MudTextField @bind-Value="loginDTO.Password"
+                                  InputType="@LoginPasswordField.InputType"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@LoginPasswordField.Icon"
+                                  OnAdornmentClick="LoginPasswordField.Toggle"
+                                  Variant="Variant.Outlined"
+                                  Required="true"
+                                  RequiredError="Password is required"
+                                  Placeholder="••••••••"
+                                  Style="background-color: #f0fdf4;"
+                                  Class="rounded-lg" />
+
+                </div>
+
+                <div class="mb-6 text-right">
+                    <MudLink OnClick="HandleForgotPasswordClick" Color="Color.Success" Class="font-semibold" Style="cursor: pointer; font-size: 0.875rem;">
+                        Forgot Password?
+                    </MudLink>
                 </div>
 
                 <MudButton Variant="Variant.Filled"
-                Color="Color.Success"
-                FullWidth="true"
-                Size="Size.Large"
-                OnClick="HandleLogin"
-                Class="mb-4 rounded-lg"
-                Style="text-transform: none; font-weight: 600; padding: 12px;">
-                    Login
+                           Color="Color.Success"
+                           FullWidth="true"
+                           Size="Size.Large"
+                           OnClick="HandleLogin"
+                           Disabled="_isLoading"
+                           Class="mb-4 rounded-lg"
+                           Style="text-transform: none; font-weight: 600; padding: 12px;">
+                    @(_isLoading ? "Logging in..." : "Login")
                 </MudButton>
+
 
                 <MudText Typo="Typo.body2" Align="Align.Center" Class="text-gray-600">
                     Don't have an account?
@@ -65,67 +71,4 @@
         </div>
     </DialogContent>
 </MudDialog>
-
-@code {
-    [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
-    private bool _isLoading;
-    private MudForm form;
-    private bool success;
-    private LoginDTO loginDTO = new LoginDTO();
-
-
-    private async Task HandleLogin()
-    {
-        await form.Validate();
-        if (!success)
-            return;
-        _isLoading = true;
-        StateHasChanged();
-        await Task.Delay(3000);
-
-        try
-        {
-            var result = await AuthService.LoginAsync(loginDTO);
-
-            if (string.IsNullOrWhiteSpace(result) || result.StartsWith("Login failed", StringComparison.OrdinalIgnoreCase))
-            {
-                Snackbar.Add(result ?? "Login failed. Please try again.", Severity.Error);
-                return;
-            }
-
-            await _localStorage.SetItemAsync("authToken", result);
-
-            var authStateProvider = (CustomAuthStateProvider)AuthStateProvider;
-            authStateProvider.NotifyUserAuthentication(result);
-
-            MudDialog.Close(DialogResult.Ok(true));
-            Navigation.NavigateTo("/dashboard", forceLoad: true);
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
-        }
-        finally
-        {
-            _isLoading = false;
-            StateHasChanged();
-        }
-    }
-
-
-
-
-    private void HandleSignUpClick()
-    {
-        MudDialog.Close();
-        var parameters = new DialogParameters();
-        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
-
-        DialogService.Show<SignUp>("", parameters, options);
-    }
-
-    private void Cancel()
-    {
-        MudDialog.Cancel();
-    }
-}
+ 
