@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options; 
 using StudentAllowanceTracker.Application.Interfaces;
 using StudentAllowanceTracker.Application.Interfaces.Repositories;
@@ -27,9 +28,14 @@ namespace StudentAllowanceTracker.Infrastructure
             var assembly = typeof(CurrentUserService).Assembly;
             services.Scan(scan => scan
                 .FromAssemblies(assembly)
-                .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Repository") || type.Name.EndsWith("Service")))
+                .AddClasses(classes => classes.Where(type =>
+                        (type.Name.EndsWith("Repository") || type.Name.EndsWith("Service")) &&
+                        !typeof(BackgroundService).IsAssignableFrom(type)))
+
                 .AsImplementedInterfaces()
                 .WithScopedLifetime());
+            services.AddHostedService<DailyReminderService>();
+
 
             return services;
         }

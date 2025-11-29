@@ -60,6 +60,10 @@ namespace StudentAllowanceTracker.Infrastructure.Persistence.Repositories
         {
             return await _dbSet.Where(filter).ToListAsync();
         }
+        public IQueryable<T> GetQueryable() 
+        {
+            return _dbSet.AsQueryable();
+        }
 
     }
 }

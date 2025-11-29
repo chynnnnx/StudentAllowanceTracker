@@ -42,6 +42,11 @@
     --color-error: hsl(0, 84.2%, 60.2%); /* #EF4444 - Error */
     --color-info-bg: hsl(162, 41.8%, 95%); /* #EEF9F5 - Info bg */
 }
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
 
 /* Page Background */
 .page-gradient-bg {
@@ -173,58 +178,6 @@
 
 .opacity-40 {
     opacity: 0.4 !important;
-}
-
-.nav-link {
-    transition: background-color 0.15s ease, border-left-color 0.15s ease;
-}
-
-    .nav-link:hover {
-        background-color: var(--bg-hover) !important;
-    }
-
-    .nav-link.active {
-        background-color: var(--color-primary-lightest) !important;
-        border-left-color: var(--color-primary) !important;
-    }
-
-        .nav-link.active .mud-icon {
-            color: var(--color-primary) !important;
-        }
-
-        .nav-link.active .mud-typography {
-            color: var(--text-primary) !important;
-            font-weight: 500 !important;
-        }
-
-.topbar {
-    background-color: var(--bg-white);
-    border-bottom: 1px solid var(--border-primary);
-    padding: 1.25rem 1.5rem;
-}
-
-/* Wallet Icon */
-.wallet-icon {
-    background: var(--gradient-primary);
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-}
-
-.wallet-icon-inner {
-    color: var(--bg-white);
-    font-size: 1.5rem;
-}
-
-/* Sidebar */
-.sidebar {
-    background-color: var(--bg-light);
-    border-right: 2px solid var(--border-primary);
-}
-
-/* Sidebar icons */
-.sidebar-icon {
-    color: var(--text-icon);
-    font-size: 1.25rem;
 }
 
 /* ========================================
@@ -770,4 +723,181 @@
     background-color: hsl(162, 41.8%, 95%) !important;
     border-radius: 8px !important;
     border: 2px solid hsl(162, 86.6%, 32.2%) !important;
+}
+/* ========================================
+   PROFILE PAGE STYLES
+   ======================================== */
+
+.profile-header {
+    margin-bottom: 2.5rem;
+}
+
+.profile-section {
+    background-color: var(--bg-white);
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-gray);
+}
+
+.profile-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.btn-edit-profile {
+    text-transform: none !important;
+    color: var(--color-primary) !important;
+}
+
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.profile-form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.btn-cancel {
+    text-transform: none !important;
+}
+
+.btn-save {
+    background-color: var(--color-primary) !important;
+    color: white !important;
+    text-transform: none !important;
+}
+
+.profile-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.profile-email-field {
+    grid-column: 1 / -1;
+}
+
+.profile-label {
+    margin-bottom: 0.25rem;
+}
+
+.profile-value {
+    font-weight: 500;
+}
+
+.profile-password-secure {
+    padding: 1rem;
+    background-color: var(--bg-page);
+    border-radius: 0.5rem;
+}
+
+.profile-secure-icon {
+    font-size: 1rem !important;
+    color: var(--color-primary) !important;
+    vertical-align: middle;
+}
+
+@media (max-width: 640px) {
+    .profile-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profile-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-form-actions {
+        flex-direction: column;
+    }
+
+    .btn-cancel,
+    .btn-save {
+        width: 100%;
+    }
+}
+/* ========================================
+   MudNavMenu & MudNavLink Styles
+   Replace your .nav-link styles with these
+   ======================================== */
+
+/* Remove MudNavLink default styles */
+.mud-nav-link {
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    text-decoration: none !important;
+}
+
+    .mud-nav-link:hover {
+        background-color: transparent !important;
+    }
+
+.mud-navmenu {
+    padding: 0 !important;
+}
+
+/* Your original nav-link design, now targeting MudNavLink's inner content */
+.mud-nav-link .nav-link {
+    transition: background-color 0.15s ease, border-left-color 0.15s ease;
+}
+
+    .mud-nav-link .nav-link:hover {
+        background-color: var(--bg-hover) !important;
+    }
+
+/* Active state - same as your original .nav-link.active */
+.mud-nav-link-active .nav-link,
+.mud-nav-link.active .nav-link {
+    background-color: var(--color-primary-lightest) !important;
+    border-left-color: var(--color-primary) !important;
+}
+
+    .mud-nav-link-active .nav-link .mud-icon,
+    .mud-nav-link.active .nav-link .mud-icon {
+        color: var(--color-primary) !important;
+    }
+
+    .mud-nav-link-active .nav-link .mud-typography,
+    .mud-nav-link.active .nav-link .mud-typography {
+        color: var(--text-primary) !important;
+        font-weight: 500 !important;
+    }
+
+/* Keep all your other original styles unchanged */
+.topbar {
+    background-color: var(--bg-white);
+    border-bottom: 1px solid var(--border-primary);
+    padding: 1.25rem 1.5rem;
+}
+
+.wallet-icon {
+    background: var(--gradient-primary);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.wallet-icon-inner {
+    color: var(--bg-white);
+    font-size: 1.5rem;
+}
+
+.sidebar {
+    background-color: var(--bg-light);
+    border-right: 2px solid var(--border-primary);
+}
+
+.sidebar-icon {
+    color: var(--text-icon);
+    font-size: 1.25rem;
 }

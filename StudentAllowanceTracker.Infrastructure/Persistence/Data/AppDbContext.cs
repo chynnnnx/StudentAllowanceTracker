@@ -19,21 +19,21 @@ namespace StudentAllowanceTracker.Infrastructure.Persistence.Data
         public DbSet<EmailVerificationCode> EmailVerificationCodes { get; set; }
         public DbSet<ExpenseEntity> Expenses { get; set; }
         public DbSet<GoalsEntity> StudentGoals { get; set; }
-       public DbSet<CategoryEntity> Category { get; set; }
+        public DbSet<CategoryEntity> Category { get; set; }
         public DbSet<BudgetEntity> Budgets { get; set; }
         public DbSet<HistoryEntity> History { get; set; }
-
+        public DbSet<UserSubscription> UserSubscriptions { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Allowance>().ToTable("Allowances");
-            modelBuilder.Entity< EmailVerificationCode>().ToTable("EmailVerificationCodes");
             modelBuilder.Entity<ExpenseEntity>().ToTable("Expenses");
             modelBuilder.Entity<GoalsEntity>().ToTable("StudentGoals");
             modelBuilder.Entity<CategoryEntity>().ToTable("Categories");
             modelBuilder.Entity<BudgetEntity>().ToTable("Budgets");
             modelBuilder.Entity<HistoryEntity>().ToTable("History");
+            modelBuilder.Entity<UserSubscription>().ToTable("UserSubscriptions");
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         }
