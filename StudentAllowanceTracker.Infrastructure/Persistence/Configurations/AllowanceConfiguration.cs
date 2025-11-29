@@ -36,6 +36,7 @@ namespace StudentAllowanceTracker.Infrastructure.Persistence.Configurations
              .WithMany(u => u.Allowances)
              .HasForeignKey(a => a.UserId)
              .OnDelete(DeleteBehavior.Cascade);
+
             builder.ToTable("Allowances");
 
         }

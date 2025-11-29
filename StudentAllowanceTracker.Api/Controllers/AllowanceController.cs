@@ -7,6 +7,7 @@ using System.Security.Claims;
 
 namespace StudentAllowanceTracker.Api.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class AllowanceController : ControllerBase
