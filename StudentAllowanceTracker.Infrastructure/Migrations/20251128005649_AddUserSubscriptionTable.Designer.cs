@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentAllowanceTracker.Infrastructure.Persistence.Data;
 
@@ -11,9 +12,11 @@ using StudentAllowanceTracker.Infrastructure.Persistence.Data;
 namespace StudentAllowanceTracker.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251128005649_AddUserSubscriptionTable")]
+    partial class AddUserSubscriptionTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -483,14 +486,6 @@ namespace StudentAllowanceTracker.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Frequency")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("LastReminderSentAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool>("ReceiveEmail")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -504,7 +499,7 @@ namespace StudentAllowanceTracker.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserSubscriptions", (string)null);
+                    b.ToTable("UserSubscription");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

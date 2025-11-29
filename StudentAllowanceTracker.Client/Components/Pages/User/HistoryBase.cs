@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 using StudentAllowanceTracker.Client.DTOs;
 using StudentAllowanceTracker.Client.Services.Interfaces;
+using StudentAllowanceTracker.Shared.Helpers;
 
 namespace StudentAllowanceTracker.Client.Components.Pages.User
 {
@@ -34,7 +35,15 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
                 var result = await HistoryService.GetHistories(selectedType);
                 if (result != null)
                 {
-                    histories = result.OrderByDescending(h => h.Date).ToList();
+                    histories = result
+                        .Select(h =>
+                        {
+                            h.Date = TimeHelper.UtcToPh(h.Date);
+                            return h;
+                        })
+                        .OrderByDescending(h => h.Date)
+                        .ToList();
+
                     FilterHistories();
                 }
                 else
@@ -53,6 +62,7 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
                 isLoading = false;
             }
         }
+
 
         protected void FilterHistories()
         {
@@ -152,10 +162,6 @@ namespace StudentAllowanceTracker.Client.Components.Pages.User
             };
         }
 
-        protected decimal GetTotalAmount()
-        {
-            return filteredHistories.Sum(h => h.Amount ?? 0);
-        }
 
         protected int GetRecordCount(string type)
         {

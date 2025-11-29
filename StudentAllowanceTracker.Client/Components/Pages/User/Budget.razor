@@ -2,11 +2,11 @@
 @inherits BudgetBase
 
 <div style="max-width: 1200px; margin: 0 auto;">
-    <div class="max-w-7xl mx-auto">
+    <div class="mx-auto max-w-7xl">
 
-        <div class="flex items-center justify-between mb-8">
+        <div class="mb-8 flex items-center justify-between">
             <div>
-                <MudText Typo="Typo.h4" Class="font-bold text-gray-900 mb-2">Budget Planning</MudText>
+                <MudText Typo="Typo.h4" Class="mb-2 font-bold text-gray-900">Budget Planning</MudText>
                 <MudText Typo="Typo.body1" Class="text-gray-600">Plan and track your 50/30/20 budget</MudText>
             </div>
         </div>
@@ -15,16 +15,16 @@
         {
             <div class="flex flex-col items-center justify-center py-16">
                 <MudProgressCircular Color="Color.Success" Indeterminate="true" />
-                <MudText Typo="Typo.body2" Class="text-gray-500 mt-4">Loading budget...</MudText>
+                <MudText Typo="Typo.body2" Class="mt-4 text-gray-500">Loading budget...</MudText>
             </div>
         }
         else
         {
          
-            <MudPaper Class="p-6 mb-6 shadow-sm"
+            <MudPaper Class="mb-6 p-6 shadow-sm"
                       Style="border-radius: 1rem; background: white;"
                       Elevation="0">
-                <div class="flex items-center justify-between mb-6">
+                <div class="mb-6 flex items-center justify-between">
                     <MudText Typo="Typo.h6" Class="font-semibold text-gray-900">
                         @(hasBudget ? "Your Budget Plan" : "Create Budget Plan")
                     </MudText>
@@ -40,7 +40,7 @@
                     }
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
                    
                     <MudNumericField @bind-Value="totalAllowance"
                                      Label="Total Allowance"
@@ -50,29 +50,18 @@
                                      Format="N2"
                                      Min="0"
                                         ReadOnly="true"/>
-
-                   
-                   @*  <div class="grid grid-cols-2 gap-4">
-                        <MudDatePicker @bind-Date="startDate"
-                                       Label="Start Date"
-                                       Variant="Variant.Outlined" />
-                        <MudDatePicker @bind-Date="endDate"
-                                       Label="End Date (Optional)"
-                                       Variant="Variant.Outlined"
-                                       Clearable="true" />
-                    </div> *@
                 </div>
 
                
-                <div class="space-y-6 mb-6">
+                <div class="mb-6 space-y-6">
                    
                     <div>
-                        <div class="flex items-center justify-between mb-2">
+                        <div class="mb-2 flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <MudIcon Icon="@Icons.Material.Filled.ShoppingBasket" Class="needs-color" Size="Size.Small" />
                                 <MudText Typo="Typo.body1" Class="font-medium">Needs</MudText>
                             </div>
-                            <MudText Typo="Typo.body1" Class="font-semibold needs-color">
+                            <MudText Typo="Typo.body1" Class="needs-color font-semibold">
                                 @needsPercentage.ToString("F0")% (₱@((totalAllowance * needsPercentage / 100).ToString("N2")))
                             </MudText>
                         </div>
@@ -80,12 +69,12 @@
                     </div>
 
                     <div>
-                        <div class="flex items-center justify-between mb-2">
+                        <div class="mb-2 flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <MudIcon Icon="@Icons.Material.Filled.ShoppingCart" Class="wants-color" Size="Size.Small" />
                                 <MudText Typo="Typo.body1" Class="font-medium">Wants</MudText>
                             </div>
-                            <MudText Typo="Typo.body1" Class="font-semibold wants-color">
+                            <MudText Typo="Typo.body1" Class="wants-color font-semibold">
                                 @wantsPercentage.ToString("F0")% (₱@((totalAllowance * wantsPercentage / 100).ToString("N2")))
                             </MudText>
                         </div>
@@ -94,12 +83,12 @@
 
                  
                     <div>
-                        <div class="flex items-center justify-between mb-2">
+                        <div class="mb-2 flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <MudIcon Icon="@Icons.Material.Filled.Savings" Class="savings-color" Size="Size.Small" />
                                 <MudText Typo="Typo.body1" Class="font-medium">Savings</MudText>
                             </div>
-                            <MudText Typo="Typo.body1" Class="font-semibold savings-color">
+                            <MudText Typo="Typo.body1" Class="savings-color font-semibold">
                                 @savingsPercentage.ToString("F0")% (₱@((totalAllowance * savingsPercentage / 100).ToString("N2")))
                             </MudText>
                         </div>
@@ -118,7 +107,7 @@
                 </div>
 
              
-                <div class="flex gap-4 justify-end">
+                <div class="flex justify-end gap-4">
                     <MudButton Variant="Variant.Outlined"
                                StartIcon="@Icons.Material.Filled.Refresh"
                                OnClick="ResetToDefault"
@@ -138,30 +127,30 @@
           
             @if (hasBudget)
             {
-                <MudText Typo="Typo.h6" Class="font-semibold text-gray-900 mb-4">Budget Tracking</MudText>
+                <MudText Typo="Typo.h6" Class="mb-4 font-semibold text-gray-900">Budget Tracking</MudText>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <div class="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
                   
-                    <MudPaper Class="p-6 border-2 needs-border needs-bg-gradient"
+                    <MudPaper Class="needs-border needs-bg-gradient border-2 p-6"
                               Style="border-radius: 1rem;"
                               Elevation="0">
-                        <div class="flex items-center gap-3 mb-4">
+                        <div class="mb-4 flex items-center gap-3">
                             <MudIcon Icon="@GetCategoryIcon("Needs")" Class="needs-color" Style="font-size: 2rem;" />
                             <MudText Typo="Typo.h6" Class="font-semibold">Needs</MudText>
                         </div>
 
                         <div class="mb-4">
-                            <div class="flex justify-between mb-2">
+                            <div class="mb-2 flex justify-between">
                                 <MudText Typo="Typo.body2" Class="text-gray-600">Budget</MudText>
                                 <MudText Typo="Typo.body2" Class="font-semibold">₱@GetBudgetAmount("Needs").ToString("N2")</MudText>
                             </div>
-                            <div class="flex justify-between mb-2">
+                            <div class="mb-2 flex justify-between">
                                 <MudText Typo="Typo.body2" Class="text-gray-600">Spent</MudText>
                                 <MudText Typo="Typo.body2" Class="font-semibold">₱@needsSpent.ToString("N2")</MudText>
                             </div>
                             <div class="flex justify-between">
                                 <MudText Typo="Typo.body2" Class="text-gray-600">Remaining</MudText>
-                                <MudText Typo="Typo.body2" Class="font-bold needs-color">
+                                <MudText Typo="Typo.body2" Class="needs-color font-bold">
                                     ₱@GetRemainingAmount("Needs").ToString("N2")
                                 </MudText>
                             </div>
@@ -171,31 +160,31 @@
                                            Value="@GetSpentPercentage("Needs")"
                                            Size="Size.Large"
                                            Class="rounded-lg" />
-                        <MudText Typo="Typo.caption" Class="text-gray-500 mt-2 text-center">
+                        <MudText Typo="Typo.caption" Class="mt-2 text-center text-gray-500">
                             @GetSpentPercentage("Needs").ToString("F1")% used
                         </MudText>
                     </MudPaper>
 
-                    <MudPaper Class="p-6 border-2 wants-border wants-bg-gradient"
+                    <MudPaper Class="wants-border wants-bg-gradient border-2 p-6"
                               Style="border-radius: 1rem;"
                               Elevation="0">
-                        <div class="flex items-center gap-3 mb-4">
+                        <div class="mb-4 flex items-center gap-3">
                             <MudIcon Icon="@GetCategoryIcon("Wants")" Class="wants-color" Style="font-size: 2rem;" />
                             <MudText Typo="Typo.h6" Class="font-semibold">Wants</MudText>
                         </div>
 
                         <div class="mb-4">
-                            <div class="flex justify-between mb-2">
+                            <div class="mb-2 flex justify-between">
                                 <MudText Typo="Typo.body2" Class="text-gray-600">Budget</MudText>
                                 <MudText Typo="Typo.body2" Class="font-semibold">₱@GetBudgetAmount("Wants").ToString("N2")</MudText>
                             </div>
-                            <div class="flex justify-between mb-2">
+                            <div class="mb-2 flex justify-between">
                                 <MudText Typo="Typo.body2" Class="text-gray-600">Spent</MudText>
                                 <MudText Typo="Typo.body2" Class="font-semibold">₱@wantsSpent.ToString("N2")</MudText>
                             </div>
                             <div class="flex justify-between">
                                 <MudText Typo="Typo.body2" Class="text-gray-600">Remaining</MudText>
-                                <MudText Typo="Typo.body2" Class="font-bold wants-color">
+                                <MudText Typo="Typo.body2" Class="wants-color font-bold">
                                     ₱@GetRemainingAmount("Wants").ToString("N2")
                                 </MudText>
                             </div>
@@ -205,31 +194,31 @@
                                            Value="@GetSpentPercentage("Wants")"
                                            Size="Size.Large"
                                            Class="rounded-lg" />
-                        <MudText Typo="Typo.caption" Class="text-gray-500 mt-2 text-center">
+                        <MudText Typo="Typo.caption" Class="mt-2 text-center text-gray-500">
                             @GetSpentPercentage("Wants").ToString("F1")% used
                         </MudText>
                     </MudPaper>
 
-                    <MudPaper Class="p-6 border-2 savings-border savings-bg-gradient"
+                    <MudPaper Class="savings-border savings-bg-gradient border-2 p-6"
                               Style="border-radius: 1rem;"
                               Elevation="0">
-                        <div class="flex items-center gap-3 mb-4">
+                        <div class="mb-4 flex items-center gap-3">
                             <MudIcon Icon="@GetCategoryIcon("Savings")" Class="savings-color" Style="font-size: 2rem;" />
                             <MudText Typo="Typo.h6" Class="font-semibold">Savings</MudText>
                         </div>
 
                         <div class="mb-4">
-                            <div class="flex justify-between mb-2">
+                            <div class="mb-2 flex justify-between">
                                 <MudText Typo="Typo.body2" Class="text-gray-600">Budget</MudText>
                                 <MudText Typo="Typo.body2" Class="font-semibold">₱@GetBudgetAmount("Savings").ToString("N2")</MudText>
                             </div>
-                            <div class="flex justify-between mb-2">
+                            <div class="mb-2 flex justify-between">
                                 <MudText Typo="Typo.body2" Class="text-gray-600">Spent</MudText>
                                 <MudText Typo="Typo.body2" Class="font-semibold">₱@savingsSpent.ToString("N2")</MudText>
                             </div>
                             <div class="flex justify-between">
                                 <MudText Typo="Typo.body2" Class="text-gray-600">Remaining</MudText>
-                                <MudText Typo="Typo.body2" Class="font-bold savings-color">
+                                <MudText Typo="Typo.body2" Class="savings-color font-bold">
                                     ₱@GetRemainingAmount("Savings").ToString("N2")
                                 </MudText>
                             </div>
@@ -239,7 +228,7 @@
                                            Value="@GetSpentPercentage("Savings")"
                                            Size="Size.Large"
                                            Class="rounded-lg" />
-                        <MudText Typo="Typo.caption" Class="text-gray-500 mt-2 text-center">
+                        <MudText Typo="Typo.caption" Class="mt-2 text-center text-gray-500">
                             @GetSpentPercentage("Savings").ToString("F1")% used
                         </MudText>
                     </MudPaper>
@@ -260,9 +249,9 @@
                           Style="border-radius: 1rem; background: white;"
                           Elevation="0">
                     <MudIcon Icon="@Icons.Material.Outlined.AccountBalanceWallet"
-                             Class="text-gray-300 mb-4"
+                             Class="mb-4 text-gray-300"
                              Style="font-size: 5rem;" />
-                    <MudText Typo="Typo.h6" Class="font-semibold text-gray-500 mb-2">
+                    <MudText Typo="Typo.h6" Class="mb-2 font-semibold text-gray-500">
                         No Budget Plan Yet
                     </MudText>
                     <MudText Typo="Typo.body2" Class="text-gray-400">
