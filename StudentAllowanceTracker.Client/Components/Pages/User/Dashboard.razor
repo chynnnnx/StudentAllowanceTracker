@@ -1,7 +1,185 @@
 ﻿@page "/dashboard"
+@inherits DashboardBase
 
-<h3>Dashboard</h3>
+<MudContainer MaxWidth="MaxWidth.Large" Class="px-4 py-8">
 
-@code {
+    @if (isLoading)
+    {
+        <MudPaper Class="d-flex align-center justify-center" Style="height: 400px;">
+            <MudProgressCircular Color="Color.Success" Indeterminate="true" Size="Size.Large" />
+            <MudText Typo="Typo.body1" Class="text-secondary ml-4">
+                Loading dashboard...
+            </MudText>
+        </MudPaper>
+    }
+    else
+    {
+        <!-- Main Balance -->
+        <MudStack Spacing="1" Class="mb-12">
+            <MudText Typo="Typo.h3" Style="color:hsl(0,0%,10.6%); font-weight:700;">
+                ₱@GetTotalBalance().ToString("N2")
+            </MudText>
+            <MudText Typo="Typo.body1" Class="text-secondary">
+                Current balance • @DateTime.Now.ToString("MMMM dd, yyyy")
+            </MudText>
+        </MudStack>
 
-}
+        <!-- Income & Expenses -->
+        <MudGrid GutterSize="16px" Class="mb-12">
+            <MudItem xs="12" sm="6">
+                <MudPaper Class="p-6" Style="background: linear-gradient(135deg, hsl(162,86.6%,95%), hsl(162,86.6%,98%)); border-radius:1rem;">
+                    <MudText Typo="Typo.body2" Class="text-secondary mb-1">Total Income</MudText>
+                    <MudText Typo="Typo.h4" Style="color:hsl(162,86.6%,32.2%); font-weight:600;">
+                        ₱@GetTotalIncome().ToString("N2")
+                    </MudText>
+                    <MudText Typo="Typo.caption" Class="text-tertiary">
+                        @allowances.Count(IsActive) active source@(allowances.Count(IsActive) != 1 ? "s" : "")
+                    </MudText>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudPaper Class="p-6" Style="background: linear-gradient(135deg, hsl(0,84.2%,95%), hsl(0,84.2%,98%)); border-radius:1rem;">
+                    <MudText Typo="Typo.body2" Class="text-secondary mb-1">This Month Spent</MudText>
+                    <MudText Typo="Typo.h4" Style="color:hsl(0,84.2%,60.2%); font-weight:600;">
+                        ₱@GetTotalSpentThisMonth().ToString("N2")
+                    </MudText>
+                    <MudText Typo="Typo.caption" Class="text-tertiary">
+                        @expenses.Count(e => e.Date.Month == DateTime.Now.Month) transaction@(expenses.Count(e => e.Date.Month == DateTime.Now.Month) != 1 ? "s" : "")
+                    </MudText>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+
+        <!-- Recent Transactions -->
+        <MudStack Spacing="4" Class="mb-12">
+            <MudStack Direction="Row" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                <MudText Typo="Typo.h5" Style="font-weight:600; color:hsl(0,0%,10.6%);">Recent Transactions</MudText>
+                <MudButton Href="/expenses" Variant="Variant.Text" Style="text-transform:none; color:hsl(162,86.6%,32.2%);">View all</MudButton>
+            </MudStack>
+
+            @if (GetRecentExpenses().Any())
+            {
+                <MudPaper Class="overflow-hidden" Style="border-radius:1rem; border:1px solid hsl(0,0%,89.8%);">
+                    @foreach (var expense in GetRecentExpenses().Take(3))
+                    {
+                        var categoryName = GetCategoryName(expense.CategoryID);
+                        <MudStack Direction="Row" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="px-5 py-4" Style="border-bottom:1px solid hsl(0,0%,95%);">
+                            <MudStack Direction="Row" AlignItems="AlignItems.Center" Spacing="3">
+                                <MudPaper Class="d-flex align-center justify-center" Style="width:40px; height:40px; border-radius:0.5rem; background:hsl(162,86.6%,95%);">
+                                    <MudIcon Icon="@Icons.Material.Filled.ShoppingBag" Style="color:hsl(162,86.6%,32.2%); font-size:1.25rem;" />
+                                </MudPaper>
+                                <MudStack Spacing="0">
+                                    <MudText Typo="Typo.body1" Style="font-weight:500; color:hsl(0,0%,10.6%);">@expense.Description</MudText>
+                                    <MudText Typo="Typo.caption" Class="text-secondary">@categoryName • @expense.Date.ToString("MMM dd, yyyy")</MudText>
+                                </MudStack>
+                            </MudStack>
+                            <MudText Typo="Typo.body1" Style="font-weight:600; color:hsl(0,0%,10.6%);">-₱@expense.Amount.ToString("N2")</MudText>
+                        </MudStack>
+                    }
+                </MudPaper>
+            }
+            else
+            {
+                <MudPaper Class="d-flex flex-column align-center justify-center p-12" Style="background:hsl(0,0%,98%); border-radius:1rem;">
+                    <MudIcon Icon="@Icons.Material.Outlined.Receipt" Style="font-size:3rem; color:hsl(0,0%,71%);" />
+                    <MudText Typo="Typo.body1" Class="text-secondary mt-4">No transactions yet</MudText>
+                </MudPaper>
+            }
+        </MudStack>
+
+        <!-- Budget Overview -->
+        
+            var activeBudget = GetActiveBudget();
+       
+        @if (activeBudget != null)
+        {
+            <MudStack Spacing="4" Class="mb-12">
+                <MudStack Direction="Row" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                    <MudText Typo="Typo.h5" Style="font-weight:600; color:hsl(0,0%,10.6%);">Budget Overview (50/30/20)</MudText>
+                    <MudButton Href="/budget" Variant="Variant.Text" Style="text-transform:none; color:hsl(162,86.6%,32.2%);">Manage</MudButton>
+                </MudStack>
+
+                <MudGrid GutterSize="16px">
+                    @foreach (var type in new[] { CategoryType.Needs, CategoryType.Wants, CategoryType.Savings })
+                    {
+                        var spent = GetSpentByType(type);
+                        var budgetAmount = type switch
+                        {
+                            CategoryType.Needs => activeBudget.NeedsBudget,
+                            CategoryType.Wants => activeBudget.WantsBudget,
+                            CategoryType.Savings => activeBudget.SavingsBudget,
+                            _ => 0
+                        };
+                        var percentage = GetBudgetPercentage(type, budgetAmount);
+                        var remaining = budgetAmount - spent;
+
+                        <MudItem xs="12" sm="4">
+                            <MudPaper Class="p-6" Style="border-radius:1rem; border:1px solid hsl(0,0%,89.8%);">
+                                <MudStack Spacing="2">
+                                    <MudStack Direction="Row" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <MudStack Spacing="1">
+                                            <MudStack Direction="Row" AlignItems="AlignItems.Center" Spacing="1">
+                                                <MudIcon Icon="@GetCategoryIcon(type)" Style="font-size:1.25rem; color:hsl(0,0%,10.6%);" />
+                                                <MudText Typo="Typo.body1" Style="font-weight:600; color:hsl(0,0%,10.6%);">@type</MudText>
+                                            </MudStack>
+                                            <MudText Typo="Typo.caption" Class="text-secondary">
+                                                ₱@spent.ToString("N2") of ₱@budgetAmount.ToString("N2")
+                                            </MudText>
+                                        </MudStack>
+                                        <MudChip T="string" Size="Size.Small" Color="@GetProgressColor(percentage)" Style="font-weight:600;">
+                                            @percentage%
+                                        </MudChip>
+                                    </MudStack>
+                                    <MudProgressLinear Color="@GetProgressColor(percentage)" Value="@percentage" Size="Size.Medium" Class="rounded" />
+                                    <MudText Typo="Typo.caption" Class="text-tertiary">₱@remaining.ToString("N2") remaining</MudText>
+                                </MudStack>
+                            </MudPaper>
+                        </MudItem>
+                    }
+                </MudGrid>
+            </MudStack>
+        }
+
+        <!-- Savings Goals -->
+        @if (goals.Any())
+        {
+            <MudStack Spacing="4">
+                <MudStack Direction="Row" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                    <MudText Typo="Typo.h5" Style="font-weight:600; color:hsl(0,0%,10.6%);">Savings Goals</MudText>
+                    <MudButton Href="/goals" Variant="Variant.Text" Style="text-transform:none; color:hsl(162,86.6%,32.2%);">View all</MudButton>
+                </MudStack>
+
+                <MudGrid GutterSize="16px">
+                    @foreach (var goal in goals.Take(3))
+                    {
+                        var percentage = GetGoalPercentage(goal.GoalID);
+                        var remaining = goal.TargetAmount - goal.CurrentAmount;
+
+                        <MudItem xs="12" sm="4">
+                            <MudPaper Class="p-6" Style="border-radius:1rem; border:1px solid hsl(0,0%,89.8%);">
+                                <MudStack Spacing="2">
+                                    <MudStack Direction="Row" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <MudStack Spacing="0">
+                                            <MudText Typo="Typo.body1" Style="font-weight:600; color:hsl(0,0%,10.6%);">@goal.GoalName</MudText>
+                                            <MudText Typo="Typo.caption" Class="text-secondary">
+                                                ₱@goal.CurrentAmount.ToString("N2") of ₱@goal.TargetAmount.ToString("N2")
+                                            </MudText>
+                                        </MudStack>
+                                        <MudChip T="string" Size="Size.Small" Color="Color.Success" Style="font-weight:600;">@percentage%</MudChip>
+                                    </MudStack>
+                                    <MudProgressLinear Color="Color.Success" Value="@percentage" Size="Size.Medium" Class="rounded" />
+                                </MudStack>
+                            </MudPaper>
+                        </MudItem>
+                    }
+                </MudGrid>
+            </MudStack>
+        }
+    }
+
+</MudContainer>
+
+<style>
+    .text-secondary { color: hsl(0, 0%, 45%); }
+    .text-tertiary { color: hsl(0, 0%, 64%); }
+</style>
