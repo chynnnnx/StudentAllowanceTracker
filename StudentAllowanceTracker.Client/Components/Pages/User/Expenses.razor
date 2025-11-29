@@ -28,27 +28,38 @@
     }
     else
     {
-        <div class="expenses-summary-grid">
-            <MudCard Class="summary-card-primary">
-                <MudCardContent Class="summary-card-content">
-                    <MudText Typo="Typo.body2" Class="summary-primary-label expenses-summary-label">This Month</MudText>
-                    <MudText Typo="Typo.h4" Class="summary-primary-value expenses-summary-value">₱@GetThisMonthTotal().ToString("N2")</MudText>
-                </MudCardContent>
+        <div class="expenses-summary-grid mb-10 grid grid-cols-1 gap-6 md:grid-cols-3">
+            <MudCard Class="summary-card-primary p-6 transition-all hover:shadow-lg" Style="border-radius: 1rem;">
+                <div class="flex items-center justify-between gap-4">
+                    <div>
+                        <MudText Typo="Typo.body2" Class="summary-primary-label expenses-summary-label">This Month</MudText>
+                        <MudText Typo="Typo.h4" Class="summary-primary-value expenses-summary-value">
+                            ₱@GetThisMonthTotal().ToString("N2")
+                        </MudText>
+                    </div>
+                </div>
+            </MudCard>
+            <MudCard Class="summary-card-white p-6 transition-all hover:shadow-lg" Style="border-radius: 1rem;">
+                <div class="flex items-center justify-between gap-4">
+                    <div>
+                        <MudText Typo="Typo.body2" Class="text-secondary expenses-summary-label">Today</MudText>
+                        <MudText Typo="Typo.h4" Class="summary-white-value expenses-summary-value">
+                            ₱@GetTodayTotal().ToString("N2")
+                        </MudText>
+                    </div>
+                </div>
+            </MudCard>
+            <MudCard Class="summary-card-white p-6 transition-all hover:shadow-lg" Style="border-radius: 1rem;">
+                <div class="flex items-center justify-between gap-4">
+                    <div>
+                        <MudText Typo="Typo.body2" Class="text-secondary expenses-summary-label">Total Items</MudText>
+                        <MudText Typo="Typo.h4" Class="summary-white-value expenses-summary-value">
+                            @expenses.Count
+                        </MudText>
+                    </div>
+                </div>
             </MudCard>
 
-            <MudCard Class="summary-card-white">
-                <MudCardContent Class="summary-card-content">
-                    <MudText Typo="Typo.body2" Class="text-secondary expenses-summary-label">Today</MudText>
-                    <MudText Typo="Typo.h4" Class="summary-white-value expenses-summary-value">₱@GetTodayTotal().ToString("N2")</MudText>
-                </MudCardContent>
-            </MudCard>
-
-            <MudCard Class="summary-card-white expenses-total-items-card">
-                <MudCardContent Class="summary-card-content">
-                    <MudText Typo="Typo.body2" Class="text-secondary expenses-summary-label">Total Items</MudText>
-                    <MudText Typo="Typo.h4" Class="summary-white-value expenses-summary-value">@expenses.Count</MudText>
-                </MudCardContent>
-            </MudCard>
         </div>
 
   
@@ -80,7 +91,6 @@
                 </div>
             </div>
 
-            <!-- Expenses Table -->
             @if (GetFilteredExpenses().Any())
             {
                 <MudDataGrid T="ExpenseDTO"
