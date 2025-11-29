@@ -4,7 +4,9 @@ namespace StudentAllowanceTracker.Client.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task<string?> RegisterAsync(RegisterDTO dto);
+        Task<bool> RegisterAsync(RegisterDTO dto);
         Task<string?> LoginAsync(LoginDTO dto);
+        Task<bool> ForgotPassword(string email);
+        Task<bool> ResetPasswordAsync(ResetPasswordDTO dto);
     }
 }
