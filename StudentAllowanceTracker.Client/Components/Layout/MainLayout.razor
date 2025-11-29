@@ -32,11 +32,7 @@ else
                         Style="color: var(--text-icon);"
                         Size="Size.Medium"
                       OnClick="@OpenNotificationDialog" />
-                        
-
-                        <MudIconButton Icon="@Icons.Material.Outlined.HelpOutline"
-                        Style="color: var(--text-icon);"
-                        Size="Size.Medium" />
+                       
 
                         <MudDivider Vertical="true" FlexItem="true" Style="height: 24px; margin: 0 0.5rem;" />
 
@@ -61,9 +57,11 @@ else
                 </MudAppBar>
 
                 <MudDrawer @bind-Open="_drawerOpen"
-                Class="white-drawer"
-                Elevation="0"
-                Style="border-right: 2px solid var(--border-primary);">
+                           Variant="@DrawerVariant.Responsive"
+                           Breakpoint="Breakpoint.Md"
+                          
+                           Elevation="0"
+                           Style="background-color: var(--bg-light); border-right: 2px solid var(--border-primary);">
                     <NavMenu />
                 </MudDrawer>
 
@@ -75,7 +73,7 @@ else
             </MudLayout>
         </Authorized>
         <NotAuthorized>
-            <div class="flex flex-col items-center justify-center h-screen text-center">
+            <div class="flex h-screen flex-col items-center justify-center text-center">
                 <MudText Typo="Typo.h5" Color="Color.Error">You are not authorized to access this page.</MudText>
                 <MudText Typo="Typo.body1">
                     Please <MudLink Href="/">log in</MudLink> to continue.

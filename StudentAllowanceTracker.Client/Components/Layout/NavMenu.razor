@@ -1,11 +1,13 @@
-﻿<AuthorizeView Roles="User">
+﻿@inject NavigationManager Navigation
+
+<AuthorizeView Roles="User">
     <!-- topbar -->
     <div class="topbar flex items-center gap-3">
         <div class="wallet-icon flex items-center justify-center">
             <MudIcon Icon="@Icons.Material.Filled.AccountBalanceWallet" Class="wallet-icon-inner" />
         </div>
         <div class="flex flex-col">
-            <MudText Typo="Typo.h6" Class="text-primary font-semibold m-0 leading-tight">
+            <MudText Typo="Typo.h6" Class="text-primary m-0 leading-tight font-semibold">
                 Student Allowance
             </MudText>
             <MudText Typo="Typo.caption" Class="text-secondary m-0 text-xs">
@@ -14,35 +16,82 @@
         </div>
     </div>
 
-    <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
-    <!-- sidebar -->
-    <div class="sidebar nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-        <nav class="flex flex-col py-4">
-            @foreach (var item in new[]
-            {
-            new { Href = "dashboard", Icon = Icons.Material.Filled.Home, Label = "Home" },
-            new { Href = "allowances", Icon = Icons.Material.Filled.Money, Label = "Allowances" },
-            new { Href = "expenses", Icon = Icons.Material.Filled.Receipt, Label = "Track Expenses" },
-            new { Href = "goals", Icon = Icons.Material.Filled.Category, Label = "Goals" },
-            new { Href = "categories", Icon = Icons.Material.Filled.Category, Label = "Categories" },
-            new { Href = "budget", Icon = Icons.Material.Filled.PieChart, Label = "Budget" },
-            new { Href = "history", Icon = Icons.Material.Filled.Assessment, Label = "History" },
-            new { Href = "profile", Icon = Icons.Material.Filled.Person, Label = "Profile" }
-            })
-            {
-                <div class="px-3">
-                    <NavLink class="nav-link flex items-center px-4 py-3 rounded border-l-4 border-transparent"
-                             href="@item.Href" Match="NavLinkMatch.All">
-                        <MudIcon Icon="@item.Icon" Class="sidebar-icon mr-3" />
-                        <MudText Typo="Typo.body1" Class="text-primary font-normal m-0">
-                            @item.Label
-                        </MudText>
-                    </NavLink>
+    <!-- sidebar with MudNavMenu -->
+    <MudNavMenu Style="padding: 1rem 0; background-color: var(--bg-light);">
+        <div style="padding: 0 0.75rem;">
+            <MudNavLink Href="dashboard" Match="NavLinkMatch.All">
+                <div class="nav-link flex items-center rounded border-l-4 border-transparent px-4 py-3">
+                    <MudIcon Icon="@Icons.Material.Filled.Home" Class="sidebar-icon mr-3" />
+                    <MudText Typo="Typo.body1" Class="text-primary m-0 font-normal">Home</MudText>
                 </div>
-            }
+            </MudNavLink>
+        </div>
 
-        </nav>
-    </div>
+        <div style="padding: 0 0.75rem;">
+            <MudNavLink Href="allowances" Match="NavLinkMatch.All">
+                <div class="nav-link flex items-center rounded border-l-4 border-transparent px-4 py-3">
+                    <MudIcon Icon="@Icons.Material.Filled.Money" Class="sidebar-icon mr-3" />
+                    <MudText Typo="Typo.body1" Class="text-primary m-0 font-normal">Allowances</MudText>
+                </div>
+            </MudNavLink>
+        </div>
 
+        <div style="padding: 0 0.75rem;">
+            <MudNavLink Href="expenses" Match="NavLinkMatch.All">
+                <div class="nav-link flex items-center rounded border-l-4 border-transparent px-4 py-3">
+                    <MudIcon Icon="@Icons.Material.Filled.Receipt" Class="sidebar-icon mr-3" />
+                    <MudText Typo="Typo.body1" Class="text-primary m-0 font-normal">Track Expenses</MudText>
+                </div>
+            </MudNavLink>
+        </div>
+
+        <div style="padding: 0 0.75rem;">
+            <MudNavLink Href="goals" Match="NavLinkMatch.All">
+                <div class="nav-link flex items-center rounded border-l-4 border-transparent px-4 py-3">
+                    <MudIcon Icon="@Icons.Material.Filled.TrendingUp" Class="sidebar-icon mr-3" />
+                    <MudText Typo="Typo.body1" Class="text-primary m-0 font-normal">Goals</MudText>
+                </div>
+            </MudNavLink>
+        </div>
+
+        <div style="padding: 0 0.75rem;">
+            <MudNavLink Href="categories" Match="NavLinkMatch.All">
+                <div class="nav-link flex items-center rounded border-l-4 border-transparent px-4 py-3">
+                    <MudIcon Icon="@Icons.Material.Filled.Category" Class="sidebar-icon mr-3" />
+                    <MudText Typo="Typo.body1" Class="text-primary m-0 font-normal">Categories</MudText>
+                </div>
+            </MudNavLink>
+        </div>
+
+        <div style="padding: 0 0.75rem;">
+            <MudNavLink Href="budget" Match="NavLinkMatch.All">
+                <div class="nav-link flex items-center rounded border-l-4 border-transparent px-4 py-3">
+                    <MudIcon Icon="@Icons.Material.Filled.PieChart" Class="sidebar-icon mr-3" />
+                    <MudText Typo="Typo.body1" Class="text-primary m-0 font-normal">Budget</MudText>
+                </div>
+            </MudNavLink>
+        </div>
+
+        <div style="padding: 0 0.75rem;">
+            <MudNavLink Href="history" Match="NavLinkMatch.All">
+                <div class="nav-link flex items-center rounded border-l-4 border-transparent px-4 py-3">
+                    <MudIcon Icon="@Icons.Material.Filled.Assessment" Class="sidebar-icon mr-3" />
+                    <MudText Typo="Typo.body1" Class="text-primary m-0 font-normal">History</MudText>
+                </div>
+            </MudNavLink>
+        </div>
+
+        <div style="padding: 0 0.75rem;">
+            <MudNavLink Href="profile" Match="NavLinkMatch.All">
+                <div class="nav-link flex items-center rounded border-l-4 border-transparent px-4 py-3">
+                    <MudIcon Icon="@Icons.Material.Filled.Person" Class="sidebar-icon mr-3" />
+                    <MudText Typo="Typo.body1" Class="text-primary m-0 font-normal">Profile</MudText>
+                </div>
+            </MudNavLink>
+        </div>
+    </MudNavMenu>
 </AuthorizeView>
+
+@code {
+    // MudNavMenu handles navigation automatically with MudDrawer
+}
