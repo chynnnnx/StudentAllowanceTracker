@@ -16,12 +16,10 @@ builder.Services.AddDatabaseAndIdentity(builder.Configuration)
                 .AddInfrastructure(builder.Configuration)
                 .AddJwtAuthentication(builder.Configuration)
                 .AddSwaggerDocumentation()
-                .AddControllers();
+                .AddCustomCors(builder.Configuration); ;
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddCustomCors(builder.Configuration);
+builder.Services.AddControllers();
 
 var app = builder.Build();
-app.UseCustomCors();
 app.UseApplicationPipeline();
-app.MapControllers();
 app.Run();
