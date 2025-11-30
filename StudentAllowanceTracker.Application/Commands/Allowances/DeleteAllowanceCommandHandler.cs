@@ -9,7 +9,7 @@ using StudentAllowanceTracker.Domain.Entities;
 using StudentAllowanceTracker.Shared.Enums;
 using StudentAllowanceTracker.Shared.Responses;
 using StudentAllowanceTracker.Application.DTOs;
-
+using StudentAllowanceTracker.Application.Common.Exceptions;
 namespace StudentAllowanceTracker.Application.Commands.Allowances
 {
     public class DeleteAllowanceCommandHandler: IRequestHandler<DeleteAllowanceCommand, Result<object> >
@@ -23,7 +23,7 @@ namespace StudentAllowanceTracker.Application.Commands.Allowances
         {
             var allowance = await _allowanceRepo.GetByIdAsync(request.AllowanceID);
             if (allowance == null)
-                return Result<object>.Fail(ResultStatus.NotFound, "Allowance not found.");
+                return Result<object>.Fail(ResultStatus.NotFound, "Allowance not found or access denied.");
 
             await _allowanceRepo.DeleteAsync(request.AllowanceID);
             return Result<object>.Ok();

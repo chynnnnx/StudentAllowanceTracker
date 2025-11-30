@@ -14,14 +14,14 @@ public class CreateAllowanceCommandHandler : IRequestHandler<CreateAllowanceComm
     private readonly IBaseRepository<Allowance> _allowanceRepo;
     private readonly IMapper _mapper;
     private readonly ICurrentUserService _currentUser;
-    private readonly IMediator _mediator; 
+   private readonly IHistoryService _historyService;
 
-    public CreateAllowanceCommandHandler( IBaseRepository<Allowance> allowanceRepo,  IMapper mapper, ICurrentUserService currentUser, IMediator mediator) 
+    public CreateAllowanceCommandHandler( IBaseRepository<Allowance> allowanceRepo,  IMapper mapper, ICurrentUserService currentUser,IHistoryService historyService) 
     {
         _allowanceRepo = allowanceRepo;
         _mapper = mapper;
         _currentUser = currentUser;
-        _mediator = mediator;
+        _historyService = historyService;
     }
 
     public async Task<Result<AllowanceDTO>> Handle(CreateAllowanceCommand command, CancellationToken cancellationToken)
@@ -31,14 +31,14 @@ public class CreateAllowanceCommandHandler : IRequestHandler<CreateAllowanceComm
             return Result<AllowanceDTO>.Fail(ResultStatus.Unauthorized, "User not logged in.");
 
         var allowance = _mapper.Map<Allowance>(command);
-        allowance.AllowanceID = Guid.NewGuid();
+        allowance.AllowanceID = Guid.NewGuid();   
         allowance.UserId = userId;
+
         await _allowanceRepo.AddAsync(allowance);
-
-        await HistoryHelper.LogAsync(allowance, "Allowance", _mapper, _mediator);
-
+        await _historyService.LogAsync(allowance, "Allowance Created");
 
         var dto = _mapper.Map<AllowanceDTO>(allowance);
         return Result<AllowanceDTO>.Ok(dto);
     }
+
 }
