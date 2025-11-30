@@ -19,13 +19,13 @@ namespace StudentAllowanceTracker.Application.Commands.Goals
         private readonly IBaseRepository<GoalsEntity> _goalsRepo;
         private readonly ICurrentUserService _currentUserService;
         private readonly IMapper _mapper;
-        private readonly IMediator _mediator;
-        public CreateGoalCommandHandler(IBaseRepository<GoalsEntity> goalsRepo, ICurrentUserService currentUserService, IMapper mapper, IMediator mediator)
+        private readonly IHistoryService _historyService;
+        public CreateGoalCommandHandler(IBaseRepository<GoalsEntity> goalsRepo, ICurrentUserService currentUserService, IMapper mapper, IHistoryService historyService)
         {
             _goalsRepo = goalsRepo;
             _currentUserService = currentUserService;
             _mapper = mapper;
-            _mediator = mediator;
+            _historyService = historyService;
         }
 
         public async Task<Result<GoalsDTO>> Handle(CreateGoalCommand command, CancellationToken cancellationToken)
@@ -39,7 +39,7 @@ namespace StudentAllowanceTracker.Application.Commands.Goals
             goal.GoalID = Guid.NewGuid();
             goal.UserID = userId;
             await _goalsRepo.AddAsync(goal);
-            await HistoryHelper.LogAsync(goal, "Goal", _mapper, _mediator);
+            await _historyService.LogAsync(goal, "Expense Updated");
 
 
             var dto = _mapper.Map<GoalsDTO>(goal);

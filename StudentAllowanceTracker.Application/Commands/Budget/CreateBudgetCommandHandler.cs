@@ -37,8 +37,7 @@ namespace StudentAllowanceTracker.Application.Commands.Budget
         {
             var userId = _currentUser.UserId;
             if (string.IsNullOrEmpty(userId))
-                return Result<BudgetDTO>.Fail(ResultStatus.Unauthorized, "User not logged in.");
-
+              throw new UnauthorizedAccessException();
             var allowances = await _allowanceRepo.FindAsync(a => a.UserId == userId);
 
             var totalAllowance = allowances.Sum(a => a.Amount);

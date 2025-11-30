@@ -20,15 +20,15 @@ namespace StudentAllowanceTracker.Application.Commands.Expense
         private readonly IBaseRepository<Allowance> _allowanceRepo;
         private readonly ICurrentUserService _currentUser;
         private readonly IMapper _mapper;
-        private readonly IMediator _mediator;
+        private readonly IHistoryService _historyService;
         public UpdateExpenseCommandHandler( IBaseRepository<ExpenseEntity> expenseRepo,IBaseRepository<Allowance> allowanceRepo, ICurrentUserService currentUser, IMapper mapper,
-            IMediator mediator)
+            IHistoryService historyService)
         {
             _expenseRepo = expenseRepo;
             _allowanceRepo = allowanceRepo;
             _currentUser = currentUser;
             _mapper = mapper;
-            _mediator = mediator;
+            _historyService = historyService;
         }
 
         public async Task<Result<ExpenseDTO>> Handle(UpdateExpenseCommand command, CancellationToken cancellationToken)
@@ -43,7 +43,8 @@ namespace StudentAllowanceTracker.Application.Commands.Expense
 
             _mapper.Map(command, expense);
             await _expenseRepo.UpdateAsync(expense);
-            await HistoryHelper.LogAsync(expense, "Expense", _mapper, _mediator);
+ 
+            await _historyService.LogAsync(expense, "Expense Updated");
 
             return Result<ExpenseDTO>.Ok(_mapper.Map<ExpenseDTO>(expense));
         }

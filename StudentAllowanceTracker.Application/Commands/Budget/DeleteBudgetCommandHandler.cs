@@ -8,6 +8,7 @@ using StudentAllowanceTracker.Application.Interfaces.Repositories;
 using StudentAllowanceTracker.Domain.Entities;
 using StudentAllowanceTracker.Shared.Enums;
 using StudentAllowanceTracker.Shared.Responses;
+using StudentAllowanceTracker.Application.Common.Exceptions;
 namespace StudentAllowanceTracker.Application.Commands.Budget
 {
     public class DeleteBudgetCommandHandler:IRequestHandler<DeleteBudgetCommand, object>
@@ -22,7 +23,7 @@ namespace StudentAllowanceTracker.Application.Commands.Budget
         {
             var budget = await _budgetRepo.GetByIdAsync(request.BudgetID);
             if (budget == null)
-                return Result<object>.Fail(ResultStatus.NotFound, "Budget not found.");
+                return Result<object>.Fail(ResultStatus.NotFound, "Budget not found");
             await _budgetRepo.DeleteAsync(request.BudgetID);
             return Result<object>.Ok();
         }

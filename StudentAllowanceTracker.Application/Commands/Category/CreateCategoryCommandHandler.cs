@@ -20,19 +20,19 @@ namespace StudentAllowanceTracker.Application.Commands.Category
         private readonly IMapper _mapper;
         private readonly ICurrentUserService _currentUser;
         private readonly IBaseRepository<BudgetEntity> _budgetRepo;
-        private readonly IMediator _mediator;
+        private readonly IHistoryService _historyService;
         public CreateCategoryCommandHandler(
             IBaseRepository<CategoryEntity> categoryRepo,
             IMapper mapper,
             ICurrentUserService currentUser,
             IBaseRepository<BudgetEntity> budgetRepo,
-            IMediator mediator)
+            IHistoryService historyService)
         {
             _categoryRepo = categoryRepo;
             _mapper = mapper;
             _currentUser = currentUser;
             _budgetRepo = budgetRepo;
-            _mediator = mediator;
+            _historyService = historyService;
         }
 
         public async Task<Result<CategoryDTO>> Handle(CreateCategoryCommand command, CancellationToken cancellationToken)
@@ -70,8 +70,7 @@ namespace StudentAllowanceTracker.Application.Commands.Category
             category.UserID = userId;
 
             await _categoryRepo.AddAsync(category);
-            await HistoryHelper.LogAsync(category, "Category", _mapper, _mediator);
-
+            await _historyService.LogAsync(category, "Category Created");
 
             return Result<CategoryDTO>.Ok(_mapper.Map<CategoryDTO>(category));
         }

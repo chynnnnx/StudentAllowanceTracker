@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StudentAllowanceTracker.Application.Common.Exceptions;
 
 namespace StudentAllowanceTracker.Application.Commands.Budget
 {
@@ -38,11 +39,12 @@ namespace StudentAllowanceTracker.Application.Commands.Budget
                 return Result<BudgetDTO>.Fail(ResultStatus.NotFound, "Budget not found or access denied.");
 
             _mapper.Map(command, budget);
-
             await _budgetRepo.UpdateAsync(budget);
 
-            return Result<BudgetDTO>.Ok(_mapper.Map<BudgetDTO>(budget));
+            var dto = _mapper.Map<BudgetDTO>(budget);
+            return Result<BudgetDTO>.Ok(dto);
         }
+
     }
 
 }

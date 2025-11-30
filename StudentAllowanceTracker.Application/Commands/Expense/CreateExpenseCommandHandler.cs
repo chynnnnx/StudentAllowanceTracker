@@ -20,15 +20,16 @@ namespace StudentAllowanceTracker.Application.Commands.Expense
         public readonly IMapper _mapper;
         public readonly ICurrentUserService _currentUser;
         private readonly IBaseRepository<Allowance> _allowanceRepo;
-        private readonly IMediator _mediator;
+        private readonly IHistoryService _historyService;
 
-        public CreateExpenseCommandHandler(IBaseRepository<ExpenseEntity> expenseRepo,IMapper mapper, ICurrentUserService currentUser, IBaseRepository<Allowance> allowanceRepo, IMediator mediator)
+        public CreateExpenseCommandHandler(IBaseRepository<ExpenseEntity> expenseRepo,IMapper mapper, ICurrentUserService currentUser, IBaseRepository<Allowance> allowanceRepo, 
+            IHistoryService historyService)
         {
             _expenseRepo = expenseRepo;
             _mapper = mapper;
             _currentUser = currentUser;
             _allowanceRepo = allowanceRepo;
-            _mediator = mediator;
+            _historyService = historyService;
         }
 
         public async Task<Result<ExpenseDTO>> Handle(CreateExpenseCommand command, CancellationToken cancellationToken)
@@ -46,8 +47,8 @@ namespace StudentAllowanceTracker.Application.Commands.Expense
             expenses.ExpenseID = Guid.NewGuid();
             expenses.UserID = userId;
             await _expenseRepo.AddAsync(expenses);
-            await HistoryHelper.LogAsync(expenses, "Expense", _mapper, _mediator);
 
+            await _historyService.LogAsync(expenses, "Expense Created");
             var dto = _mapper.Map<ExpenseDTO>(expenses);
             return Result<ExpenseDTO>.Ok(dto);
         }
