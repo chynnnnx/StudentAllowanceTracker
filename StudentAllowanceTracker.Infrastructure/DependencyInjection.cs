@@ -9,7 +9,7 @@ using StudentAllowanceTracker.Infrastructure.Persistence.Data;
 using StudentAllowanceTracker.Infrastructure.Persistence.Repositories;
 using StudentAllowanceTracker.Infrastructure.Services;
 using StudentAllowanceTracker.Infrastructure.Settings;
-
+using StudentAllowanceTracker.Application.Services;
 namespace StudentAllowanceTracker.Infrastructure
 {
     public static class DependencyInjection
@@ -23,6 +23,7 @@ namespace StudentAllowanceTracker.Infrastructure
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
             services.AddHttpContextAccessor();
+            services.AddScoped<IHistoryService, HistoryService>();
 
 
             var assembly = typeof(CurrentUserService).Assembly;
