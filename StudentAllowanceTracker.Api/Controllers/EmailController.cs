@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using StudentAllowanceTracker.Application.Commands.Auth;
+using StudentAllowanceTracker.Application.Commands.Auth.LoginAndRegister;
 
 namespace StudentAllowanceTracker.Api.Controllers
 {

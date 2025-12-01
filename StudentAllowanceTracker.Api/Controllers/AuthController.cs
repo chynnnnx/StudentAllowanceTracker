@@ -1,58 +1,71 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using StudentAllowanceTracker.Application.Commands.Auth;
-using StudentAllowanceTracker.Application.Commands.Notification;
+﻿    using MediatR;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using StudentAllowanceTracker.Application.Commands.Auth.LoginAndRegister;
+    using StudentAllowanceTracker.Application.Commands.Auth.PasswordRecovery;
+    using StudentAllowanceTracker.Application.Commands.Auth.RefreshTokens;
+    using StudentAllowanceTracker.Application.Commands.Notification;
 
 
-namespace StudentAllowanceTracker.Api.Controllers
-{
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    namespace StudentAllowanceTracker.Api.Controllers
     {
-        private readonly IMediator _mediator;
+        [Route("api/[controller]")]
+        [ApiController]
+        public class AuthController : ControllerBase
+        {
+            private readonly IMediator _mediator;
 
-        public AuthController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+            public AuthController(IMediator mediator)
+            {
+                _mediator = mediator;
+            }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterCommand command)
-        {
-            var result = await _mediator.Send(command);
+            [HttpPost("register")]
+            public async Task<IActionResult> Register([FromBody] RegisterCommand command)
+            {
+                var result = await _mediator.Send(command);
 
-            if (!result.Success)
-                return BadRequest(result.Errors);
+                if (!result.Success)
+                    return BadRequest(result.Errors);
 
-            return Ok(new {  Message = "User registered successfully." } );
+                return Ok(new {  Message = "User registered successfully." } );
+            }
+            [HttpPost("login")]
+            public async Task<IActionResult> Login([FromBody] LoginCommand command)
+            {
+                var result = await _mediator.Send(command);
+                if (!result.Success)
+                    return BadRequest(result.Errors);
+
+                 return Ok(result.Data);  
+            }
+            [HttpPatch("password/forgot")]
+            public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordCommand command)
+            {
+                var result = await _mediator.Send(command);
+                if (!result.Success)
+                    return BadRequest(result.Errors);
+                return Ok(new { Message = "Password reset code sent." });
+            }
+            [HttpPatch("password/reset")]
+            public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
+            {
+                var result = await _mediator.Send(command);
+                if (!result.Success)
+                    return BadRequest(result.Errors);
+                return NoContent();
+            }
+            [HttpPost("refresh")]
+            public async Task<IActionResult> Refresh([FromBody] RefreshTokenCommand command)
+            {
+                var result = await _mediator.Send(command);
+                if (!result.Success)
+                    return BadRequest(result.Errors);
+
+                 return Ok(result.Data);
+            }
+
+
         }
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody]LoginCommand command)
-        {
-            var result = await _mediator.Send(command);
-            if (!result.Success)
-                return BadRequest(result.Errors);
-            return Ok(new { Token = result.Data });
-        }
-        [HttpPatch("password/forgot")]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordCommand command)
-        {
-            var result = await _mediator.Send(command);
-            if (!result.Success)
-                return BadRequest(result.Errors);
-            return Ok(new { Message = "Password reset code sent." });
-        }
-        [HttpPatch("password/reset")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
-        {
-            var result = await _mediator.Send(command);
-            if (!result.Success)
-                return BadRequest(result.Errors);
-            return NoContent();
-        }
-           
     }
-}
