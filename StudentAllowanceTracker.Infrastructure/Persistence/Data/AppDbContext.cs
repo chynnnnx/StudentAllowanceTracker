@@ -23,6 +23,7 @@ namespace StudentAllowanceTracker.Infrastructure.Persistence.Data
         public DbSet<BudgetEntity> Budgets { get; set; }
         public DbSet<HistoryEntity> History { get; set; }
         public DbSet<UserSubscription> UserSubscriptions { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -34,7 +35,7 @@ namespace StudentAllowanceTracker.Infrastructure.Persistence.Data
             modelBuilder.Entity<BudgetEntity>().ToTable("Budgets");
             modelBuilder.Entity<HistoryEntity>().ToTable("History");
             modelBuilder.Entity<UserSubscription>().ToTable("UserSubscriptions");
-
+            modelBuilder.Entity<RefreshToken>().ToTable("RefreshTokens");
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         }
     }

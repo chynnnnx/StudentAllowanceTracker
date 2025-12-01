@@ -13,7 +13,7 @@ namespace StudentAllowanceTracker.Infrastructure.Persistence.Data
         public AppDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-
+            
 
             optionsBuilder.UseSqlServer(
               "Server=.;Database=AllowanceTrackerDB;Trusted_Connection=True;TrustServerCertificate=true;MultipleActiveResultSets=true"
