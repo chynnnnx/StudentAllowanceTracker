@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StudentAllowanceTracker.Application.Commands.Auth;
 using StudentAllowanceTracker.Domain.Entities;
 using StudentAllowanceTracker.Application.Commands.Allowances;
 using StudentAllowanceTracker.Application.DTOs;
@@ -14,6 +13,7 @@ using StudentAllowanceTracker.Application.Commands.Budget;
 using StudentAllowanceTracker.Application.Commands.Category;
 using StudentAllowanceTracker.Application.Commands.History;
 using StudentAllowanceTracker.Application.Commands.User;
+using StudentAllowanceTracker.Application.Commands.Auth.LoginAndRegister;
 
 namespace StudentAllowanceTracker.Application.Mapping
 {
