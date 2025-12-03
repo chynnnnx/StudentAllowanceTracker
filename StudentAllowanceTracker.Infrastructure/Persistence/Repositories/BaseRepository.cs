@@ -64,6 +64,14 @@ namespace StudentAllowanceTracker.Infrastructure.Persistence.Repositories
         {
             return _dbSet.AsQueryable();
         }
+        public async Task<bool> UpdateRangeAsync(IEnumerable<T> entities)
+        {
+            foreach (var entity in entities)
+                _dbSet.Update(entity);
+
+            return await _dbContext.SaveChangesAsync() > 0;
+        }
+
 
     }
 }

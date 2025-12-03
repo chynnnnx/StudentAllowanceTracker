@@ -17,5 +17,6 @@ namespace StudentAllowanceTracker.Application.Interfaces.Repositories
         Task<bool> DeleteAsync(object id);
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> filter);
         IQueryable<T> GetQueryable();
+        Task<bool> UpdateRangeAsync(IEnumerable<T> entities);
     }
 }
