@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StudentAllowanceTracker.Application.Commands.Expense;
@@ -8,6 +9,8 @@ namespace StudentAllowanceTracker.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+
     public class ExpenseController : ControllerBase
     {
         private readonly IMediator _mediator;

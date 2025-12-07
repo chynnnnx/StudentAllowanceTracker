@@ -4,11 +4,14 @@ using StudentAllowanceTracker.Application.Commands.Budget;
 using StudentAllowanceTracker.Application.Queries.Budget;
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StudentAllowanceTracker.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+
     public class BudgetController : ControllerBase
     {
         private readonly IMediator _mediator;

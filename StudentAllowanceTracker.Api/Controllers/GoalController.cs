@@ -5,11 +5,14 @@ using StudentAllowanceTracker.Application.Commands.Goals;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using StudentAllowanceTracker.Application.Queries.Goal;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StudentAllowanceTracker.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+
     public class GoalController : ControllerBase
     {
         private readonly IMediator _mediator;

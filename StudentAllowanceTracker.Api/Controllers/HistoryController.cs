@@ -1,10 +1,14 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudentAllowanceTracker.Application.Commands.History;
 using StudentAllowanceTracker.Application.Queries.History;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
+
+
 public class HistoryController : ControllerBase
 {
     private readonly IMediator _mediator;
