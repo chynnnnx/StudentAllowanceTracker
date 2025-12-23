@@ -101,8 +101,10 @@ else
     {
         _isLoading = true;
         StateHasChanged();
-        await LocalStorage.RemoveItemAsync("authToken");
-        await LocalStorage.RemoveItemAsync("userRole");
+        await LocalStorage.RemoveItemAsync("accessToken");
+    await LocalStorage.RemoveItemAsync("refreshToken");
+        await LocalStorage.RemoveItemAsync("accessTokenExpiry");
+
         if (AuthStateProvider is CustomAuthStateProvider customAuth)
             customAuth.NotifyUserLogout();
         Navigation.NavigateTo("/", forceLoad: true);
