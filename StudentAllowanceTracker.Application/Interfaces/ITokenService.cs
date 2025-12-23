@@ -1,4 +1,6 @@
-﻿using System;
+﻿using StudentAllowanceTracker.Application.DTOs;
+using StudentAllowanceTracker.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +11,12 @@ namespace StudentAllowanceTracker.Application.Interfaces
 {
     public interface ITokenService
     {
-        string GenerateToken(string userId, string email, string firstName, string lastName, IList<string> roles);
+        Task<AuthResult> GenerateTokensAsync(AppIdentityUser user, IList<string> roles);
+
+        Task<AuthResult> RefreshTokensAsync(string rawToken);
+
+
+
     }
 }
 
